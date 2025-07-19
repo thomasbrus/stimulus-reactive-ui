@@ -269,7 +269,7 @@
 
         <!-- Live Search Results Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">Live Search Results</h2>
+          <h2 class="text-xl font-semibold text-gray-700">Live Search Results (Simplified)</h2>
           <div
             data-controller="binding"
             data-binding-initial-state="{ query: '', items: ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape'] }"
@@ -280,30 +280,79 @@
               data-binding-value="state.query"
               data-action="input->binding#updateState"
               data-binding-updater-param="state.query = target.value"
-              class="w-full p-3 border border-gray-300 rounded-lg"
+              class="w-full p-3 border border-gray-300 rounded-lg mb-4"
             />
-            <div class="mt-4">
-              <div
-                class="text-sm text-gray-600 mb-2"
+
+            <!-- Results counter -->
+            <div class="text-sm text-gray-600 mb-2">
+              <span data-binding-show="state.query === ''" data-binding-text="state.items.length + ' items available'"
+                >7 items available</span
+              >
+              <span
+                data-binding-show="state.query !== ''"
                 data-binding-text="state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase())).length + ' results found'"
+                >0 results found</span
               >
-                7 results found
+            </div>
+
+            <!-- Single unified list -->
+            <div class="space-y-2">
+              <div
+                class="p-2 bg-gray-50 rounded border-l-4"
+                data-binding-show="state.query === '' || 'Apple'.toLowerCase().includes(state.query.toLowerCase())"
+                data-binding-class="{ 'border-gray-300': state.query === '', 'border-blue-500': state.query !== '' }"
+              >
+                Apple
               </div>
               <div
-                class="space-y-2"
-                data-binding-html="state.items
-                  .filter(item => item.toLowerCase().includes(state.query.toLowerCase()))
-                  .map(item => `<div class='p-2 bg-gray-50 rounded border-l-4 border-blue-500'>${item}</div>`)
-                  .join('')"
+                class="p-2 bg-gray-50 rounded border-l-4"
+                data-binding-show="state.query === '' || 'Banana'.toLowerCase().includes(state.query.toLowerCase())"
+                data-binding-class="{ 'border-gray-300': state.query === '', 'border-blue-500': state.query !== '' }"
               >
-                <!-- Results will be populated here -->
+                Banana
               </div>
               <div
-                class="text-center text-gray-500 mt-4"
-                data-binding-class="{ 'hidden': state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase())).length > 0 || state.query === '' }"
+                class="p-2 bg-gray-50 rounded border-l-4"
+                data-binding-show="state.query === '' || 'Cherry'.toLowerCase().includes(state.query.toLowerCase())"
+                data-binding-class="{ 'border-gray-300': state.query === '', 'border-blue-500': state.query !== '' }"
               >
-                No results found for "<span data-binding-text="state.query"></span>"
+                Cherry
               </div>
+              <div
+                class="p-2 bg-gray-50 rounded border-l-4"
+                data-binding-show="state.query === '' || 'Date'.toLowerCase().includes(state.query.toLowerCase())"
+                data-binding-class="{ 'border-gray-300': state.query === '', 'border-blue-500': state.query !== '' }"
+              >
+                Date
+              </div>
+              <div
+                class="p-2 bg-gray-50 rounded border-l-4"
+                data-binding-show="state.query === '' || 'Elderberry'.toLowerCase().includes(state.query.toLowerCase())"
+                data-binding-class="{ 'border-gray-300': state.query === '', 'border-blue-500': state.query !== '' }"
+              >
+                Elderberry
+              </div>
+              <div
+                class="p-2 bg-gray-50 rounded border-l-4"
+                data-binding-show="state.query === '' || 'Fig'.toLowerCase().includes(state.query.toLowerCase())"
+                data-binding-class="{ 'border-gray-300': state.query === '', 'border-blue-500': state.query !== '' }"
+              >
+                Fig
+              </div>
+              <div
+                class="p-2 bg-gray-50 rounded border-l-4"
+                data-binding-show="state.query === '' || 'Grape'.toLowerCase().includes(state.query.toLowerCase())"
+                data-binding-class="{ 'border-gray-300': state.query === '', 'border-blue-500': state.query !== '' }"
+              >
+                Grape
+              </div>
+            </div>
+
+            <!-- No results message -->
+            <div
+              data-binding-show="state.query !== '' && state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase())).length === 0"
+            >
+              <p class="text-center text-gray-500 mt-4">No results found for "<span data-binding-text="state.query"></span>"</p>
             </div>
           </div>
         </div>
@@ -701,6 +750,218 @@
             </div>
           </div>
         </div>
+
+        <!-- Advanced Template Example -->
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-gray-700">User Management (Simplified)</h2>
+          <div
+            data-controller="binding"
+            data-binding-initial-state="{
+              users: [
+                { name: 'Alice', role: 'admin', active: true, score: 95 },
+                { name: 'Bob', role: 'user', active: false, score: 78 },
+                { name: 'Charlie', role: 'moderator', active: true, score: 88 },
+                { name: 'Diana', role: 'user', active: true, score: 92 }
+              ],
+              filter: 'all',
+              sortBy: 'name'
+            }"
+          >
+            <!-- Controls -->
+            <div class="flex gap-4 mb-4">
+              <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Filter</label>
+                <select
+                  data-binding-value="state.filter"
+                  data-action="change->binding#updateState"
+                  data-binding-updater-param="state.filter = target.value"
+                  class="w-full p-2 border border-gray-300 rounded"
+                >
+                  <option value="all">All Users</option>
+                  <option value="active">Active Only</option>
+                  <option value="inactive">Inactive Only</option>
+                  <option value="admin">Admins Only</option>
+                </select>
+              </div>
+              <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+                <select
+                  data-binding-value="state.sortBy"
+                  data-action="change->binding#updateState"
+                  data-binding-updater-param="state.sortBy = target.value"
+                  class="w-full p-2 border border-gray-300 rounded"
+                >
+                  <option value="name">Name</option>
+                  <option value="score">Score</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- No users message -->
+            <div data-binding-show="state.users.length === 0" class="text-center py-8 text-gray-500">
+              <p>No users found</p>
+            </div>
+
+            <!-- User List -->
+            <div class="space-y-2">
+              <!-- Alice -->
+              <div
+                class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+                data-binding-show="(state.filter === 'all' || (state.filter === 'active' && true) || (state.filter === 'inactive' && false) || (state.filter === 'admin' && 'admin' === 'admin'))"
+              >
+                <div class="flex items-center space-x-3">
+                  <div data-binding-show="true">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <div data-binding-show="false">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                  </div>
+                  <div>
+                    <div class="font-medium">Alice</div>
+                    <div class="text-sm text-gray-500 capitalize">admin</div>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                  <div class="text-right">
+                    <div class="text-sm font-medium">Score: 95</div>
+                    <div data-binding-show="95 >= 90">
+                      <span class="text-xs text-green-600 font-medium">Excellent</span>
+                    </div>
+                    <div data-binding-show="95 >= 80 && 95 < 90">
+                      <span class="text-xs text-blue-600 font-medium">Good</span>
+                    </div>
+                    <div data-binding-show="95 < 80">
+                      <span class="text-xs text-yellow-600 font-medium">Needs Improvement</span>
+                    </div>
+                  </div>
+                  <div data-binding-show="'admin' === 'admin'">
+                    <span class="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">Admin</span>
+                  </div>
+                  <div data-binding-show="'admin' === 'moderator'">
+                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Mod</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bob -->
+              <div
+                class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+                data-binding-show="(state.filter === 'all' || (state.filter === 'active' && false) || (state.filter === 'inactive' && true) || (state.filter === 'admin' && 'user' === 'admin'))"
+              >
+                <div class="flex items-center space-x-3">
+                  <div data-binding-show="false">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <div data-binding-show="true">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                  </div>
+                  <div>
+                    <div class="font-medium">Bob</div>
+                    <div class="text-sm text-gray-500 capitalize">user</div>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                  <div class="text-right">
+                    <div class="text-sm font-medium">Score: 78</div>
+                    <div data-binding-show="78 >= 90">
+                      <span class="text-xs text-green-600 font-medium">Excellent</span>
+                    </div>
+                    <div data-binding-show="78 >= 80 && 78 < 90">
+                      <span class="text-xs text-blue-600 font-medium">Good</span>
+                    </div>
+                    <div data-binding-show="78 < 80">
+                      <span class="text-xs text-yellow-600 font-medium">Needs Improvement</span>
+                    </div>
+                  </div>
+                  <div data-binding-show="'user' === 'admin'">
+                    <span class="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">Admin</span>
+                  </div>
+                  <div data-binding-show="'user' === 'moderator'">
+                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Mod</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Charlie -->
+              <div
+                class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+                data-binding-show="(state.filter === 'all' || (state.filter === 'active' && true) || (state.filter === 'inactive' && false) || (state.filter === 'admin' && 'moderator' === 'admin'))"
+              >
+                <div class="flex items-center space-x-3">
+                  <div data-binding-show="true">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <div data-binding-show="false">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                  </div>
+                  <div>
+                    <div class="font-medium">Charlie</div>
+                    <div class="text-sm text-gray-500 capitalize">moderator</div>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                  <div class="text-right">
+                    <div class="text-sm font-medium">Score: 88</div>
+                    <div data-binding-show="88 >= 90">
+                      <span class="text-xs text-green-600 font-medium">Excellent</span>
+                    </div>
+                    <div data-binding-show="88 >= 80 && 88 < 90">
+                      <span class="text-xs text-blue-600 font-medium">Good</span>
+                    </div>
+                    <div data-binding-show="88 < 80">
+                      <span class="text-xs text-yellow-600 font-medium">Needs Improvement</span>
+                    </div>
+                  </div>
+                  <div data-binding-show="'moderator' === 'admin'">
+                    <span class="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">Admin</span>
+                  </div>
+                  <div data-binding-show="'moderator' === 'moderator'">
+                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Mod</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Diana -->
+              <div
+                class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+                data-binding-show="(state.filter === 'all' || (state.filter === 'active' && true) || (state.filter === 'inactive' && false) || (state.filter === 'admin' && 'user' === 'admin'))"
+              >
+                <div class="flex items-center space-x-3">
+                  <div data-binding-show="true">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <div data-binding-show="false">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                  </div>
+                  <div>
+                    <div class="font-medium">Diana</div>
+                    <div class="text-sm text-gray-500 capitalize">user</div>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                  <div class="text-right">
+                    <div class="text-sm font-medium">Score: 92</div>
+                    <div data-binding-show="92 >= 90">
+                      <span class="text-xs text-green-600 font-medium">Excellent</span>
+                    </div>
+                    <div data-binding-show="92 >= 80 && 92 < 90">
+                      <span class="text-xs text-blue-600 font-medium">Good</span>
+                    </div>
+                    <div data-binding-show="92 < 80">
+                      <span class="text-xs text-yellow-600 font-medium">Needs Improvement</span>
+                    </div>
+                  </div>
+                  <div data-binding-show="'user' === 'admin'">
+                    <span class="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">Admin</span>
+                  </div>
+                  <div data-binding-show="'user' === 'moderator'">
+                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Mod</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -724,6 +985,7 @@
           this.bindingElements("class").forEach(this.applyClassBinding.bind(this));
           this.bindingElements("style").forEach(this.applyStyleBinding.bind(this));
           this.bindingElements("checked").forEach(this.applyCheckedBinding.bind(this));
+          this.bindingElements("show").forEach(this.applyShowBinding.bind(this));
           this.bindingElements("html").forEach(this.applyHtmlBinding.bind(this));
         }
 
@@ -760,6 +1022,11 @@
 
         applyCheckedBinding(element) {
           element.checked = this.evaluateExpression(element.dataset.bindingChecked);
+        }
+
+        applyShowBinding(element) {
+          const shouldShow = this.evaluateExpression(element.dataset.bindingShow);
+          element.style.display = shouldShow ? "" : "none";
         }
 
         applyHtmlBinding(element) {
