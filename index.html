@@ -438,11 +438,11 @@
               computed.hasQuery && computed.resultCount === 0
             </script>
             <script type="text/template" data-binding-computed="itemsHtml">
-              html`${computed.filteredResults.map(item => html`
+              computed.filteredResults.map(item => `
                 <div class="p-2 bg-gray-50 rounded border-l-4 ${computed.hasQuery ? 'border-blue-500' : 'border-gray-300'}">
                   ${item}
                 </div>
-              `).join('')}`
+              `).join('')
             </script>
 
             <input
@@ -835,14 +835,14 @@
               })
             </script>
             <script type="text/template" data-binding-computed="usersHtml">
-              html`${computed.filteredUsers.map(user => {
+              computed.filteredUsers.map(user => {
                 const statusColor = user.active ? 'bg-green-500' : 'bg-red-500';
                 const scoreColor = user.score >= 90 ? 'text-green-600' :
                                    user.score >= 80 ? 'text-blue-600' : 'text-yellow-600';
                 const scoreLabel = user.score >= 90 ? 'Excellent' :
                                    user.score >= 80 ? 'Good' : 'Needs Improvement';
 
-                return html`
+                return `
                   <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
                     <div class="flex items-center space-x-3">
                       <div class="w-3 h-3 ${statusColor} rounded-full"></div>
@@ -859,7 +859,7 @@
                     </div>
                   </div>
                 `;
-              }).join('')}`
+              }).join('')
             </script>
 
             <!-- Controls -->
@@ -984,22 +984,9 @@
           const templateContent = element.textContent.trim();
 
           Object.defineProperty(this.computed, name, {
-            get: () => this.evaluateTemplateExpression(templateContent),
+            get: () => this.evaluateExpression(templateContent),
             configurable: true,
           });
-        }
-
-        evaluateTemplateExpression(template) {
-          // Create a template tag function that handles HTML properly
-          const html = (strings, ...values) => {
-            return strings.reduce((result, string, i) => {
-              const value = values[i] !== undefined ? values[i] : "";
-              return result + string + value;
-            }, "");
-          };
-
-          // Make the html tag function available in the expression context
-          return new Function("state", "computed", "html", `return ${template};`)(this.state, this.computed, html);
         }
 
         evaluateUpdate(updater, target) {
