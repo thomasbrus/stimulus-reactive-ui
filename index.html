@@ -117,7 +117,7 @@
             <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
               <div
                 :class="state.progressBarColor"
-                class="h-4 rounded-full transition-all duration-300"
+                class="h-4 rounded-full transition-all duration-150"
                 :style="{ width: state.progress + '%' }"
               ></div>
             </div>
@@ -324,7 +324,7 @@
               >
                 <span>What is Stimulus?</span>
                 <svg
-                  class="w-5 h-5 transition-transform duration-200"
+                  class="w-5 h-5 transition-transform duration-150"
                   :class="{ 'rotate-180': state.openPanel === 'panel1' }"
                   fill="none"
                   stroke="currentColor"
@@ -333,7 +333,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              <div class="overflow-hidden transition-all duration-300" :class="{ 'hidden': state.openPanel !== 'panel1' }">
+              <div class="overflow-hidden transition-all duration-150" :class="{ 'hidden': state.openPanel !== 'panel1' }">
                 <div class="p-4 text-gray-600">
                   Stimulus is a JavaScript framework with modest ambitions. It doesn't seek to take over your entire front-end—in fact, it's
                   not concerned with rendering HTML at all. Instead, it's designed to augment your HTML with just enough behavior to make it
@@ -352,7 +352,7 @@
               >
                 <span>How does data binding work?</span>
                 <svg
-                  class="w-5 h-5 transition-transform duration-200"
+                  class="w-5 h-5 transition-transform duration-150"
                   :class="{ 'rotate-180': state.openPanel === 'panel2' }"
                   fill="none"
                   stroke="currentColor"
@@ -361,7 +361,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              <div class="overflow-hidden transition-all duration-300" :class="{ 'hidden': state.openPanel !== 'panel2' }">
+              <div class="overflow-hidden transition-all duration-150" :class="{ 'hidden': state.openPanel !== 'panel2' }">
                 <div class="p-4 text-gray-600">
                   Data binding allows you to automatically sync your application state with the DOM. When state changes, the UI updates
                   automatically without manual DOM manipulation. This creates reactive interfaces with minimal code.
@@ -379,7 +379,7 @@
               >
                 <span>Why use this approach?</span>
                 <svg
-                  class="w-5 h-5 transition-transform duration-200"
+                  class="w-5 h-5 transition-transform duration-150"
                   :class="{ 'rotate-180': state.openPanel === 'panel3' }"
                   fill="none"
                   stroke="currentColor"
@@ -388,7 +388,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              <div class="overflow-hidden transition-all duration-300" :class="{ 'hidden': state.openPanel !== 'panel3' }">
+              <div class="overflow-hidden transition-all duration-150" :class="{ 'hidden': state.openPanel !== 'panel3' }">
                 <div class="p-4 text-gray-600">
                   This approach provides a clean separation between state and presentation. It's declarative, easy to understand, and
                   reduces the complexity of managing UI state. Plus, it works great with server-rendered HTML!
@@ -570,7 +570,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               </div>
               <div class="w-full bg-gray-200 rounded-full h-3">
                 <div
-                  class="h-3 rounded-full transition-all duration-300"
+                  class="h-3 rounded-full transition-all duration-150"
                   :class="{
                     'bg-red-500': state.isOverLimit,
                     'bg-yellow-500': state.isNearLimit,
@@ -720,7 +720,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <!-- Action Buttons -->
               <div class="flex gap-3 pt-2">
                 <button
-                  class="px-4 py-2 rounded-lg font-medium transition-all duration-200"
+                  class="px-4 py-2 rounded-lg font-medium transition-all duration-150"
                   :class="{
                     'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.isValid,
                     'bg-gray-300 text-gray-500 cursor-not-allowed': !state.isValid
@@ -1072,7 +1072,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             <!-- Action Buttons -->
             <div class="flex gap-3 mt-6">
               <button
-                class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200"
+                class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-150"
                 data-binding-class="{
                   'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': computed.hasSelection,
                   'bg-gray-300 text-gray-500 cursor-not-allowed': !computed.hasSelection
@@ -1095,13 +1095,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         <!-- 12. Terms and Conditions Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">12. Terms & Conditions Agreement</h2>
-          <div data-controller="binding" data-binding-initial-state="{ acceptTerms: false, acceptPrivacy: false, email: '' }">
+          <div data-controller="reactive">
             <!-- Computed Properties Templates -->
-            <script type="text/template" data-binding-computed="isValidEmail">
+            <script type="text/template" data-reactive-state="isValidEmail">
               state.email && state.email.includes('@') && state.email.length > 5
             </script>
-            <script type="text/template" data-binding-computed="allRequirementsMet">
-              state.acceptTerms && state.acceptPrivacy && computed.isValidEmail
+            <script type="text/template" data-reactive-state="allRequirementsMet">
+              state.acceptTerms && state.acceptPrivacy && state.isValidEmail
             </script>
 
             <!-- Email Input -->
@@ -1110,9 +1110,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <input
                 type="email"
                 placeholder="Enter your email address"
-                data-binding-value="state.email"
-                data-action="input->binding#updateState"
-                data-binding-updater-param="state.email = target.value"
+                value=""
+                data-reactive-state="email"
+                data-action="input->reactive#mutate"
                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -1122,9 +1122,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <label class="flex items-start space-x-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  data-binding-checked="state.acceptTerms"
-                  data-action="change->binding#updateState"
-                  data-binding-updater-param="state.acceptTerms = target.checked"
+                  data-reactive-state="acceptTerms"
+                  data-action="change->reactive#mutate"
                   class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <div class="text-sm">
@@ -1138,9 +1137,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <label class="flex items-start space-x-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  data-binding-checked="state.acceptPrivacy"
-                  data-action="change->binding#updateState"
-                  data-binding-updater-param="state.acceptPrivacy = target.checked"
+                  data-reactive-state="acceptPrivacy"
+                  data-action="change->reactive#mutate"
                   class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <div class="text-sm">
@@ -1158,36 +1156,36 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <div class="flex items-center space-x-2">
                   <div
                     class="w-4 h-4 rounded-full flex items-center justify-center"
-                    data-binding-class="{
-                      'bg-green-500': computed.isValidEmail,
-                      'bg-red-500': !computed.isValidEmail
+                    :class="{
+                      'bg-green-500': state.isValidEmail,
+                      'bg-red-500': !state.isValidEmail
                     }"
                   >
-                    <span class="text-xs text-white font-bold" data-binding-text="computed.isValidEmail ? '✓' : '✗'">✗</span>
+                    <span class="text-xs text-white font-bold" :text="state.isValidEmail ? '✓' : '✗'">✗</span>
                   </div>
                   <span class="text-gray-600">Valid email address</span>
                 </div>
                 <div class="flex items-center space-x-2">
                   <div
                     class="w-4 h-4 rounded-full flex items-center justify-center"
-                    data-binding-class="{
+                    :class="{
                       'bg-green-500': state.acceptTerms,
                       'bg-red-500': !state.acceptTerms
                     }"
                   >
-                    <span class="text-xs text-white font-bold" data-binding-text="state.acceptTerms ? '✓' : '✗'">✗</span>
+                    <span class="text-xs text-white font-bold" :text="state.acceptTerms ? '✓' : '✗'">✗</span>
                   </div>
                   <span class="text-gray-600">Terms and Conditions accepted</span>
                 </div>
                 <div class="flex items-center space-x-2">
                   <div
                     class="w-4 h-4 rounded-full flex items-center justify-center"
-                    data-binding-class="{
+                    :class="{
                       'bg-green-500': state.acceptPrivacy,
                       'bg-red-500': !state.acceptPrivacy
                     }"
                   >
-                    <span class="text-xs text-white font-bold" data-binding-text="state.acceptPrivacy ? '✓' : '✗'">✗</span>
+                    <span class="text-xs text-white font-bold" :text="state.acceptPrivacy ? '✓' : '✗'">✗</span>
                   </div>
                   <span class="text-gray-600">Privacy Policy accepted</span>
                 </div>
@@ -1197,18 +1195,18 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             <!-- Action Buttons -->
             <div class="flex gap-3 mt-6">
               <button
-                class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200"
-                data-binding-class="{
-                  'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': computed.allRequirementsMet,
-                  'bg-gray-300 text-gray-500 cursor-not-allowed': !computed.allRequirementsMet
+                class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-150"
+                :class="{
+                  'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.allRequirementsMet,
+                  'bg-gray-300 text-gray-500 cursor-not-allowed': !state.allRequirementsMet
                 }"
-                data-binding-text="computed.allRequirementsMet ? 'Create Account' : 'Complete Requirements'"
+                :text="state.allRequirementsMet ? 'Create Account' : 'Complete Requirements'"
               >
                 Complete Requirements
               </button>
               <button
-                data-action="click->binding#updateState"
-                data-binding-updater-param="state.acceptTerms = false; state.acceptPrivacy = false; state.email = ''"
+                data-action="click->reactive#mutate"
+                data-reactive-mutate-param="state.acceptTerms = false; state.acceptPrivacy = false; state.email = ''"
                 class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Cancel
@@ -1221,33 +1219,31 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <span class="text-sm font-medium text-gray-700">Completion Progress:</span>
                 <span
                   class="text-sm font-bold"
-                  data-binding-class="{
-                    'text-green-600': computed.allRequirementsMet,
-                    'text-blue-600': !computed.allRequirementsMet
+                  :class="{
+                    'text-green-600': state.allRequirementsMet,
+                    'text-blue-600': !state.allRequirementsMet
                   }"
-                  data-binding-text="Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (computed.isValidEmail ? 1 : 0)) / 3 * 100) + '%'"
+                  :text="Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (state.isValidEmail ? 1 : 0)) / 3 * 100) + '%'"
                 >
                   0%
                 </span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2">
                 <div
-                  class="h-2 rounded-full transition-all duration-300"
-                  data-binding-class="{
-                    'bg-green-500': computed.allRequirementsMet,
-                    'bg-blue-500': !computed.allRequirementsMet
+                  class="h-2 rounded-full transition-all duration-150"
+                  :class="{
+                    'bg-green-500': state.allRequirementsMet,
+                    'bg-blue-500': !state.allRequirementsMet
                   }"
-                  data-binding-style="{ width: Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (computed.isValidEmail ? 1 : 0)) / 3 * 100) + '%' }"
+                  :style="{ width: Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (state.isValidEmail ? 1 : 0)) / 3 * 100) + '%' }"
                 ></div>
               </div>
             </div>
 
             <!-- Help Text -->
             <div class="mt-4 text-sm text-gray-600">
-              <p data-binding-class="{ 'hidden': computed.allRequirementsMet }">
-                Please complete all requirements above to create your account.
-              </p>
-              <p class="text-green-600 font-medium" data-binding-class="{ 'hidden': !computed.allRequirementsMet }">
+              <p :class="{ 'hidden': state.allRequirementsMet }">Please complete all requirements above to create your account.</p>
+              <p class="text-green-600 font-medium" :class="{ 'hidden': !state.allRequirementsMet }">
                 ✅ All requirements met! You can now create your account.
               </p>
             </div>
