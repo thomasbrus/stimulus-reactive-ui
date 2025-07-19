@@ -817,6 +817,13 @@
             }"
           >
             <!-- Computed Properties Templates -->
+            <script type="text/template" data-binding-computed="classifyScore">
+              (score) => {
+                if (score >= 90) return { level: 'excellent', color: 'text-green-600', label: 'Excellent' };
+                if (score >= 80) return { level: 'good', color: 'text-blue-600', label: 'Good' };
+                return { level: 'needs-improvement', color: 'text-yellow-600', label: 'Needs Improvement' };
+              }
+            </script>
             <script type="text/template" data-binding-computed="filteredUsers">
               state.users.filter(user => {
                 // Role filter
@@ -826,10 +833,8 @@
                   (state.filter === 'admin' && user.role === 'admin');
 
                 // Score filter
-                const scoreMatch = state.scoreFilter === 'all' ||
-                  (state.scoreFilter === 'excellent' && user.score >= 90) ||
-                  (state.scoreFilter === 'good' && user.score >= 80 && user.score < 90) ||
-                  (state.scoreFilter === 'needs-improvement' && user.score < 80);
+                const userScoreLevel = computed.classifyScore(user.score).level;
+                const scoreMatch = state.scoreFilter === 'all' || state.scoreFilter === userScoreLevel;
 
                 return roleMatch && scoreMatch;
               })
@@ -837,10 +842,7 @@
             <script type="text/template" data-binding-computed="usersHtml">
               computed.filteredUsers.map(user => {
                 const statusColor = user.active ? 'bg-green-500' : 'bg-red-500';
-                const scoreColor = user.score >= 90 ? 'text-green-600' :
-                                   user.score >= 80 ? 'text-blue-600' : 'text-yellow-600';
-                const scoreLabel = user.score >= 90 ? 'Excellent' :
-                                   user.score >= 80 ? 'Good' : 'Needs Improvement';
+                const scoreInfo = computed.classifyScore(user.score);
 
                 return `
                   <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
@@ -854,7 +856,7 @@
                     <div class="flex items-center space-x-4">
                       <div class="text-right">
                         <div class="text-sm font-medium">Score: ${user.score}</div>
-                        <span class="text-xs ${scoreColor} font-medium">${scoreLabel}</span>
+                        <span class="text-xs ${scoreInfo.color} font-medium">${scoreInfo.label}</span>
                       </div>
                     </div>
                   </div>
