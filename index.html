@@ -309,20 +309,23 @@
 
         <!-- 6. Accordion Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">6. Simple Accordion</h2>
-          <div data-controller="binding" data-binding-initial-state="{ openPanel: null }">
+          <h2 class="text-xl font-semibold text-gray-700">6. Stateful Accordion</h2>
+          <div data-controller="reactive">
+            <!-- Hidden input to track which panel is open -->
+            <input type="hidden" data-reactive-state="openPanel" value="" data-action="input->reactive#mutate" />
+
             <!-- Panel 1 -->
             <div class="border border-gray-200 rounded-lg mb-2">
               <button
                 class="w-full px-4 py-3 text-left font-medium text-gray-800 hover:bg-gray-50 rounded-t-lg flex justify-between items-center"
-                data-action="click->binding#updateState"
-                data-binding-updater-param="state.openPanel = state.openPanel === 'panel1' ? null : 'panel1'"
-                data-binding-class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel1' }"
+                data-action="click->reactive#mutate"
+                data-reactive-mutate-param="state.openPanel = state.openPanel === 'panel1' ? '' : 'panel1'"
+                :class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel1' }"
               >
                 <span>What is Stimulus?</span>
                 <svg
                   class="w-5 h-5 transition-transform duration-200"
-                  data-binding-class="{ 'rotate-180': state.openPanel === 'panel1' }"
+                  :class="{ 'rotate-180': state.openPanel === 'panel1' }"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -330,7 +333,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              <div class="overflow-hidden transition-all duration-300" data-binding-class="{ 'hidden': state.openPanel !== 'panel1' }">
+              <div class="overflow-hidden transition-all duration-300" :class="{ 'hidden': state.openPanel !== 'panel1' }">
                 <div class="p-4 text-gray-600">
                   Stimulus is a JavaScript framework with modest ambitions. It doesn't seek to take over your entire front-end—in fact, it's
                   not concerned with rendering HTML at all. Instead, it's designed to augment your HTML with just enough behavior to make it
@@ -343,14 +346,14 @@
             <div class="border border-gray-200 rounded-lg mb-2">
               <button
                 class="w-full px-4 py-3 text-left font-medium text-gray-800 hover:bg-gray-50 rounded-t-lg flex justify-between items-center"
-                data-action="click->binding#updateState"
-                data-binding-updater-param="state.openPanel = state.openPanel === 'panel2' ? null : 'panel2'"
-                data-binding-class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel2' }"
+                data-action="click->reactive#mutate"
+                data-reactive-mutate-param="state.openPanel = state.openPanel === 'panel2' ? '' : 'panel2'"
+                :class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel2' }"
               >
                 <span>How does data binding work?</span>
                 <svg
                   class="w-5 h-5 transition-transform duration-200"
-                  data-binding-class="{ 'rotate-180': state.openPanel === 'panel2' }"
+                  :class="{ 'rotate-180': state.openPanel === 'panel2' }"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -358,7 +361,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              <div class="overflow-hidden transition-all duration-300" data-binding-class="{ 'hidden': state.openPanel !== 'panel2' }">
+              <div class="overflow-hidden transition-all duration-300" :class="{ 'hidden': state.openPanel !== 'panel2' }">
                 <div class="p-4 text-gray-600">
                   Data binding allows you to automatically sync your application state with the DOM. When state changes, the UI updates
                   automatically without manual DOM manipulation. This creates reactive interfaces with minimal code.
@@ -370,14 +373,14 @@
             <div class="border border-gray-200 rounded-lg mb-2">
               <button
                 class="w-full px-4 py-3 text-left font-medium text-gray-800 hover:bg-gray-50 rounded-t-lg flex justify-between items-center"
-                data-action="click->binding#updateState"
-                data-binding-updater-param="state.openPanel = state.openPanel === 'panel3' ? null : 'panel3'"
-                data-binding-class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel3' }"
+                data-action="click->reactive#mutate"
+                data-reactive-mutate-param="state.openPanel = state.openPanel === 'panel3' ? '' : 'panel3'"
+                :class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel3' }"
               >
                 <span>Why use this approach?</span>
                 <svg
                   class="w-5 h-5 transition-transform duration-200"
-                  data-binding-class="{ 'rotate-180': state.openPanel === 'panel3' }"
+                  :class="{ 'rotate-180': state.openPanel === 'panel3' }"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -385,7 +388,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              <div class="overflow-hidden transition-all duration-300" data-binding-class="{ 'hidden': state.openPanel !== 'panel3' }">
+              <div class="overflow-hidden transition-all duration-300" :class="{ 'hidden': state.openPanel !== 'panel3' }">
                 <div class="p-4 text-gray-600">
                   This approach provides a clean separation between state and presentation. It's declarative, easy to understand, and
                   reduces the complexity of managing UI state. Plus, it works great with server-rendered HTML!
@@ -396,7 +399,7 @@
             <!-- Status indicator -->
             <div class="mt-4 text-sm text-gray-500 text-center">
               Currently open:
-              <span data-binding-text="state.openPanel || 'None'">None</span>
+              <span :text="state.openPanel || 'None'">None</span>
             </div>
           </div>
         </div>
