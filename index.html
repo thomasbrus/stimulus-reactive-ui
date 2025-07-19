@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stimulus with Tailwind</title>
+
+    <!-- Tailwind CSS via Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Import Maps for Stimulus -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@hotwired/stimulus": "https://unpkg.com/@hotwired/stimulus/dist/stimulus.js"
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-gray-100 min-h-screen py-8">
+    <div class="container mx-auto px-4">
+      <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 space-y-4">
+        <h1 class="text-2xl font-bold text-gray-800">Stimulus Data Binding</h1>
+
+        <div class="flex gap-3" data-controller="binding" data-binding-initial-state="{ count: 0 }">
+          <button
+            data-action="click->binding#updateState"
+            data-binding-statement-param="state.count--"
+            class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
+          >
+            -
+          </button>
+          <div class="flex-1 text-center p-2 bg-gray-100 rounded font-medium" data-binding-text="state.count">0</div>
+          <button
+            data-action="click->binding#updateState"
+            data-binding-statement-param="state.count++"
+            class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
+          >
+            +
+          </button>
+        </div>
+
+        <div class="flex gap-3" data-controller="binding" data-binding-initial-state="{ message: 'Hello' }">
+          <input type="text" data-binding-value="state.message" class="flex-1 p-2 border border-gray-300 rounded" />
+          <button
+            data-action="click->binding#updateState"
+            data-binding-statement-param="state.message = ''"
+            class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { Application, Controller } from "@hotwired/stimulus";
+
+      class BindingController extends Controller {
+        connect() {
+          this.state = new Function(`return ${this.data.get("initial-state")}`)();
+          this.applyBindings();
+        }
+
+        updateState(event) {
+          this.evaluateStatement(event.params.statement);
+          this.applyBindings();
+        }
+
+        applyBindings() {
+          this.bindingElements("text").forEach(this.applyTextBinding.bind(this));
+          this.bindingElements("value").forEach(this.applyValueBinding.bind(this));
+        }
+
+        bindingElements(bindingName) {
+          return this.element.querySelectorAll(`[data-binding-${bindingName}]`);
+        }
+
+        applyTextBinding(element) {
+          element.textContent = this.evaluateExpression(element.dataset.bindingText);
+        }
+
+        applyValueBinding(element) {
+          element.value = this.evaluateExpression(element.dataset.bindingValue);
+        }
+
+        evaluateStatement(statement) {
+          this.state = new Function("state", `${statement}; return state;`)(this.state);
+        }
+
+        evaluateExpression(expression) {
+          return new Function("state", `return ${expression};`)(this.state);
+        }
+      }
+
+      const application = Application.start();
+      application.register("binding", BindingController);
+    </script>
+  </body>
+</html>
