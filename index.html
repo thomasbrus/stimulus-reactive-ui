@@ -92,12 +92,7 @@
               ({ 'bg-red-600': state.progress < 30, 'bg-yellow-600': state.progress >= 30 && state.progress < 70, 'bg-green-600':
                             state.progress >= 70 })
             </script>
-            <script type="text/template" data-binding-computed="progressText">
-              state.progress + '%'
-            </script>
-            <script type="text/template" data-binding-computed="progressStyle">
-              ({ width: state.progress + '%' })
-            </script>
+
             <script type="text/template" data-binding-computed="canDecrease">
               state.progress > 0
             </script>
@@ -107,7 +102,7 @@
 
             <div class="flex justify-between items-center mb-2">
               <span class="text-sm font-medium text-gray-700">Progress:</span>
-              <span data-binding-text="computed.progressText" data-binding-class="computed.progressColor" class="text-sm font-bold">
+              <span data-binding-text="state.progress + '%'" data-binding-class="computed.progressColor" class="text-sm font-bold">
                 25%
               </span>
             </div>
@@ -115,7 +110,7 @@
               <div
                 data-binding-class="computed.progressBarColor"
                 class="h-4 rounded-full transition-all duration-300"
-                data-binding-style="computed.progressStyle"
+                data-binding-style="{ width: state.progress + '%' }"
               ></div>
             </div>
             <div class="flex gap-2">
@@ -244,12 +239,6 @@
                             'bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white': computed.isColorfulTheme, 'text-sm':
                             computed.isSmallFont, 'text-base': computed.isMediumFont, 'text-lg': computed.isLargeFont })
             </script>
-            <script type="text/template" data-binding-computed="themeText">
-              state.theme + ' theme'
-            </script>
-            <script type="text/template" data-binding-computed="fontText">
-              state.fontSize + ' font'
-            </script>
 
             <div class="grid grid-cols-2 gap-4 mb-4">
               <div>
@@ -313,8 +302,8 @@
               <p>This is how your content will look with the selected theme and font size.</p>
               <p class="mt-2">
                 Current settings:
-                <span data-binding-text="computed.themeText">light theme</span>,
-                <span data-binding-text="computed.fontText">medium font</span>
+                <span data-binding-text="state.theme + ' theme'">light theme</span>,
+                <span data-binding-text="state.fontSize + ' font'">medium font</span>
               </p>
             </div>
           </div>
@@ -428,14 +417,11 @@
             <script type="text/template" data-binding-computed="filteredResults">
               state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase()))
             </script>
-            <script type="text/template" data-binding-computed="resultCount">
-              computed.filteredResults.length
-            </script>
             <script type="text/template" data-binding-computed="resultsText">
-              computed.hasQuery ? computed.resultCount + ' results found' : state.items.length + ' items available'
+              computed.hasQuery ? computed.filteredResults.length + ' results found' : state.items.length + ' items available'
             </script>
             <script type="text/template" data-binding-computed="hasNoResults">
-              computed.hasQuery && computed.resultCount === 0
+              computed.hasQuery && computed.filteredResults.length === 0
             </script>
             <script type="text/template" data-binding-computed="itemsHtml">
               computed.filteredResults.map(item => `
@@ -474,12 +460,6 @@
           <h2 class="text-xl font-semibold text-gray-700">8. Character Counter & Text Analysis</h2>
           <div data-controller="binding" data-binding-initial-state="{ text: '', maxLength: 280 }">
             <!-- Computed Properties Templates -->
-            <script type="text/template" data-binding-computed="characterCount">
-              state.text.length
-            </script>
-            <script type="text/template" data-binding-computed="wordCount">
-              state.text.trim().split(/\s+/).filter(word => word.length > 0).length
-            </script>
             <script type="text/template" data-binding-computed="lineCount">
               state.text.split('\n').length
             </script>
@@ -487,22 +467,22 @@
               Math.ceil(computed.wordCount / 200)
             </script>
             <script type="text/template" data-binding-computed="usagePercentage">
-              Math.round((computed.characterCount / state.maxLength) * 100)
+              Math.round((state.text.length / state.maxLength) * 100)
             </script>
             <script type="text/template" data-binding-computed="isOverLimit">
-              computed.characterCount > state.maxLength
+              state.text.length > state.maxLength
             </script>
             <script type="text/template" data-binding-computed="isNearLimit">
-              computed.characterCount > state.maxLength * 0.8 && computed.characterCount <= state.maxLength
+              state.text.length > state.maxLength * 0.8 && state.text.length <= state.maxLength
             </script>
             <script type="text/template" data-binding-computed="isComfortable">
-              computed.characterCount > 0 && computed.characterCount <= state.maxLength * 0.8
+              state.text.length > 0 && state.text.length <= state.maxLength * 0.8
             </script>
             <script type="text/template" data-binding-computed="isEmpty">
-              computed.characterCount === 0
+              state.text.length === 0
             </script>
             <script type="text/template" data-binding-computed="isHalfway">
-              computed.characterCount > 0 && computed.characterCount <= state.maxLength * 0.5
+              state.text.length > 0 && state.text.length <= state.maxLength * 0.5
             </script>
 
             <div class="mb-4">
@@ -545,7 +525,7 @@
                   'bg-green-600': computed.isComfortable,
                   'bg-gray-500': computed.isEmpty
                 }"
-                data-binding-text="computed.characterCount + '/' + state.maxLength"
+                data-binding-text="state.text.length + '/' + state.maxLength"
               >
                 0/280
               </div>
@@ -554,11 +534,16 @@
             <!-- Text Statistics -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" data-binding-text="computed.characterCount">0</div>
+                <div class="text-lg font-bold text-gray-800" data-binding-text="state.text.length">0</div>
                 <div class="text-sm text-gray-600">Characters</div>
               </div>
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" data-binding-text="computed.wordCount">0</div>
+                <div
+                  class="text-lg font-bold text-gray-800"
+                  data-binding-text="state.text.trim().split(/\s+/).filter(word => word.length > 0).length"
+                >
+                  0
+                </div>
                 <div class="text-sm text-gray-600">Words</div>
               </div>
               <div class="bg-gray-50 p-3 rounded text-center">
@@ -610,7 +595,7 @@
                 }"
               >
                 ⚠️ You've exceeded the character limit by
-                <span data-binding-text="Math.max(0, computed.characterCount - state.maxLength)">0</span> characters
+                <span data-binding-text="Math.max(0, state.text.length - state.maxLength)">0</span> characters
               </div>
               <div
                 class="text-sm p-2 rounded"
@@ -619,8 +604,7 @@
                   'bg-yellow-100 text-yellow-700 border border-yellow-200': computed.isNearLimit
                 }"
               >
-                ⚡ Approaching character limit - <span data-binding-text="state.maxLength - computed.characterCount">0</span> characters
-                remaining
+                ⚡ Approaching character limit - <span data-binding-text="state.maxLength - state.text.length">0</span> characters remaining
               </div>
               <div
                 class="text-sm p-2 rounded"
@@ -646,12 +630,6 @@
             <script type="text/template" data-binding-computed="isValidSubdomain">
               state.subdomain.length > 0 && !computed.containsDomain && /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(state.subdomain)
             </script>
-            <script type="text/template" data-binding-computed="isEmpty">
-              state.subdomain.length === 0
-            </script>
-            <script type="text/template" data-binding-computed="fullDomain">
-              state.subdomain + '.example.com'
-            </script>
 
             <div class="space-y-4">
               <div>
@@ -666,7 +644,7 @@
                     data-binding-class="{
                       'border-red-500 bg-red-50': computed.containsDomain,
                       'border-green-500 bg-green-50': computed.isValidSubdomain,
-                      'border-gray-300': computed.isEmpty
+                      'border-gray-300': state.subdomain.length === 0
                     }"
                     class="w-full pl-3 pr-32 py-2 border rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -684,7 +662,7 @@
                     'text-green-600': computed.isValidSubdomain,
                     'text-gray-800': !computed.containsDomain && !computed.isValidSubdomain
                   }"
-                  data-binding-text="computed.fullDomain"
+                  data-binding-text="state.subdomain + '.example.com'"
                 >
                   .example.com
                 </div>
@@ -908,15 +886,6 @@
             <script type="text/template" data-binding-computed="allRequirementsMet">
               state.acceptTerms && state.acceptPrivacy && computed.isValidEmail
             </script>
-            <script type="text/template" data-binding-computed="requirementsCount">
-              (state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (computed.isValidEmail ? 1 : 0)
-            </script>
-            <script type="text/template" data-binding-computed="completionPercentage">
-              Math.round((computed.requirementsCount / 3) * 100)
-            </script>
-            <script type="text/template" data-binding-computed="allRequirementsComplete">
-              computed.requirementsCount === 3
-            </script>
 
             <!-- Email Input -->
             <div class="mb-4">
@@ -1020,7 +989,13 @@
               >
                 Complete Requirements
               </button>
-              <button class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
+              <button
+                data-action="click->binding#updateState"
+                data-binding-updater-param="state.acceptTerms = false; state.acceptPrivacy = false; state.email = ''"
+                class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
             </div>
 
             <!-- Progress Indicator -->
@@ -1030,10 +1005,10 @@
                 <span
                   class="text-sm font-bold"
                   data-binding-class="{
-                    'text-green-600': computed.allRequirementsComplete,
-                    'text-blue-600': !computed.allRequirementsComplete
+                    'text-green-600': computed.allRequirementsMet,
+                    'text-blue-600': !computed.allRequirementsMet
                   }"
-                  data-binding-text="computed.completionPercentage + '%'"
+                  data-binding-text="Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (computed.isValidEmail ? 1 : 0)) / 3 * 100) + '%'"
                 >
                   0%
                 </span>
@@ -1042,10 +1017,10 @@
                 <div
                   class="h-2 rounded-full transition-all duration-300"
                   data-binding-class="{
-                    'bg-green-500': computed.allRequirementsComplete,
-                    'bg-blue-500': !computed.allRequirementsComplete
+                    'bg-green-500': computed.allRequirementsMet,
+                    'bg-blue-500': !computed.allRequirementsMet
                   }"
-                  data-binding-style="{ width: computed.completionPercentage + '%' }"
+                  data-binding-style="{ width: Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (computed.isValidEmail ? 1 : 0)) / 3 * 100) + '%' }"
                 ></div>
               </div>
             </div>
