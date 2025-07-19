@@ -17,7 +17,7 @@
       }
     </script>
   </head>
-  <body class="bg-gray-100 min-h-screen py-8">
+  <body class="bg-gray-100 min-h-screen pt-12 pb-24">
     <div class="container mx-auto px-4">
       <div class="max-w-2xl mx-auto space-y-6">
         <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Stimulus Data Binding Examples</h1>
@@ -36,7 +36,7 @@
             <div
               class="flex-1 text-center p-2 bg-gray-100 rounded font-medium"
               data-binding-text="state.count"
-              data-binding-class="{ '!bg-red-100': state.count < 0, '!bg-green-100': state.count > 10 }"
+              data-binding-class="{ '!bg-red-100': state.count < 0, '!bg-green-100': state.count > 5 }"
             >
               0
             </div>
@@ -635,9 +635,135 @@
           </div>
         </div>
 
-        <!-- 9. Terms and Conditions Example -->
+        <!-- 9. User Management Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">9. Terms & Conditions Agreement</h2>
+          <h2 class="text-xl font-semibold text-gray-700">9. User Management (Advanced Filtering)</h2>
+          <div
+            data-controller="binding"
+            data-binding-initial-state="{
+              users: [
+                { name: 'Alice', role: 'admin', active: true, score: 91 },
+                { name: 'Bob', role: 'user', active: false, score: 78 },
+                { name: 'Charlie', role: 'moderator', active: true, score: 88 },
+                { name: 'Diana', role: 'user', active: true, score: 98 }
+              ],
+              role: 'all',
+              scoreFilter: 'all',
+              sortBy: 'name'
+            }"
+          >
+            <!-- Computed Properties Templates -->
+            <script type="text/template" data-binding-computed="classifyScore">
+              (score) => {
+                if (score >= 90) return { level: 'excellent', color: 'text-green-600', label: 'Excellent' };
+                if (score >= 80) return { level: 'good', color: 'text-blue-600', label: 'Good' };
+                return { level: 'needs-improvement', color: 'text-yellow-600', label: 'Needs Improvement' };
+              }
+            </script>
+            <script type="text/template" data-binding-computed="filteredUsers">
+              state.users.filter(user => {
+                // Role filter
+                const roleMatch = state.role === 'all' ||
+                  (state.role === 'admin-moderator' && (user.role === 'admin' || user.role === 'moderator')) ||
+                  (state.role === 'user' && user.role === 'user');
+
+                // Score filter
+                const userScoreLevel = computed.classifyScore(user.score).level;
+                const scoreMatch = state.scoreFilter === 'all' || state.scoreFilter === userScoreLevel;
+
+                return roleMatch && scoreMatch;
+              })
+            </script>
+            <script type="text/template" data-binding-computed="sortedUsers">
+              [...computed.filteredUsers].sort((a, b) => {
+                if (state.sortBy === 'score') {
+                  return b.score - a.score; // Sort by score descending
+                }
+                // Default: sort by name ascending
+                return a.name.localeCompare(b.name);
+              })
+            </script>
+            <script type="text/template" data-binding-computed="usersHtml">
+              computed.sortedUsers.map(user => {
+                const statusColor = user.active ? 'bg-green-500' : 'bg-red-500';
+                const scoreInfo = computed.classifyScore(user.score);
+
+                return `
+                  <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-3 h-3 ${statusColor} rounded-full"></div>
+                      <div>
+                        <div class="font-medium">${user.name}</div>
+                        <div class="text-sm text-gray-500 capitalize">${user.role}</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                      <div class="text-right">
+                        <div class="text-sm font-medium">Score: ${user.score}</div>
+                        <span class="text-xs ${scoreInfo.color} font-medium">${scoreInfo.label}</span>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')
+            </script>
+
+            <!-- Controls -->
+            <div class="grid grid-cols-3 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                <select
+                  data-binding-value="state.role"
+                  data-action="change->binding#updateState"
+                  data-binding-updater-param="state.role = target.value"
+                  class="w-full p-2 border border-gray-300 rounded"
+                >
+                  <option value="all">All</option>
+                  <option value="admin-moderator">Admin / Moderator</option>
+                  <option value="user">User</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Score</label>
+                <select
+                  data-binding-value="state.scoreFilter"
+                  data-action="change->binding#updateState"
+                  data-binding-updater-param="state.scoreFilter = target.value"
+                  class="w-full p-2 border border-gray-300 rounded"
+                >
+                  <option value="all">All Scores</option>
+                  <option value="excellent">Excellent (90+)</option>
+                  <option value="good">Good (80-89)</option>
+                  <option value="needs-improvement">Needs Improvement (&lt;80)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+                <select
+                  data-binding-value="state.sortBy"
+                  data-action="change->binding#updateState"
+                  data-binding-updater-param="state.sortBy = target.value"
+                  class="w-full p-2 border border-gray-300 rounded"
+                >
+                  <option value="name">Name (A-Z)</option>
+                  <option value="score">Score (High-Low)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- No users message -->
+            <div data-binding-show="computed.sortedUsers.length === 0" class="text-center py-8 text-gray-500">
+              <p>No users match the current filters</p>
+            </div>
+
+            <!-- User List -->
+            <div class="space-y-2" data-binding-html="computed.usersHtml"></div>
+          </div>
+        </div>
+
+        <!-- 10. Terms and Conditions Example -->
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-gray-700">10. Terms & Conditions Agreement</h2>
           <div data-controller="binding" data-binding-initial-state="{ acceptTerms: false, acceptPrivacy: false, email: '' }">
             <!-- Computed Properties Templates -->
             <script type="text/template" data-binding-computed="isValidEmail">
@@ -797,112 +923,6 @@
                 ✅ All requirements met! You can now create your account.
               </p>
             </div>
-          </div>
-        </div>
-
-        <!-- 10. User Management Example -->
-        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">10. User Management (Advanced Filtering)</h2>
-          <div
-            data-controller="binding"
-            data-binding-initial-state="{
-              users: [
-                { name: 'Alice', role: 'admin', active: true, score: 95 },
-                { name: 'Bob', role: 'user', active: false, score: 78 },
-                { name: 'Charlie', role: 'moderator', active: true, score: 88 },
-                { name: 'Diana', role: 'user', active: true, score: 92 }
-              ],
-              filter: 'all',
-              scoreFilter: 'all'
-            }"
-          >
-            <!-- Computed Properties Templates -->
-            <script type="text/template" data-binding-computed="classifyScore">
-              (score) => {
-                if (score >= 90) return { level: 'excellent', color: 'text-green-600', label: 'Excellent' };
-                if (score >= 80) return { level: 'good', color: 'text-blue-600', label: 'Good' };
-                return { level: 'needs-improvement', color: 'text-yellow-600', label: 'Needs Improvement' };
-              }
-            </script>
-            <script type="text/template" data-binding-computed="filteredUsers">
-              state.users.filter(user => {
-                // Role filter
-                const roleMatch = state.filter === 'all' ||
-                  (state.filter === 'active' && user.active) ||
-                  (state.filter === 'inactive' && !user.active) ||
-                  (state.filter === 'admin' && user.role === 'admin');
-
-                // Score filter
-                const userScoreLevel = computed.classifyScore(user.score).level;
-                const scoreMatch = state.scoreFilter === 'all' || state.scoreFilter === userScoreLevel;
-
-                return roleMatch && scoreMatch;
-              })
-            </script>
-            <script type="text/template" data-binding-computed="usersHtml">
-              computed.filteredUsers.map(user => {
-                const statusColor = user.active ? 'bg-green-500' : 'bg-red-500';
-                const scoreInfo = computed.classifyScore(user.score);
-
-                return `
-                  <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
-                    <div class="flex items-center space-x-3">
-                      <div class="w-3 h-3 ${statusColor} rounded-full"></div>
-                      <div>
-                        <div class="font-medium">${user.name}</div>
-                        <div class="text-sm text-gray-500 capitalize">${user.role}</div>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                      <div class="text-right">
-                        <div class="text-sm font-medium">Score: ${user.score}</div>
-                        <span class="text-xs ${scoreInfo.color} font-medium">${scoreInfo.label}</span>
-                      </div>
-                    </div>
-                  </div>
-                `;
-              }).join('')
-            </script>
-
-            <!-- Controls -->
-            <div class="flex gap-4 mb-4">
-              <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Filter</label>
-                <select
-                  data-binding-value="state.filter"
-                  data-action="change->binding#updateState"
-                  data-binding-updater-param="state.filter = target.value"
-                  class="w-full p-2 border border-gray-300 rounded"
-                >
-                  <option value="all">All Users</option>
-                  <option value="active">Active Only</option>
-                  <option value="inactive">Inactive Only</option>
-                  <option value="admin">Admins Only</option>
-                </select>
-              </div>
-              <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Score Filter</label>
-                <select
-                  data-binding-value="state.scoreFilter"
-                  data-action="change->binding#updateState"
-                  data-binding-updater-param="state.scoreFilter = target.value"
-                  class="w-full p-2 border border-gray-300 rounded"
-                >
-                  <option value="all">All Scores</option>
-                  <option value="excellent">Excellent (90+)</option>
-                  <option value="good">Good (80-89)</option>
-                  <option value="needs-improvement">Needs Improvement (&lt;80)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- No users message -->
-            <div data-binding-show="computed.filteredUsers.length === 0" class="text-center py-8 text-gray-500">
-              <p>No users match the current filters</p>
-            </div>
-
-            <!-- User List -->
-            <div class="space-y-2" data-binding-html="computed.usersHtml"></div>
           </div>
         </div>
       </div>
