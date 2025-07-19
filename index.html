@@ -488,12 +488,12 @@
 
               <!-- Character count overlay -->
               <div
-                class="absolute bottom-3 right-3 px-2 py-1 rounded text-xs font-medium"
+                class="absolute bottom-3 right-3 px-2 py-1 rounded text-xs font-medium text-white"
                 data-binding-class="{
-                  'bg-red-600 text-white': state.text.length > state.maxLength,
-                  'bg-yellow-600 text-white': state.text.length > state.maxLength * 0.8 && state.text.length <= state.maxLength,
-                  'bg-green-600 text-white': state.text.length > 0 && state.text.length <= state.maxLength * 0.8,
-                  'bg-gray-500 text-white': state.text.length === 0
+                  'bg-red-600': state.text.length > state.maxLength,
+                  'bg-yellow-600': state.text.length > state.maxLength * 0.8 && state.text.length <= state.maxLength,
+                  'bg-green-600': state.text.length > 0 && state.text.length <= state.maxLength * 0.8,
+                  'bg-gray-500': state.text.length === 0
                 }"
                 data-binding-text="state.text.length + '/' + state.maxLength"
               >
@@ -607,6 +607,7 @@
               >(state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (computed.isValidEmail ? 1 : 0)</template
             >
             <template data-binding-computed="completionPercentage">Math.round((computed.requirementsCount / 3) * 100)</template>
+            <template data-binding-computed="allRequirementsComplete">computed.requirementsCount === 3</template>
 
             <!-- Email Input -->
             <div class="mb-4">
@@ -720,8 +721,8 @@
                 <span
                   class="text-sm font-bold"
                   data-binding-class="{
-                    'text-green-600': computed.requirementsCount === 3,
-                    'text-blue-600': computed.requirementsCount < 3
+                    'text-green-600': computed.allRequirementsComplete,
+                    'text-blue-600': !computed.allRequirementsComplete
                   }"
                   data-binding-text="computed.completionPercentage + '%'"
                 >
@@ -732,8 +733,8 @@
                 <div
                   class="h-2 rounded-full transition-all duration-300"
                   data-binding-class="{
-                    'bg-green-500': computed.requirementsCount === 3,
-                    'bg-blue-500': computed.requirementsCount < 3
+                    'bg-green-500': computed.allRequirementsComplete,
+                    'bg-blue-500': !computed.allRequirementsComplete
                   }"
                   data-binding-style="{ width: computed.completionPercentage + '%' }"
                 ></div>
