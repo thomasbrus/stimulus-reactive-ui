@@ -407,26 +407,25 @@
         <!-- 7. Live Search Results Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">7. Live Search Results</h2>
-          <div
-            data-controller="binding"
-            data-binding-initial-state="{ query: '', items: ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape'] }"
-          >
-            <!-- Computed Properties Templates -->
-            <script type="text/template" data-binding-computed="hasQuery">
+          <div data-controller="reactive">
+            <script type="text/template" data-reactive-state="items">
+              ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape']
+            </script>
+            <script type="text/template" data-reactive-state="hasQuery">
               state.query !== ''
             </script>
-            <script type="text/template" data-binding-computed="filteredResults">
+            <script type="text/template" data-reactive-state="filteredResults">
               state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase()))
             </script>
-            <script type="text/template" data-binding-computed="resultsText">
-              computed.hasQuery ? computed.filteredResults.length + ' results found' : state.items.length + ' items available'
+            <script type="text/template" data-reactive-state="resultsText">
+              state.hasQuery ? state.filteredResults.length + ' results found' : state.items.length + ' items available'
             </script>
-            <script type="text/template" data-binding-computed="hasNoResults">
-              computed.hasQuery && computed.filteredResults.length === 0
+            <script type="text/template" data-reactive-state="hasNoResults">
+              state.hasQuery && state.filteredResults.length === 0
             </script>
-            <script type="text/template" data-binding-computed="itemsHtml">
-              computed.filteredResults.map(item => `
-                <div class="p-2 bg-gray-50 rounded border-l-4 ${computed.hasQuery ? 'border-blue-500' : 'border-gray-300'}">
+            <script type="text/template" data-reactive-state="itemsHtml">
+              state.filteredResults.map(item => `
+                <div class="p-2 bg-gray-50 rounded border-l-4 ${state.hasQuery ? 'border-blue-500' : 'border-gray-300'}">
                   ${item}
                 </div>
               `).join('')
@@ -435,23 +434,23 @@
             <input
               type="text"
               placeholder="Search fruits..."
-              data-binding-value="state.query"
-              data-action="input->binding#updateState"
-              data-binding-updater-param="state.query = target.value"
+              value=""
+              data-reactive-state="query"
+              data-action="input->reactive#mutate"
               class="w-full p-3 border border-gray-300 rounded-lg mb-4"
             />
 
             <!-- Results counter -->
             <div class="text-sm text-gray-600 mb-2">
-              <span data-binding-text="computed.resultsText">7 items available</span>
+              <span :text="state.resultsText">7 items available</span>
             </div>
 
             <!-- Results list -->
-            <div class="space-y-2" data-binding-html="computed.itemsHtml"></div>
+            <div class="space-y-2" :html="state.itemsHtml"></div>
 
             <!-- No results message -->
-            <div data-binding-show="computed.hasNoResults">
-              <p class="text-center text-gray-500 mt-4">No results found for "<span data-binding-text="state.query"></span>"</p>
+            <div :show="state.hasNoResults">
+              <p class="text-center text-gray-500 mt-4">No results found for "<span :text="state.query"></span>"</p>
             </div>
           </div>
         </div>
