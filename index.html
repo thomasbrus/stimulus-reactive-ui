@@ -89,7 +89,7 @@
           <h2 class="text-xl font-semibold text-gray-700">3. Progress Bar with Status</h2>
           <div data-controller="reactive">
             <input type="range" data-reactive-state="progress" min="0" max="100" value="25" class="hidden" />
-            <script type="text/template" data-reactive-state="progressColor">
+            <script type="text/template" data-reactive-state="progressPercentageColor">
               {
                 "text-red-600": state.progress < 30,
                 "text-yellow-600": state.progress >= 30 && state.progress < 70,
@@ -112,7 +112,7 @@
 
             <div class="flex justify-between items-center mb-2">
               <span class="text-sm font-medium text-gray-700">Progress:</span>
-              <span :text="state.progress + '%'" :class="state.progressColor" class="text-sm font-bold"></span>
+              <span :text="state.progress + '%'" :class="state.progressPercentageColor" class="text-sm font-bold"></span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
               <div
@@ -744,29 +744,26 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         <!-- 10. User Management Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">10. User Management (Advanced Filtering)</h2>
-          <div
-            data-controller="binding"
-            data-binding-initial-state="{
-              users: [
+          <div data-controller="reactive">
+            <!-- Initial data -->
+            <script type="text/template" data-reactive-state="users">
+              [
                 { name: 'Alice', role: 'admin', active: true, score: 91 },
                 { name: 'Bob', role: 'user', active: false, score: 78 },
                 { name: 'Charlie', role: 'moderator', active: true, score: 88 },
                 { name: 'Diana', role: 'user', active: true, score: 98 }
-              ],
-              role: 'all',
-              scoreFilter: 'all',
-              sortBy: 'name'
-            }"
-          >
+              ]
+            </script>
+
             <!-- Computed Properties Templates -->
-            <script type="text/template" data-binding-computed="classifyScore">
+            <script type="text/template" data-reactive-state="classifyScore">
               (score) => {
                 if (score >= 90) return { level: 'excellent', color: 'text-green-600', label: 'Excellent' };
                 if (score >= 80) return { level: 'good', color: 'text-blue-600', label: 'Good' };
                 return { level: 'needs-improvement', color: 'text-yellow-600', label: 'Needs Improvement' };
               }
             </script>
-            <script type="text/template" data-binding-computed="filteredUsers">
+            <script type="text/template" data-reactive-state="filteredUsers">
               state.users.filter(user => {
                 // Role filter
                 const roleMatch = state.role === 'all' ||
@@ -774,14 +771,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                   (state.role === 'user' && user.role === 'user');
 
                 // Score filter
-                const userScoreLevel = computed.classifyScore(user.score).level;
+                const userScoreLevel = state.classifyScore(user.score).level;
                 const scoreMatch = state.scoreFilter === 'all' || state.scoreFilter === userScoreLevel;
 
                 return roleMatch && scoreMatch;
               })
             </script>
-            <script type="text/template" data-binding-computed="sortedUsers">
-              [...computed.filteredUsers].sort((a, b) => {
+            <script type="text/template" data-reactive-state="sortedUsers">
+              [...state.filteredUsers].sort((a, b) => {
                 if (state.sortBy === 'score') {
                   return b.score - a.score; // Sort by score descending
                 }
@@ -789,10 +786,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 return a.name.localeCompare(b.name);
               })
             </script>
-            <script type="text/template" data-binding-computed="usersHtml">
-              computed.sortedUsers.map(user => {
+            <script type="text/template" data-reactive-state="usersHtml">
+              state.sortedUsers.map(user => {
                 const statusColor = user.active ? 'bg-green-500' : 'bg-red-500';
-                const scoreInfo = computed.classifyScore(user.score);
+                const scoreInfo = state.classifyScore(user.score);
 
                 return `
                   <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
@@ -819,9 +816,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
                 <select
-                  data-binding-value="state.role"
-                  data-action="change->binding#updateState"
-                  data-binding-updater-param="state.role = target.value"
+                  value="all"
+                  data-reactive-state="role"
+                  data-action="change->reactive#mutate"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
                   <option value="all">All</option>
@@ -832,9 +829,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Score</label>
                 <select
-                  data-binding-value="state.scoreFilter"
-                  data-action="change->binding#updateState"
-                  data-binding-updater-param="state.scoreFilter = target.value"
+                  value="all"
+                  data-reactive-state="scoreFilter"
+                  data-action="change->reactive#mutate"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
                   <option value="all">All Scores</option>
@@ -846,9 +843,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
                 <select
-                  data-binding-value="state.sortBy"
-                  data-action="change->binding#updateState"
-                  data-binding-updater-param="state.sortBy = target.value"
+                  value="name"
+                  data-reactive-state="sortBy"
+                  data-action="change->reactive#mutate"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
                   <option value="name">Name (A-Z)</option>
@@ -858,54 +855,50 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </div>
 
             <!-- No users message -->
-            <div data-binding-show="computed.sortedUsers.length === 0" class="text-center py-8 text-gray-500">
+            <div :show="state.sortedUsers.length === 0" class="text-center py-8 text-gray-500">
               <p>No users match the current filters</p>
             </div>
 
             <!-- User List -->
-            <div class="space-y-2" data-binding-html="computed.usersHtml"></div>
+            <div class="space-y-2" :html="state.usersHtml"></div>
           </div>
         </div>
 
         <!-- 11. Travel Booking Form (Dependent Dropdowns) -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">11. Travel Booking Form (Dependent Dropdowns)</h2>
-          <div
-            data-controller="binding"
-            data-binding-initial-state="{
-            country: 'usa',
-            city: '',
-            travelers: 1,
-            tripType: 'roundtrip',
-            countries: {
-              'usa': { name: 'United States', cities: ['New York', 'Los Angeles', 'Chicago', 'Miami', 'San Francisco'] },
-              'france': { name: 'France', cities: ['Paris', 'Lyon', 'Marseille', 'Nice', 'Bordeaux'] },
-              'japan': { name: 'Japan', cities: ['Tokyo', 'Osaka', 'Kyoto', 'Hiroshima', 'Sapporo'] },
-              'italy': { name: 'Italy', cities: ['Rome', 'Milan', 'Venice', 'Florence', 'Naples'] },
-              'australia': { name: 'Australia', cities: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide'] }
-            }
-          }"
-          >
+          <div data-controller="reactive">
+            <!-- Initial data -->
+            <script type="text/template" data-reactive-state="countries">
+              {
+                'usa': { name: 'United States', cities: ['New York', 'Los Angeles', 'Chicago', 'Miami', 'San Francisco'] },
+                'france': { name: 'France', cities: ['Paris', 'Lyon', 'Marseille', 'Nice', 'Bordeaux'] },
+                'japan': { name: 'Japan', cities: ['Tokyo', 'Osaka', 'Kyoto', 'Hiroshima', 'Sapporo'] },
+                'italy': { name: 'Italy', cities: ['Rome', 'Milan', 'Venice', 'Florence', 'Naples'] },
+                'australia': { name: 'Australia', cities: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide'] }
+              }
+            </script>
+
             <!-- Computed Properties Templates -->
-            <script type="text/template" data-binding-computed="selectedCountryData">
+            <script type="text/template" data-reactive-state="selectedCountryData">
               state.country ? state.countries[state.country] : null
             </script>
-            <script type="text/template" data-binding-computed="availableCities">
-              computed.selectedCountryData ? computed.selectedCountryData.cities : []
+            <script type="text/template" data-reactive-state="availableCities">
+              state.selectedCountryData ? state.selectedCountryData.cities : []
             </script>
-            <script type="text/template" data-binding-computed="cityOptionsHtml">
-              `<option value="">Select a city...</option>` + computed.availableCities.map(city =>
+            <script type="text/template" data-reactive-state="cityOptionsHtml">
+              `<option value="">Select a city...</option>` + state.availableCities.map(city =>
                 `<option value="${city}" ${state.city === city ? 'selected' : ''}>${city}</option>`
               ).join('')
             </script>
-            <script type="text/template" data-binding-computed="hasSelection">
+            <script type="text/template" data-reactive-state="hasSelection">
               state.country && state.city
             </script>
-            <script type="text/template" data-binding-computed="estimatedPrice">
-              computed.hasSelection ? Math.floor(Math.random() * 800) + 400 : 0
+            <script type="text/template" data-reactive-state="estimatedPrice">
+              state.hasSelection ? Math.floor(Math.random() * 800) + 400 : 0
             </script>
-            <script type="text/template" data-binding-computed="totalPrice">
-              computed.estimatedPrice * state.travelers * (state.tripType === 'roundtrip' ? 1 : 0.6)
+            <script type="text/template" data-reactive-state="totalPrice">
+              state.estimatedPrice * state.travelers * (state.tripType === 'roundtrip' ? 1 : 0.6)
             </script>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -918,9 +911,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                   </span>
                 </label>
                 <select
-                  data-binding-value="state.country"
-                  data-action="change->binding#updateState"
-                  data-binding-updater-param="state.country = target.value; state.city = ''"
+                  value="usa"
+                  data-reactive-state="country"
+                  data-action="change->reactive#mutate"
+                  data-reactive-mutate-param="state.city = ''"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select a country...</option>
@@ -941,25 +935,25 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                   </span>
                 </label>
                 <select
-                  data-binding-value="state.city"
-                  data-action="change->binding#updateState"
-                  data-binding-updater-param="state.city = target.value"
-                  data-binding-disabled="!state.country"
-                  data-binding-html="computed.cityOptionsHtml"
+                  value=""
+                  data-reactive-state="city"
+                  data-action="change->reactive#mutate"
+                  :disabled="!state.country"
+                  :html="state.cityOptionsHtml"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                   <option value="">Select a city...</option>
                 </select>
-                <div data-binding-show="!state.country" class="text-xs text-gray-500 mt-1">Please select a country first</div>
+                <div :show="!state.country" class="text-xs text-gray-500 mt-1">Please select a country first</div>
               </div>
 
               <!-- Number of Travelers -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Number of Travelers </label>
                 <select
-                  data-binding-value="state.travelers"
-                  data-action="change->binding#updateState"
-                  data-binding-updater-param="state.travelers = parseInt(target.value)"
+                  value="1"
+                  data-reactive-state="travelers"
+                  data-action="change->reactive#mutate"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="1">1 Traveler</option>
@@ -974,9 +968,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Trip Type </label>
                 <select
-                  data-binding-value="state.tripType"
-                  data-action="change->binding#updateState"
-                  data-binding-updater-param="state.tripType = target.value"
+                  value="roundtrip"
+                  data-reactive-state="tripType"
+                  data-action="change->reactive#mutate"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="roundtrip">Round Trip</option>
@@ -986,67 +980,61 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </div>
 
             <!-- Selected Destination Preview -->
-            <div
-              data-binding-show="computed.hasSelection"
-              class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200"
-            >
+            <div :show="state.hasSelection" class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
               <h3 class="text-lg font-semibold text-gray-800 mb-2">Your Selected Destination</h3>
               <div class="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span class="font-medium text-gray-600">Country:</span>
                   <span
-                    data-binding-text="computed.selectedCountryData ? computed.selectedCountryData.name : ''"
+                    :text="state.selectedCountryData ? state.selectedCountryData.name : ''"
                     class="ml-2 font-semibold text-blue-700"
                   ></span>
                 </div>
                 <div>
                   <span class="font-medium text-gray-600">City:</span>
-                  <span data-binding-text="state.city" class="ml-2 font-semibold text-blue-700"></span>
+                  <span :text="state.city" class="ml-2 font-semibold text-blue-700"></span>
                 </div>
                 <div>
                   <span class="font-medium text-gray-600">Travelers:</span>
                   <span
-                    data-binding-text="state.travelers + (state.travelers === 1 ? ' person' : ' people')"
+                    :text="state.travelers + (state.travelers === 1 ? ' person' : ' people')"
                     class="ml-2 font-semibold text-blue-700"
                   ></span>
                 </div>
                 <div>
                   <span class="font-medium text-gray-600">Trip Type:</span>
-                  <span
-                    data-binding-text="state.tripType === 'roundtrip' ? 'Round Trip' : 'One Way'"
-                    class="ml-2 font-semibold text-blue-700"
-                  ></span>
+                  <span :text="state.tripType === 'roundtrip' ? 'Round Trip' : 'One Way'" class="ml-2 font-semibold text-blue-700"></span>
                 </div>
               </div>
             </div>
 
             <!-- Price Estimation -->
-            <div data-binding-show="computed.hasSelection" class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+            <div :show="state.hasSelection" class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
               <h3 class="text-lg font-semibold text-gray-800 mb-3">Price Estimation</h3>
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Base price per person:</span>
-                  <span data-binding-text="'$' + computed.estimatedPrice" class="font-medium text-gray-800"></span>
+                  <span :text="'$' + state.estimatedPrice" class="font-medium text-gray-800"></span>
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Number of travelers:</span>
-                  <span data-binding-text="state.travelers + 'x'" class="font-medium text-gray-800"></span>
+                  <span :text="state.travelers + 'x'" class="font-medium text-gray-800"></span>
                 </div>
-                <div data-binding-show="state.tripType === 'oneway'" class="flex justify-between items-center">
+                <div :show="state.tripType === 'oneway'" class="flex justify-between items-center">
                   <span class="text-gray-600">One-way discount:</span>
                   <span class="font-medium text-green-600">-40%</span>
                 </div>
                 <div class="border-t border-green-300 pt-2 mt-2">
                   <div class="flex justify-between items-center">
                     <span class="font-semibold text-gray-800">Total estimated price:</span>
-                    <span data-binding-text="'$' + Math.round(computed.totalPrice)" class="text-xl font-bold text-green-700"></span>
+                    <span :text="'$' + Math.round(state.totalPrice)" class="text-xl font-bold text-green-700"></span>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Helpful Information -->
-            <div data-binding-show="state.country && !state.city" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div :show="state.country && !state.city" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <div class="flex items-start space-x-2">
                 <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path
@@ -1059,10 +1047,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                   <div class="font-medium">Almost there!</div>
                   <div>
                     Please select a city in
-                    <span
-                      data-binding-text="computed.selectedCountryData ? computed.selectedCountryData.name : ''"
-                      class="font-semibold"
-                    ></span>
+                    <span :text="state.selectedCountryData ? state.selectedCountryData.name : ''" class="font-semibold"></span>
                     to see pricing information.
                   </div>
                 </div>
@@ -1073,17 +1058,17 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             <div class="flex gap-3 mt-6">
               <button
                 class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-150"
-                data-binding-class="{
-                  'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': computed.hasSelection,
-                  'bg-gray-300 text-gray-500 cursor-not-allowed': !computed.hasSelection
+                :class="{
+                  'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.hasSelection,
+                  'bg-gray-300 text-gray-500 cursor-not-allowed': !state.hasSelection
                 }"
-                data-binding-disabled="!computed.hasSelection"
+                :disabled="!state.hasSelection"
               >
                 Search Flights
               </button>
               <button
-                data-action="click->binding#updateState"
-                data-binding-updater-param="state.country = ''; state.city = ''; state.travelers = 1; state.tripType = 'roundtrip'"
+                data-action="click->reactive#mutate"
+                data-reactive-mutate-param="state.country = 'usa'; state.city = ''; state.travelers = 1; state.tripType = 'roundtrip'"
                 class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Reset Form
