@@ -19,56 +19,293 @@
   </head>
   <body class="bg-gray-100 min-h-screen py-8">
     <div class="container mx-auto px-4">
-      <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 space-y-4">
-        <h1 class="text-2xl font-bold text-gray-800">Stimulus Data Binding</h1>
+      <div class="max-w-2xl mx-auto space-y-6">
+        <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Stimulus Data Binding Examples</h1>
 
-        <div class="flex gap-3" data-controller="binding" data-binding-initial-state="{ count: 0 }">
-          <button
-            data-action="click->binding#updateState"
-            data-binding-updater-param="state.count--"
-            class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
-          >
-            -
-          </button>
-          <div
-            class="flex-1 text-center p-2 bg-gray-100 rounded font-medium"
-            data-binding-text="state.count"
-            data-binding-class="{ '!bg-red-100': state.count < 0 }"
-          >
-            0
+        <!-- Counter Example -->
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-gray-700">Counter with Conditional Styling</h2>
+          <div class="flex gap-3" data-controller="binding" data-binding-initial-state="{ count: 0 }">
+            <button
+              data-action="click->binding#updateState"
+              data-binding-updater-param="state.count--"
+              class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
+            >
+              -
+            </button>
+            <div
+              class="flex-1 text-center p-2 bg-gray-100 rounded font-medium"
+              data-binding-text="state.count"
+              data-binding-class="{ '!bg-red-100': state.count < 0, '!bg-green-100': state.count > 10 }"
+            >
+              0
+            </div>
+            <button
+              data-action="click->binding#updateState"
+              data-binding-updater-param="state.count++"
+              class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
+            >
+              +
+            </button>
           </div>
-          <button
-            data-action="click->binding#updateState"
-            data-binding-updater-param="state.count++"
-            class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
-          >
-            +
-          </button>
         </div>
 
-        <div class="flex gap-3" data-controller="binding" data-binding-initial-state="{ message: 'hello' }">
-          <input
-            type="text"
-            data-binding-value="state.message"
-            data-binding-class="{ 'bg-green-100': state.message === 'hello' }"
-            class="flex-1 p-2 border border-gray-300 rounded"
-            data-action="input->binding#updateState"
-            data-binding-updater-param="state.message = target.value"
-          />
-          <button
-            data-action="click->binding#updateState"
-            data-binding-updater-param="state.message = ''"
-            class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
+        <!-- Input Message Example -->
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-gray-700">Text Input with Dynamic Styling</h2>
+          <div class="flex gap-3" data-controller="binding" data-binding-initial-state="{ message: 'hello' }">
+            <input
+              type="text"
+              data-binding-value="state.message"
+              data-binding-class="{ 'bg-green-100': state.message === 'hello' }"
+              class="flex-1 p-2 border border-gray-300 rounded"
+              data-action="input->binding#updateState"
+              data-binding-updater-param="state.message = target.value"
+            />
+            <button
+              data-action="click->binding#updateState"
+              data-binding-updater-param="state.message = ''"
+              class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
+            >
+              Clear
+            </button>
+            <button
+              data-action="click->binding#updateState"
+              data-binding-updater-param="state.message = 'hello'"
+              class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Bar Example -->
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-gray-700">Progress Bar with Status</h2>
+          <div data-controller="binding" data-binding-initial-state="{ progress: 25 }">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-medium text-gray-700">Progress:</span>
+              <span
+                data-binding-text="state.progress + '%'"
+                data-binding-class="{ 'text-red-600': state.progress < 30, 'text-yellow-600': state.progress >= 30 && state.progress < 70, 'text-green-600': state.progress >= 70 }"
+                class="text-sm font-bold"
+              >
+                25%
+              </span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+              <div
+                class="bg-blue-600 h-4 rounded-full transition-all duration-300"
+                data-binding-style="{ width: state.progress + '%' }"
+              ></div>
+            </div>
+            <div class="flex gap-2">
+              <button
+                data-action="click->binding#updateState"
+                data-binding-updater-param="state.progress = Math.max(0, state.progress - 10)"
+                class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+              >
+                -10%
+              </button>
+              <button
+                data-action="click->binding#updateState"
+                data-binding-updater-param="state.progress = Math.min(100, state.progress + 10)"
+                class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600"
+              >
+                +10%
+              </button>
+              <button
+                data-action="click->binding#updateState"
+                data-binding-updater-param="state.progress = 0"
+                class="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shopping Cart Example -->
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-gray-700">Shopping Cart Calculator</h2>
+          <div data-controller="binding" data-binding-initial-state="{ quantity: 1, price: 29.99, discount: 0 }">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                <input
+                  type="number"
+                  min="1"
+                  data-binding-value="state.quantity"
+                  data-action="input->binding#updateState"
+                  data-binding-updater-param="state.quantity = Math.max(1, parseInt(target.value) || 1)"
+                  class="w-full p-2 border border-gray-300 rounded"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Price per item</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  data-binding-value="state.price"
+                  data-action="input->binding#updateState"
+                  data-binding-updater-param="state.price = Math.max(0, parseFloat(target.value) || 0)"
+                  class="w-full p-2 border border-gray-300 rounded"
+                />
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Discount (%)</label>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                data-binding-value="state.discount"
+                data-action="input->binding#updateState"
+                data-binding-updater-param="state.discount = parseInt(target.value)"
+                class="w-full"
+              />
+              <div class="text-center text-sm text-gray-600 mt-1" data-binding-text="state.discount + '% off'">0% off</div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded">
+              <div class="flex justify-between items-center text-sm text-gray-600 mb-1">
+                <span>Subtotal:</span>
+                <span data-binding-text="'$' + (state.quantity * state.price).toFixed(2)">$29.99</span>
+              </div>
+              <div class="flex justify-between items-center text-sm text-gray-600 mb-1">
+                <span>Discount:</span>
+                <span data-binding-text="'-$' + (state.quantity * state.price * state.discount / 100).toFixed(2)">-$0.00</span>
+              </div>
+              <div class="flex justify-between items-center text-lg font-bold text-gray-800 border-t pt-2">
+                <span>Total:</span>
+                <span data-binding-text="'$' + (state.quantity * state.price * (1 - state.discount / 100)).toFixed(2)">$29.99</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Theme Switcher Example -->
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-gray-700">Theme Switcher</h2>
+          <div data-controller="binding" data-binding-initial-state="{ theme: 'light', fontSize: 'medium' }">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Theme</label>
+                <div class="space-y-2">
+                  <label class="flex items-center">
+                    <input
+                      type="radio"
+                      name="theme"
+                      value="light"
+                      data-action="change->binding#updateState"
+                      data-binding-updater-param="state.theme = target.value"
+                      data-binding-checked="state.theme === 'light'"
+                      class="mr-2"
+                      checked
+                    />
+                    Light
+                  </label>
+                  <label class="flex items-center">
+                    <input
+                      type="radio"
+                      name="theme"
+                      value="dark"
+                      data-action="change->binding#updateState"
+                      data-binding-updater-param="state.theme = target.value"
+                      data-binding-checked="state.theme === 'dark'"
+                      class="mr-2"
+                    />
+                    Dark
+                  </label>
+                  <label class="flex items-center">
+                    <input
+                      type="radio"
+                      name="theme"
+                      value="colorful"
+                      data-action="change->binding#updateState"
+                      data-binding-updater-param="state.theme = target.value"
+                      data-binding-checked="state.theme === 'colorful'"
+                      class="mr-2"
+                    />
+                    Colorful
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
+                <select
+                  data-binding-value="state.fontSize"
+                  data-action="change->binding#updateState"
+                  data-binding-updater-param="state.fontSize = target.value"
+                  class="w-full p-2 border border-gray-300 rounded"
+                >
+                  <option value="small">Small</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="large">Large</option>
+                </select>
+              </div>
+            </div>
+            <div
+              class="p-4 rounded transition-all duration-300"
+              data-binding-class="{
+                'bg-white text-gray-800 border': state.theme === 'light',
+                'bg-gray-800 border-gray-600 text-gray-100': state.theme === 'dark',
+                'bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white': state.theme === 'colorful',
+                'text-sm': state.fontSize === 'small',
+                'text-base': state.fontSize === 'medium',
+                'text-lg': state.fontSize === 'large'
+              }"
+            >
+              <h3 class="font-bold mb-2">Preview Panel</h3>
+              <p>This is how your content will look with the selected theme and font size.</p>
+              <p class="mt-2">
+                Current settings:
+                <span data-binding-text="state.theme + ' theme'">light theme</span>,
+                <span data-binding-text="state.fontSize + ' font'">medium font</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Search Results Example -->
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-gray-700">Live Search Results</h2>
+          <div
+            data-controller="binding"
+            data-binding-initial-state="{ query: '', items: ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape'] }"
           >
-            Clear
-          </button>
-          <button
-            data-action="click->binding#updateState"
-            data-binding-updater-param="state.message = 'hello'"
-            class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-          >
-            Reset
-          </button>
+            <input
+              type="text"
+              placeholder="Search fruits..."
+              data-binding-value="state.query"
+              data-action="input->binding#updateState"
+              data-binding-updater-param="state.query = target.value"
+              class="w-full p-3 border border-gray-300 rounded-lg"
+            />
+            <div class="mt-4">
+              <div
+                class="text-sm text-gray-600 mb-2"
+                data-binding-text="state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase())).length + ' results found'"
+              >
+                7 results found
+              </div>
+              <div
+                class="space-y-2"
+                data-binding-html="state.items
+                  .filter(item => item.toLowerCase().includes(state.query.toLowerCase()))
+                  .map(item => `<div class='p-2 bg-gray-50 rounded border-l-4 border-blue-500'>${item}</div>`)
+                  .join('')"
+              >
+                <!-- Results will be populated here -->
+              </div>
+              <div
+                class="text-center text-gray-500 mt-4"
+                data-binding-class="{ 'hidden': state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase())).length > 0 || state.query === '' }"
+              >
+                No results found for "<span data-binding-text="state.query"></span>"
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -91,6 +328,9 @@
           this.bindingElements("text").forEach(this.applyTextBinding.bind(this));
           this.bindingElements("value").forEach(this.applyValueBinding.bind(this));
           this.bindingElements("class").forEach(this.applyClassBinding.bind(this));
+          this.bindingElements("style").forEach(this.applyStyleBinding.bind(this));
+          this.bindingElements("checked").forEach(this.applyCheckedBinding.bind(this));
+          this.bindingElements("html").forEach(this.applyHtmlBinding.bind(this));
         }
 
         bindingElements(bindingName) {
@@ -108,9 +348,28 @@
         applyClassBinding(element) {
           const classes = this.evaluateExpression(element.dataset.bindingClass);
 
-          Object.keys(classes).forEach((className) => {
-            element.classList.toggle(className, classes[className]);
+          Object.keys(classes).forEach((classNames) => {
+            // Split space-separated class names and toggle each individually
+            classNames.split(" ").forEach((className) => {
+              element.classList.toggle(className.trim(), classes[classNames]);
+            });
           });
+        }
+
+        applyStyleBinding(element) {
+          const styles = this.evaluateExpression(element.dataset.bindingStyle);
+
+          Object.keys(styles).forEach((property) => {
+            element.style[property] = styles[property];
+          });
+        }
+
+        applyCheckedBinding(element) {
+          element.checked = this.evaluateExpression(element.dataset.bindingChecked);
+        }
+
+        applyHtmlBinding(element) {
+          element.innerHTML = this.evaluateExpression(element.dataset.bindingHtml);
         }
 
         evaluateUpdate(updater, target) {
