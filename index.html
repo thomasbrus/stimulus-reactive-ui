@@ -84,18 +84,26 @@
           <h2 class="text-xl font-semibold text-gray-700">3. Progress Bar with Status</h2>
           <div data-controller="binding" data-binding-initial-state="{ progress: 25 }">
             <!-- Computed Properties Templates -->
-            <template data-binding-computed="progressColor"
-              >({ 'text-red-600': state.progress < 30, 'text-yellow-600': state.progress >= 30 && state.progress < 70, 'text-green-600':
-              state.progress >= 70 })</template
-            >
-            <template data-binding-computed="progressBarColor"
-              >({ 'bg-red-600': state.progress < 30, 'bg-yellow-600': state.progress >= 30 && state.progress < 70, 'bg-green-600':
-              state.progress >= 70 })</template
-            >
-            <template data-binding-computed="progressText">state.progress + '%'</template>
-            <template data-binding-computed="progressStyle">({ width: state.progress + '%' })</template>
-            <template data-binding-computed="canDecrease">state.progress > 0</template>
-            <template data-binding-computed="canIncrease">state.progress < 100</template>
+            <script type="text/template" data-binding-computed="progressColor">
+              ({ 'text-red-600': state.progress < 30, 'text-yellow-600': state.progress >= 30 && state.progress < 70, 'text-green-600':
+                            state.progress >= 70 })
+            </script>
+            <script type="text/template" data-binding-computed="progressBarColor">
+              ({ 'bg-red-600': state.progress < 30, 'bg-yellow-600': state.progress >= 30 && state.progress < 70, 'bg-green-600':
+                            state.progress >= 70 })
+            </script>
+            <script type="text/template" data-binding-computed="progressText">
+              state.progress + '%'
+            </script>
+            <script type="text/template" data-binding-computed="progressStyle">
+              ({ width: state.progress + '%' })
+            </script>
+            <script type="text/template" data-binding-computed="canDecrease">
+              state.progress > 0
+            </script>
+            <script type="text/template" data-binding-computed="canIncrease">
+              state.progress < 100
+            </script>
 
             <div class="flex justify-between items-center mb-2">
               <span class="text-sm font-medium text-gray-700">Progress:</span>
@@ -143,9 +151,15 @@
           <h2 class="text-xl font-semibold text-gray-700">4. Shopping Cart Calculator</h2>
           <div data-controller="binding" data-binding-initial-state="{ quantity: 1, price: 29.99, discount: 0 }">
             <!-- Computed Properties Templates -->
-            <template data-binding-computed="subtotal">state.quantity * state.price</template>
-            <template data-binding-computed="discountAmount">computed.subtotal * state.discount / 100</template>
-            <template data-binding-computed="total">computed.subtotal - computed.discountAmount</template>
+            <script type="text/template" data-binding-computed="subtotal">
+              state.quantity * state.price
+            </script>
+            <script type="text/template" data-binding-computed="discountAmount">
+              computed.subtotal * state.discount / 100
+            </script>
+            <script type="text/template" data-binding-computed="total">
+              computed.subtotal - computed.discountAmount
+            </script>
 
             <div class="grid grid-cols-2 gap-4 mb-4">
               <div>
@@ -207,19 +221,35 @@
           <h2 class="text-xl font-semibold text-gray-700">5. Theme Switcher</h2>
           <div data-controller="binding" data-binding-initial-state="{ theme: 'light', fontSize: 'medium' }">
             <!-- Computed Properties Templates -->
-            <template data-binding-computed="isLightTheme">state.theme === 'light'</template>
-            <template data-binding-computed="isDarkTheme">state.theme === 'dark'</template>
-            <template data-binding-computed="isColorfulTheme">state.theme === 'colorful'</template>
-            <template data-binding-computed="isSmallFont">state.fontSize === 'small'</template>
-            <template data-binding-computed="isMediumFont">state.fontSize === 'medium'</template>
-            <template data-binding-computed="isLargeFont">state.fontSize === 'large'</template>
-            <template data-binding-computed="previewClasses"
-              >({ 'bg-white text-gray-800 border': computed.isLightTheme, 'bg-gray-800 border-gray-600 text-gray-100': computed.isDarkTheme,
-              'bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white': computed.isColorfulTheme, 'text-sm':
-              computed.isSmallFont, 'text-base': computed.isMediumFont, 'text-lg': computed.isLargeFont })</template
-            >
-            <template data-binding-computed="themeText">state.theme + ' theme'</template>
-            <template data-binding-computed="fontText">state.fontSize + ' font'</template>
+            <script type="text/template" data-binding-computed="isLightTheme">
+              state.theme === 'light'
+            </script>
+            <script type="text/template" data-binding-computed="isDarkTheme">
+              state.theme === 'dark'
+            </script>
+            <script type="text/template" data-binding-computed="isColorfulTheme">
+              state.theme === 'colorful'
+            </script>
+            <script type="text/template" data-binding-computed="isSmallFont">
+              state.fontSize === 'small'
+            </script>
+            <script type="text/template" data-binding-computed="isMediumFont">
+              state.fontSize === 'medium'
+            </script>
+            <script type="text/template" data-binding-computed="isLargeFont">
+              state.fontSize === 'large'
+            </script>
+            <script type="text/template" data-binding-computed="previewClasses">
+              ({ 'bg-white text-gray-800 border': computed.isLightTheme, 'bg-gray-800 border-gray-600 text-gray-100': computed.isDarkTheme,
+                            'bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white': computed.isColorfulTheme, 'text-sm':
+                            computed.isSmallFont, 'text-base': computed.isMediumFont, 'text-lg': computed.isLargeFont })
+            </script>
+            <script type="text/template" data-binding-computed="themeText">
+              state.theme + ' theme'
+            </script>
+            <script type="text/template" data-binding-computed="fontText">
+              state.fontSize + ' font'
+            </script>
 
             <div class="grid grid-cols-2 gap-4 mb-4">
               <div>
@@ -392,39 +422,28 @@
             data-binding-initial-state="{ query: '', items: ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape'] }"
           >
             <!-- Computed Properties Templates -->
-            <template data-binding-computed="hasQuery">state.query !== ''</template>
-            <template data-binding-computed="filteredResults"
-              >state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase()))</template
-            >
-            <template data-binding-computed="resultCount">computed.filteredResults.length</template>
-            <template data-binding-computed="resultsText"
-              >computed.hasQuery ? computed.resultCount + ' results found' : state.items.length + ' items available'</template
-            >
-            <template data-binding-computed="hasNoResults">computed.hasQuery && computed.resultCount === 0</template>
-            <template data-binding-computed="itemBorderClass"
-              >({ 'border-gray-300': !computed.hasQuery, 'border-blue-500': computed.hasQuery })</template
-            >
-            <template data-binding-computed="showApple"
-              >!computed.hasQuery || 'Apple'.toLowerCase().includes(state.query.toLowerCase())</template
-            >
-            <template data-binding-computed="showBanana"
-              >!computed.hasQuery || 'Banana'.toLowerCase().includes(state.query.toLowerCase())</template
-            >
-            <template data-binding-computed="showCherry"
-              >!computed.hasQuery || 'Cherry'.toLowerCase().includes(state.query.toLowerCase())</template
-            >
-            <template data-binding-computed="showDate"
-              >!computed.hasQuery || 'Date'.toLowerCase().includes(state.query.toLowerCase())</template
-            >
-            <template data-binding-computed="showElderberry"
-              >!computed.hasQuery || 'Elderberry'.toLowerCase().includes(state.query.toLowerCase())</template
-            >
-            <template data-binding-computed="showFig"
-              >!computed.hasQuery || 'Fig'.toLowerCase().includes(state.query.toLowerCase())</template
-            >
-            <template data-binding-computed="showGrape"
-              >!computed.hasQuery || 'Grape'.toLowerCase().includes(state.query.toLowerCase())</template
-            >
+            <script type="text/template" data-binding-computed="hasQuery">
+              state.query !== ''
+            </script>
+            <script type="text/template" data-binding-computed="filteredResults">
+              state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase()))
+            </script>
+            <script type="text/template" data-binding-computed="resultCount">
+              computed.filteredResults.length
+            </script>
+            <script type="text/template" data-binding-computed="resultsText">
+              computed.hasQuery ? computed.resultCount + ' results found' : state.items.length + ' items available'
+            </script>
+            <script type="text/template" data-binding-computed="hasNoResults">
+              computed.hasQuery && computed.resultCount === 0
+            </script>
+            <script type="text/template" data-binding-computed="itemsHtml">
+              html`${computed.filteredResults.map(item => html`
+                <div class="p-2 bg-gray-50 rounded border-l-4 ${computed.hasQuery ? 'border-blue-500' : 'border-gray-300'}">
+                  ${item}
+                </div>
+              `).join('')}`
+            </script>
 
             <input
               type="text"
@@ -440,58 +459,8 @@
               <span data-binding-text="computed.resultsText">7 items available</span>
             </div>
 
-            <!-- Single unified list -->
-            <div class="space-y-2">
-              <div
-                class="p-2 bg-gray-50 rounded border-l-4"
-                data-binding-show="computed.showApple"
-                data-binding-class="computed.itemBorderClass"
-              >
-                Apple
-              </div>
-              <div
-                class="p-2 bg-gray-50 rounded border-l-4"
-                data-binding-show="computed.showBanana"
-                data-binding-class="computed.itemBorderClass"
-              >
-                Banana
-              </div>
-              <div
-                class="p-2 bg-gray-50 rounded border-l-4"
-                data-binding-show="computed.showCherry"
-                data-binding-class="computed.itemBorderClass"
-              >
-                Cherry
-              </div>
-              <div
-                class="p-2 bg-gray-50 rounded border-l-4"
-                data-binding-show="computed.showDate"
-                data-binding-class="computed.itemBorderClass"
-              >
-                Date
-              </div>
-              <div
-                class="p-2 bg-gray-50 rounded border-l-4"
-                data-binding-show="computed.showElderberry"
-                data-binding-class="computed.itemBorderClass"
-              >
-                Elderberry
-              </div>
-              <div
-                class="p-2 bg-gray-50 rounded border-l-4"
-                data-binding-show="computed.showFig"
-                data-binding-class="computed.itemBorderClass"
-              >
-                Fig
-              </div>
-              <div
-                class="p-2 bg-gray-50 rounded border-l-4"
-                data-binding-show="computed.showGrape"
-                data-binding-class="computed.itemBorderClass"
-              >
-                Grape
-              </div>
-            </div>
+            <!-- Results list -->
+            <div class="space-y-2" data-binding-html="computed.itemsHtml"></div>
 
             <!-- No results message -->
             <div data-binding-show="computed.hasNoResults">
@@ -505,22 +474,36 @@
           <h2 class="text-xl font-semibold text-gray-700">8. Character Counter & Text Analysis</h2>
           <div data-controller="binding" data-binding-initial-state="{ text: '', maxLength: 280 }">
             <!-- Computed Properties Templates -->
-            <template data-binding-computed="characterCount">state.text.length</template>
-            <template data-binding-computed="wordCount">state.text.trim().split(/\s+/).filter(word => word.length > 0).length</template>
-            <template data-binding-computed="lineCount">state.text.split('\n').length</template>
-            <template data-binding-computed="readingTime">Math.ceil(computed.wordCount / 200)</template>
-            <template data-binding-computed="usagePercentage">Math.round((computed.characterCount / state.maxLength) * 100)</template>
-            <template data-binding-computed="isOverLimit">computed.characterCount > state.maxLength</template>
-            <template data-binding-computed="isNearLimit"
-              >computed.characterCount > state.maxLength * 0.8 && computed.characterCount <= state.maxLength</template
-            >
-            <template data-binding-computed="isComfortable"
-              >computed.characterCount > 0 && computed.characterCount <= state.maxLength * 0.8</template
-            >
-            <template data-binding-computed="isEmpty">computed.characterCount === 0</template>
-            <template data-binding-computed="isHalfway"
-              >computed.characterCount > 0 && computed.characterCount <= state.maxLength * 0.5</template
-            >
+            <script type="text/template" data-binding-computed="characterCount">
+              state.text.length
+            </script>
+            <script type="text/template" data-binding-computed="wordCount">
+              state.text.trim().split(/\s+/).filter(word => word.length > 0).length
+            </script>
+            <script type="text/template" data-binding-computed="lineCount">
+              state.text.split('\n').length
+            </script>
+            <script type="text/template" data-binding-computed="readingTime">
+              Math.ceil(computed.wordCount / 200)
+            </script>
+            <script type="text/template" data-binding-computed="usagePercentage">
+              Math.round((computed.characterCount / state.maxLength) * 100)
+            </script>
+            <script type="text/template" data-binding-computed="isOverLimit">
+              computed.characterCount > state.maxLength
+            </script>
+            <script type="text/template" data-binding-computed="isNearLimit">
+              computed.characterCount > state.maxLength * 0.8 && computed.characterCount <= state.maxLength
+            </script>
+            <script type="text/template" data-binding-computed="isComfortable">
+              computed.characterCount > 0 && computed.characterCount <= state.maxLength * 0.8
+            </script>
+            <script type="text/template" data-binding-computed="isEmpty">
+              computed.characterCount === 0
+            </script>
+            <script type="text/template" data-binding-computed="isHalfway">
+              computed.characterCount > 0 && computed.characterCount <= state.maxLength * 0.5
+            </script>
 
             <div class="mb-4">
               <label class="block text-sm font-medium text-gray-700 mb-2">Max characters allowed</label>
@@ -657,15 +640,21 @@
           <h2 class="text-xl font-semibold text-gray-700">9. Terms & Conditions Agreement</h2>
           <div data-controller="binding" data-binding-initial-state="{ acceptTerms: false, acceptPrivacy: false, email: '' }">
             <!-- Computed Properties Templates -->
-            <template data-binding-computed="isValidEmail"> state.email && state.email.includes('@') && state.email.length > 5 </template>
-            <template data-binding-computed="allRequirementsMet"
-              >state.acceptTerms && state.acceptPrivacy && computed.isValidEmail</template
-            >
-            <template data-binding-computed="requirementsCount"
-              >(state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (computed.isValidEmail ? 1 : 0)</template
-            >
-            <template data-binding-computed="completionPercentage">Math.round((computed.requirementsCount / 3) * 100)</template>
-            <template data-binding-computed="allRequirementsComplete">computed.requirementsCount === 3</template>
+            <script type="text/template" data-binding-computed="isValidEmail">
+              state.email && state.email.includes('@') && state.email.length > 5
+            </script>
+            <script type="text/template" data-binding-computed="allRequirementsMet">
+              state.acceptTerms && state.acceptPrivacy && computed.isValidEmail
+            </script>
+            <script type="text/template" data-binding-computed="requirementsCount">
+              (state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (computed.isValidEmail ? 1 : 0)
+            </script>
+            <script type="text/template" data-binding-computed="completionPercentage">
+              Math.round((computed.requirementsCount / 3) * 100)
+            </script>
+            <script type="text/template" data-binding-computed="allRequirementsComplete">
+              computed.requirementsCount === 3
+            </script>
 
             <!-- Email Input -->
             <div class="mb-4">
@@ -827,6 +816,52 @@
               scoreFilter: 'all'
             }"
           >
+            <!-- Computed Properties Templates -->
+            <script type="text/template" data-binding-computed="filteredUsers">
+              state.users.filter(user => {
+                // Role filter
+                const roleMatch = state.filter === 'all' ||
+                  (state.filter === 'active' && user.active) ||
+                  (state.filter === 'inactive' && !user.active) ||
+                  (state.filter === 'admin' && user.role === 'admin');
+
+                // Score filter
+                const scoreMatch = state.scoreFilter === 'all' ||
+                  (state.scoreFilter === 'excellent' && user.score >= 90) ||
+                  (state.scoreFilter === 'good' && user.score >= 80 && user.score < 90) ||
+                  (state.scoreFilter === 'needs-improvement' && user.score < 80);
+
+                return roleMatch && scoreMatch;
+              })
+            </script>
+            <script type="text/template" data-binding-computed="usersHtml">
+              html`${computed.filteredUsers.map(user => {
+                const statusColor = user.active ? 'bg-green-500' : 'bg-red-500';
+                const scoreColor = user.score >= 90 ? 'text-green-600' :
+                                   user.score >= 80 ? 'text-blue-600' : 'text-yellow-600';
+                const scoreLabel = user.score >= 90 ? 'Excellent' :
+                                   user.score >= 80 ? 'Good' : 'Needs Improvement';
+
+                return html`
+                  <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-3 h-3 ${statusColor} rounded-full"></div>
+                      <div>
+                        <div class="font-medium">${user.name}</div>
+                        <div class="text-sm text-gray-500 capitalize">${user.role}</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                      <div class="text-right">
+                        <div class="text-sm font-medium">Score: ${user.score}</div>
+                        <span class="text-xs ${scoreColor} font-medium">${scoreLabel}</span>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}`
+            </script>
+
             <!-- Controls -->
             <div class="flex gap-4 mb-4">
               <div class="flex-1">
@@ -854,98 +889,18 @@
                   <option value="all">All Scores</option>
                   <option value="excellent">Excellent (90+)</option>
                   <option value="good">Good (80-89)</option>
-                  <option value="needs-improvement">Needs Improvement (<80)</option>
+                  <option value="needs-improvement">Needs Improvement (&lt;80)</option>
                 </select>
               </div>
             </div>
 
             <!-- No users message -->
-            <div data-binding-show="state.users.length === 0" class="text-center py-8 text-gray-500">
-              <p>No users found</p>
+            <div data-binding-show="computed.filteredUsers.length === 0" class="text-center py-8 text-gray-500">
+              <p>No users match the current filters</p>
             </div>
 
             <!-- User List -->
-            <div class="space-y-2">
-              <!-- Alice -->
-              <div
-                class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
-                data-binding-show="(state.filter === 'all' || (state.filter === 'active') || (state.filter === 'admin')) && (state.scoreFilter === 'all' || state.scoreFilter === 'excellent')"
-              >
-                <div class="flex items-center space-x-3">
-                  <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <div>
-                    <div class="font-medium">Alice</div>
-                    <div class="text-sm text-gray-500 capitalize">admin</div>
-                  </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                  <div class="text-right">
-                    <div class="text-sm font-medium">Score: 95</div>
-                    <span class="text-xs text-green-600 font-medium">Excellent</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Bob -->
-              <div
-                class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
-                data-binding-show="(state.filter === 'all' || (state.filter === 'inactive')) && (state.scoreFilter === 'all' || state.scoreFilter === 'needs-improvement')"
-              >
-                <div class="flex items-center space-x-3">
-                  <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <div>
-                    <div class="font-medium">Bob</div>
-                    <div class="text-sm text-gray-500 capitalize">user</div>
-                  </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                  <div class="text-right">
-                    <div class="text-sm font-medium">Score: 78</div>
-                    <span class="text-xs text-yellow-600 font-medium">Needs Improvement</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Charlie -->
-              <div
-                class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
-                data-binding-show="(state.filter === 'all' || (state.filter === 'active')) && (state.scoreFilter === 'all' || state.scoreFilter === 'good')"
-              >
-                <div class="flex items-center space-x-3">
-                  <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <div>
-                    <div class="font-medium">Charlie</div>
-                    <div class="text-sm text-gray-500 capitalize">moderator</div>
-                  </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                  <div class="text-right">
-                    <div class="text-sm font-medium">Score: 88</div>
-                    <span class="text-xs text-blue-600 font-medium">Good</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Diana -->
-              <div
-                class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
-                data-binding-show="(state.filter === 'all' || (state.filter === 'active')) && (state.scoreFilter === 'all' || state.scoreFilter === 'excellent')"
-              >
-                <div class="flex items-center space-x-3">
-                  <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <div>
-                    <div class="font-medium">Diana</div>
-                    <div class="text-sm text-gray-500 capitalize">user</div>
-                  </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                  <div class="text-right">
-                    <div class="text-sm font-medium">Score: 92</div>
-                    <span class="text-xs text-green-600 font-medium">Excellent</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div class="space-y-2" data-binding-html="computed.usersHtml"></div>
           </div>
         </div>
       </div>
@@ -1026,12 +981,25 @@
 
         applyComputedBinding(element) {
           const name = element.dataset.bindingComputed;
-          const expression = element.content.textContent.trim();
+          const templateContent = element.textContent.trim();
 
           Object.defineProperty(this.computed, name, {
-            get: () => this.evaluateExpression(expression),
+            get: () => this.evaluateTemplateExpression(templateContent),
             configurable: true,
           });
+        }
+
+        evaluateTemplateExpression(template) {
+          // Create a template tag function that handles HTML properly
+          const html = (strings, ...values) => {
+            return strings.reduce((result, string, i) => {
+              const value = values[i] !== undefined ? values[i] : "";
+              return result + string + value;
+            }, "");
+          };
+
+          // Make the html tag function available in the expression context
+          return new Function("state", "computed", "html", `return ${template};`)(this.state, this.computed, html);
         }
 
         evaluateUpdate(updater, target) {
