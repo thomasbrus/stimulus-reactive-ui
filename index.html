@@ -221,30 +221,16 @@
         <!-- 5. Theme Switcher Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">5. Theme Switcher</h2>
-          <div data-controller="binding" data-binding-initial-state="{ theme: 'light', fontSize: 'medium' }">
-            <!-- Computed Properties Templates -->
-            <script type="text/template" data-binding-computed="isLightTheme">
-              state.theme === 'light'
+          <div data-controller="reactive">
+            <script type="text/template" data-reactive-state="previewClasses">
+              { 'p-4 rounded transition-all duration-150': true, 'text-sm': state.fontSize === 'small', 'text-base': state.fontSize === 'medium', 'text-lg': state.fontSize === 'large' }
             </script>
-            <script type="text/template" data-binding-computed="isDarkTheme">
-              state.theme === 'dark'
-            </script>
-            <script type="text/template" data-binding-computed="isColorfulTheme">
-              state.theme === 'colorful'
-            </script>
-            <script type="text/template" data-binding-computed="isSmallFont">
-              state.fontSize === 'small'
-            </script>
-            <script type="text/template" data-binding-computed="isMediumFont">
-              state.fontSize === 'medium'
-            </script>
-            <script type="text/template" data-binding-computed="isLargeFont">
-              state.fontSize === 'large'
-            </script>
-            <script type="text/template" data-binding-computed="previewClasses">
-              ({ 'bg-white text-gray-800 border': computed.isLightTheme, 'bg-gray-800 border-gray-600 text-gray-100': computed.isDarkTheme,
-                            'bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white': computed.isColorfulTheme, 'text-sm':
-                            computed.isSmallFont, 'text-base': computed.isMediumFont, 'text-lg': computed.isLargeFont })
+
+            <script type="text/template" data-reactive-state="previewHtml">
+              (theme) => `
+                <h3 class="font-bold mb-2">${theme} theme</h3>
+                <p>This is what your content will look with the selected theme and font size.</p>
+              `
             </script>
 
             <div class="grid grid-cols-2 gap-4 mb-4">
@@ -256,9 +242,8 @@
                       type="radio"
                       name="theme"
                       value="light"
-                      data-action="change->binding#updateState"
-                      data-binding-updater-param="state.theme = target.value"
-                      data-binding-checked="computed.isLightTheme"
+                      data-reactive-state="theme"
+                      data-action="change->reactive#mutate"
                       class="mr-2"
                       checked
                     />
@@ -269,9 +254,8 @@
                       type="radio"
                       name="theme"
                       value="dark"
-                      data-action="change->binding#updateState"
-                      data-binding-updater-param="state.theme = target.value"
-                      data-binding-checked="computed.isDarkTheme"
+                      data-reactive-state="theme"
+                      data-action="change->reactive#mutate"
                       class="mr-2"
                     />
                     Dark
@@ -281,9 +265,8 @@
                       type="radio"
                       name="theme"
                       value="colorful"
-                      data-action="change->binding#updateState"
-                      data-binding-updater-param="state.theme = target.value"
-                      data-binding-checked="computed.isColorfulTheme"
+                      data-reactive-state="theme"
+                      data-action="change->reactive#mutate"
                       class="mr-2"
                     />
                     Colorful
@@ -293,9 +276,8 @@
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
                 <select
-                  data-binding-value="state.fontSize"
-                  data-action="change->binding#updateState"
-                  data-binding-updater-param="state.fontSize = target.value"
+                  data-reactive-state="fontSize"
+                  data-action="change->reactive#mutate"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
                   <option value="small">Small</option>
@@ -304,15 +286,24 @@
                 </select>
               </div>
             </div>
-            <div class="p-4 rounded transition-all duration-300" data-binding-class="computed.previewClasses">
-              <h3 class="font-bold mb-2">Preview Panel</h3>
-              <p>This is how your content will look with the selected theme and font size.</p>
-              <p class="mt-2">
-                Current settings:
-                <span data-binding-text="state.theme + ' theme'">light theme</span>,
-                <span data-binding-text="state.fontSize + ' font'">medium font</span>
-              </p>
-            </div>
+            <div
+              class="bg-gray-50 text-gray-800"
+              :class="state.previewClasses"
+              :show="state.theme === 'light'"
+              :html="state.previewHtml('Light')"
+            ></div>
+            <div
+              class="bg-gray-800 border-gray-600 text-gray-100"
+              :class="state.previewClasses"
+              :show="state.theme === 'dark'"
+              :html="state.previewHtml('Dark')"
+            ></div>
+            <div
+              class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white"
+              :class="state.previewClasses"
+              :show="state.theme === 'colorful'"
+              :html="state.previewHtml('Colorful')"
+            ></div>
           </div>
         </div>
 
@@ -1383,19 +1374,30 @@
         }
 
         connectState() {
+          // TODO: Figure out radio buttons and checkboxes that reuse the same state name
           this.element.querySelectorAll("[data-reactive-state]").forEach((element) => {
             const name = element.dataset.reactiveState;
             const tagName = element.tagName[0] + element.tagName.slice(1).toLowerCase();
-            this[`connect${tagName}State`](name, element);
+            const functionName = `connect${tagName}State`;
+            this[functionName](name, element);
           });
         }
 
         connectInputState(name, element) {
-          this.defineState(name, { get: () => this.parseNumber(element.value), set: (value) => (element.value = value) });
+          this.defineState(name, { get: () => this.getInputValue(element, name), set: (value) => (element.value = value) });
         }
 
-        parseNumber(value) {
-          return isNaN(value) ? value : Number(value);
+        getInputValue(element, name) {
+          if (element.type === "checkbox") {
+            return element.checked;
+          } else if (element.type === "radio") {
+            return this.element.querySelector(`input[name="${name}"]:checked`)?.value || "";
+          }
+          return this.parseNumber(element.value);
+        }
+
+        connectSelectState(name, element) {
+          this.defineState(name, { get: () => element.value, set: (value) => (element.value = value) });
         }
 
         connectScriptState(name, element) {
@@ -1433,7 +1435,7 @@
         }
 
         get supportedAttributes() {
-          return [":text", ":class", ":style", ":disabled"];
+          return [":text", ":html", ":class", ":style", ":show", ":disabled"];
         }
 
         pauseObserver(callback) {
@@ -1445,6 +1447,11 @@
         applyTextBinding(element, expression) {
           const newContent = this.evaluateExpression(expression);
           this.pauseObserver(() => (element.textContent = newContent));
+        }
+
+        applyHtmlBinding(element, expression) {
+          const newContent = this.evaluateExpression(expression);
+          this.pauseObserver(() => (element.innerHTML = newContent));
         }
 
         applyClassBinding(element, expression) {
@@ -1459,6 +1466,11 @@
           });
         }
 
+        applyShowBinding(element, expression) {
+          const shouldShow = this.evaluateExpression(expression);
+          this.pauseObserver(() => (element.style.display = shouldShow ? "" : "none"));
+        }
+
         applyDisabledBinding(element, expression) {
           const isDisabled = this.evaluateExpression(expression);
           this.pauseObserver(() => (element.disabled = isDisabled));
@@ -1470,6 +1482,10 @@
 
         evaluateExpression(expression) {
           return new Function("state", `return ${expression};`)(this.state);
+        }
+
+        parseNumber(value) {
+          return isNaN(value) ? value : Number(value);
         }
 
         mutate(event) {
