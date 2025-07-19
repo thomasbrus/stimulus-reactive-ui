@@ -25,29 +25,49 @@
         <div class="flex gap-3" data-controller="binding" data-binding-initial-state="{ count: 0 }">
           <button
             data-action="click->binding#updateState"
-            data-binding-statement-param="state.count--"
+            data-binding-updater-param="state.count--"
             class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
           >
             -
           </button>
-          <div class="flex-1 text-center p-2 bg-gray-100 rounded font-medium" data-binding-text="state.count">0</div>
+          <div
+            class="flex-1 text-center p-2 bg-gray-100 rounded font-medium"
+            data-binding-text="state.count"
+            data-binding-class="{ '!bg-red-100': state.count < 0 }"
+          >
+            0
+          </div>
           <button
             data-action="click->binding#updateState"
-            data-binding-statement-param="state.count++"
+            data-binding-updater-param="state.count++"
             class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
           >
             +
           </button>
         </div>
 
-        <div class="flex gap-3" data-controller="binding" data-binding-initial-state="{ message: 'Hello' }">
-          <input type="text" data-binding-value="state.message" class="flex-1 p-2 border border-gray-300 rounded" />
+        <div class="flex gap-3" data-controller="binding" data-binding-initial-state="{ message: 'hello' }">
+          <input
+            type="text"
+            data-binding-value="state.message"
+            data-binding-class="{ 'bg-green-100': state.message === 'hello' }"
+            class="flex-1 p-2 border border-gray-300 rounded"
+            data-action="input->binding#updateState"
+            data-binding-updater-param="state.message = target.value"
+          />
           <button
             data-action="click->binding#updateState"
-            data-binding-statement-param="state.message = ''"
+            data-binding-updater-param="state.message = ''"
             class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
           >
             Clear
+          </button>
+          <button
+            data-action="click->binding#updateState"
+            data-binding-updater-param="state.message = 'hello'"
+            class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
+          >
+            Reset
           </button>
         </div>
       </div>
@@ -63,13 +83,14 @@
         }
 
         updateState(event) {
-          this.evaluateStatement(event.params.statement);
+          this.evaluateUpdate(event.params.updater, event.target);
           this.applyBindings();
         }
 
         applyBindings() {
           this.bindingElements("text").forEach(this.applyTextBinding.bind(this));
           this.bindingElements("value").forEach(this.applyValueBinding.bind(this));
+          this.bindingElements("class").forEach(this.applyClassBinding.bind(this));
         }
 
         bindingElements(bindingName) {
@@ -84,8 +105,16 @@
           element.value = this.evaluateExpression(element.dataset.bindingValue);
         }
 
-        evaluateStatement(statement) {
-          this.state = new Function("state", `${statement}; return state;`)(this.state);
+        applyClassBinding(element) {
+          const classes = this.evaluateExpression(element.dataset.bindingClass);
+
+          Object.keys(classes).forEach((className) => {
+            element.classList.toggle(className, classes[className]);
+          });
+        }
+
+        evaluateUpdate(updater, target) {
+          this.state = new Function("state", "target", `${updater}; return state;`)(this.state, target);
         }
 
         evaluateExpression(expression) {
