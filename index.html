@@ -58,25 +58,25 @@
         <!-- 2. Text Input Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">2. Text Input with Dynamic Styling</h2>
-          <div class="flex gap-3" data-controller="binding" data-binding-initial-state="{ message: 'hello' }">
+          <div class="flex gap-3" data-controller="reactive">
             <input
               type="text"
-              data-binding-value="state.message"
-              data-binding-class="{ 'bg-green-100': state.message === 'hello' }"
+              data-reactive-state="message"
+              value="hello"
+              :class="{ 'bg-green-100': state.message === 'hello' }"
               class="flex-1 p-2 border border-gray-300 rounded"
-              data-action="input->binding#updateState"
-              data-binding-updater-param="state.message = target.value"
+              data-action="input->reactive#mutate"
             />
             <button
-              data-action="click->binding#updateState"
-              data-binding-updater-param="state.message = ''"
+              data-action="click->reactive#mutate"
+              data-reactive-mutate-param="state.message = ''"
               class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
             >
               Clear
             </button>
             <button
-              data-action="click->binding#updateState"
-              data-binding-updater-param="state.message = 'hello'"
+              data-action="click->reactive#mutate"
+              data-reactive-mutate-param="state.message = 'hello'"
               class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
             >
               Reset
