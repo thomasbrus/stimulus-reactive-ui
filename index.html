@@ -22,125 +22,32 @@
       <div class="max-w-2xl mx-auto space-y-6">
         <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Stimulus Data Binding Examples</h1>
 
-        <!-- New: Clean Data Binding Example -->
-        <div class="bg-white rounded-lg shadow-md p-6 space-y-4 border-l-4 border-blue-500">
-          <h2 class="text-xl font-semibold text-blue-700">✨ Clean Data Binding (New Approach)</h2>
-          <div data-controller="binding2">
-            <!-- Sources: Auto-sync on input -->
-            <div class="space-y-3">
-              <textarea
-                value="hello world"
-                data-binding-source="message"
-                data-action="input->binding2#sync"
-                placeholder="Type your message..."
-                class="w-full p-3 border border-gray-300 rounded-lg resize-none h-20"
-              >
-hello world</textarea
-              >
-
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value="25"
-                data-binding-source="progress"
-                data-action="input->binding2#sync"
-                class="w-full"
-              />
-            </div>
-
-            <!-- Targets: Display state -->
-            <div class="space-y-3 bg-gray-50 p-4 rounded-lg">
-              <div
-                data-binding-target="element.textContent = `Message: ${this.messageSource.value}`"
-                class="p-3 bg-white rounded border-l-4 border-green-500 font-medium"
-              >
-                Message: hello world
-              </div>
-
-              <div
-                data-binding-target="element.textContent = this.progressSource.value + '%'"
-                class="p-3 bg-white rounded border-l-4 border-blue-500 font-medium"
-              >
-                25%
-              </div>
-
-              <div
-                data-binding-target="element.className = 'p-3 rounded font-medium ' + (this.progressSource.value > 50 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')"
-                class="p-3 rounded font-medium bg-red-100 text-red-800"
-              >
-                Progress Status: Low
-              </div>
-            </div>
-
-            <!-- Effects: Update then sync -->
-            <div class="flex gap-2 flex-wrap">
-              <button
-                data-action="click->binding2#update"
-                data-binding-updater="this.messageSource.value = ''"
-                class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-              >
-                Clear Message
-              </button>
-
-              <button
-                data-action="click->binding2#update"
-                data-binding-updater="this.messageSource.value = 'Hello World!'"
-                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-              >
-                Reset Message
-              </button>
-
-              <button
-                data-action="click->binding2#update"
-                data-binding-updater="this.progressSource.value = Math.max(0, parseInt(this.progressSource.value) - 10)"
-                class="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"
-              >
-                -10%
-              </button>
-
-              <button
-                data-action="click->binding2#update"
-                data-binding-updater="this.progressSource.value = Math.min(100, parseInt(this.progressSource.value) + 10)"
-                class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-              >
-                +10%
-              </button>
-            </div>
-
-            <div class="text-sm text-blue-600 bg-blue-50 p-3 rounded-lg">
-              <strong>🚀 Pure Stimulus Pattern:</strong>
-              <ul class="mt-2 space-y-1 text-xs">
-                <li>• <code>data-binding-source="name"</code> + <code>data-action="input->binding2#sync"</code> = Auto-syncing sources</li>
-                <li>• <code>data-binding-target="expression"</code> = Reactive display targets</li>
-                <li>• <code>data-binding-updater="expression"</code> + <code>data-action="click->binding2#update"</code> = Side effects</li>
-                <li>• All state lives in DOM, accessed via <code>this.nameSource</code></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
         <!-- 1. Counter Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">1. Counter with Conditional Styling</h2>
-          <div class="flex gap-3" data-controller="binding" data-binding-initial-state="{ count: 0 }">
+          <div class="flex gap-3" data-controller="reactive">
+            <input type="text" data-reactive-state="count" value="0" />
+            <script type="text/template" data-reactive-state="isNegative">
+              state.count < 0
+            </script>
+            <script type="text/template" data-reactive-state="isPositive">
+              state.count > 0
+            </script>
             <button
-              data-action="click->binding#updateState"
-              data-binding-updater-param="state.count--"
+              data-action="click->reactive#effect"
+              data-reactive-effect-param="state.count--"
               class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
             >
               -
             </button>
             <div
               class="flex-1 text-center p-2 bg-gray-100 rounded font-medium"
-              data-binding-text="state.count"
-              data-binding-class="{ '!bg-red-100': state.count < 0, '!bg-green-100': state.count > 5 }"
-            >
-              0
-            </div>
+              :text="state.count"
+              :class="{ '!bg-red-100': state.isNegative, '!bg-green-100': state.isPositive }"
+            ></div>
             <button
-              data-action="click->binding#updateState"
-              data-binding-updater-param="state.count++"
+              data-action="click->reactive#effect"
+              data-reactive-effect-param="state.count++"
               class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
             >
               +
@@ -1454,57 +1361,106 @@ hello world</textarea
         }
       }
 
-      // New Binding2 Controller - Clean DOM-based approach
-      class Binding2Controller extends Controller {
+      class ReactiveController extends Controller {
         connect() {
-          this.setupSources();
-          this.sync(); // Initial sync
+          this.state = {};
+          this.connectState();
+          this.observer = new MutationObserver((mutations) => this.applyBindings());
+          this.connectBindings();
         }
 
-        setupSources() {
-          // Find all source elements and create dynamic properties
-          this.element.querySelectorAll("[data-binding-source]").forEach((element) => {
-            const sourceName = element.dataset.bindingSource;
-            // Create this.messageSource, this.progressSource, etc.
-            Object.defineProperty(this, `${sourceName}Source`, {
-              get: () => element,
-              configurable: true,
-            });
+        connectState() {
+          this.element.querySelectorAll("[data-reactive-state]").forEach((element) => {
+            const name = element.dataset.reactiveState;
+            const tagName = element.tagName[0] + element.tagName.slice(1).toLowerCase();
+            this[`connect${tagName}State`](name, element);
           });
         }
 
-        // Called by data-action="input->binding2#sync"
-        sync() {
-          this.applyTargets();
-        }
-
-        // Called by data-action="click->binding2#update"
-        update(event) {
-          // Execute the updater expression
-          const updater = event.target.dataset.bindingUpdater;
-          if (updater) {
-            new Function(updater).call(this);
-          }
-
-          // Then sync everything
-          this.sync();
-        }
-
-        applyTargets() {
-          this.element.querySelectorAll("[data-binding-target]").forEach((element) => {
-            const expression = element.dataset.bindingTarget;
-            try {
-              new Function("element", expression).call(this, element);
-            } catch (error) {
-              console.warn("Binding target error:", error, expression);
-            }
+        connectInputState(name, element) {
+          Object.defineProperty(this.state, name, {
+            get: () => element.value,
+            set: (value) => (element.value = value),
+            configurable: true,
+            enumerable: true,
           });
+        }
+
+        connectScriptState(name, element) {
+          Object.defineProperty(this.state, name, {
+            get: () => this.evaluateExpression(element.textContent.trim()),
+            configurable: true,
+            enumerable: true,
+          });
+        }
+
+        connectBindings() {
+          this.applyBindings();
+        }
+
+        connectObserver() {
+          this.observer.observe(this.element, {
+            attributes: true,
+            childList: true,
+            subtree: true,
+            attributeFilter: this.bindingAttributes,
+          });
+        }
+
+        disconnectObserver() {
+          this.observer.disconnect();
+        }
+
+        get bindingAttributes() {
+          return [":text", ":class"];
+        }
+
+        pauseObserver(callback) {
+          this.disconnectObserver();
+          callback();
+          this.connectObserver();
+        }
+
+        applyBindings() {
+          this.bindingAttributes.forEach((attribute) => {
+            const functionName = "apply" + attribute.slice(1, 2).toUpperCase() + attribute.slice(2) + "Binding";
+            this.element
+              .querySelectorAll(`[\\${attribute}]`)
+              .forEach((element) => this[functionName](element, element.getAttribute(attribute)));
+          });
+        }
+
+        applyTextBinding(element, expression) {
+          const newContent = this.evaluateExpression(expression);
+          this.pauseObserver(() => (element.textContent = newContent));
+        }
+
+        applyClassBinding(element, expression) {
+          const classes = this.evaluateExpression(expression);
+          Object.keys(classes).forEach((classNames) => this.applyClass(element, classNames, classes[classNames]));
+        }
+
+        applyClass(element, classNames, isToggled) {
+          classNames.split(" ").forEach((className) => this.pauseObserver(() => element.classList.toggle(className.trim(), isToggled)));
+        }
+
+        evaluateExpression(expression) {
+          return new Function("state", `return ${expression};`)(this.state);
+        }
+
+        effect(event) {
+          this.evaluateExpression(event.params.effect);
+          this.applyBindings();
+        }
+
+        disconnect() {
+          this.disconnectObserver();
         }
       }
 
       const application = Application.start();
       application.register("binding", BindingController);
-      application.register("binding2", Binding2Controller);
+      application.register("reactive", ReactiveController);
     </script>
   </body>
 </html>
