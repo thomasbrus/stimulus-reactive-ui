@@ -875,9 +875,234 @@
           </div>
         </div>
 
-        <!-- 11. Terms and Conditions Example -->
+        <!-- 11. Travel Booking Form (Dependent Dropdowns) -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">11. Terms & Conditions Agreement</h2>
+          <h2 class="text-xl font-semibold text-gray-700">11. Travel Booking Form (Dependent Dropdowns)</h2>
+          <div
+            data-controller="binding"
+            data-binding-initial-state="{
+            country: 'usa',
+            city: '',
+            travelers: 1,
+            tripType: 'roundtrip',
+            countries: {
+              'usa': { name: 'United States', cities: ['New York', 'Los Angeles', 'Chicago', 'Miami', 'San Francisco'] },
+              'france': { name: 'France', cities: ['Paris', 'Lyon', 'Marseille', 'Nice', 'Bordeaux'] },
+              'japan': { name: 'Japan', cities: ['Tokyo', 'Osaka', 'Kyoto', 'Hiroshima', 'Sapporo'] },
+              'italy': { name: 'Italy', cities: ['Rome', 'Milan', 'Venice', 'Florence', 'Naples'] },
+              'australia': { name: 'Australia', cities: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide'] }
+            }
+          }"
+          >
+            <!-- Computed Properties Templates -->
+            <script type="text/template" data-binding-computed="selectedCountryData">
+              state.country ? state.countries[state.country] : null
+            </script>
+            <script type="text/template" data-binding-computed="availableCities">
+              computed.selectedCountryData ? computed.selectedCountryData.cities : []
+            </script>
+            <script type="text/template" data-binding-computed="cityOptionsHtml">
+              `<option value="">Select a city...</option>` + computed.availableCities.map(city =>
+                `<option value="${city}" ${state.city === city ? 'selected' : ''}>${city}</option>`
+              ).join('')
+            </script>
+            <script type="text/template" data-binding-computed="hasSelection">
+              state.country && state.city
+            </script>
+            <script type="text/template" data-binding-computed="estimatedPrice">
+              computed.hasSelection ? Math.floor(Math.random() * 800) + 400 : 0
+            </script>
+            <script type="text/template" data-binding-computed="totalPrice">
+              computed.estimatedPrice * state.travelers * (state.tripType === 'roundtrip' ? 1 : 0.6)
+            </script>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Country Selection -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  <span class="flex items-center">
+                    Destination Country
+                    <span class="ml-1 text-red-500">*</span>
+                  </span>
+                </label>
+                <select
+                  data-binding-value="state.country"
+                  data-action="change->binding#updateState"
+                  data-binding-updater-param="state.country = target.value; state.city = ''"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select a country...</option>
+                  <option value="usa">🇺🇸 United States</option>
+                  <option value="france">🇫🇷 France</option>
+                  <option value="japan">🇯🇵 Japan</option>
+                  <option value="italy">🇮🇹 Italy</option>
+                  <option value="australia">🇦🇺 Australia</option>
+                </select>
+              </div>
+
+              <!-- City Selection (Dependent on Country) -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  <span class="flex items-center">
+                    Destination City
+                    <span class="ml-1 text-red-500">*</span>
+                  </span>
+                </label>
+                <select
+                  data-binding-value="state.city"
+                  data-action="change->binding#updateState"
+                  data-binding-updater-param="state.city = target.value"
+                  data-binding-disabled="!state.country"
+                  data-binding-html="computed.cityOptionsHtml"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select a city...</option>
+                </select>
+                <div data-binding-show="!state.country" class="text-xs text-gray-500 mt-1">Please select a country first</div>
+              </div>
+
+              <!-- Number of Travelers -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Number of Travelers </label>
+                <select
+                  data-binding-value="state.travelers"
+                  data-action="change->binding#updateState"
+                  data-binding-updater-param="state.travelers = parseInt(target.value)"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="1">1 Traveler</option>
+                  <option value="2">2 Travelers</option>
+                  <option value="3">3 Travelers</option>
+                  <option value="4">4 Travelers</option>
+                  <option value="5">5+ Travelers</option>
+                </select>
+              </div>
+
+              <!-- Trip Type -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Trip Type </label>
+                <select
+                  data-binding-value="state.tripType"
+                  data-action="change->binding#updateState"
+                  data-binding-updater-param="state.tripType = target.value"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="roundtrip">Round Trip</option>
+                  <option value="oneway">One Way</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Selected Destination Preview -->
+            <div
+              data-binding-show="computed.hasSelection"
+              class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200"
+            >
+              <h3 class="text-lg font-semibold text-gray-800 mb-2">Your Selected Destination</h3>
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span class="font-medium text-gray-600">Country:</span>
+                  <span
+                    data-binding-text="computed.selectedCountryData ? computed.selectedCountryData.name : ''"
+                    class="ml-2 font-semibold text-blue-700"
+                  ></span>
+                </div>
+                <div>
+                  <span class="font-medium text-gray-600">City:</span>
+                  <span data-binding-text="state.city" class="ml-2 font-semibold text-blue-700"></span>
+                </div>
+                <div>
+                  <span class="font-medium text-gray-600">Travelers:</span>
+                  <span
+                    data-binding-text="state.travelers + (state.travelers === 1 ? ' person' : ' people')"
+                    class="ml-2 font-semibold text-blue-700"
+                  ></span>
+                </div>
+                <div>
+                  <span class="font-medium text-gray-600">Trip Type:</span>
+                  <span
+                    data-binding-text="state.tripType === 'roundtrip' ? 'Round Trip' : 'One Way'"
+                    class="ml-2 font-semibold text-blue-700"
+                  ></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Price Estimation -->
+            <div data-binding-show="computed.hasSelection" class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+              <h3 class="text-lg font-semibold text-gray-800 mb-3">Price Estimation</h3>
+              <div class="space-y-2 text-sm">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-600">Base price per person:</span>
+                  <span data-binding-text="'$' + computed.estimatedPrice" class="font-medium text-gray-800"></span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-600">Number of travelers:</span>
+                  <span data-binding-text="state.travelers + 'x'" class="font-medium text-gray-800"></span>
+                </div>
+                <div data-binding-show="state.tripType === 'oneway'" class="flex justify-between items-center">
+                  <span class="text-gray-600">One-way discount:</span>
+                  <span class="font-medium text-green-600">-40%</span>
+                </div>
+                <div class="border-t border-green-300 pt-2 mt-2">
+                  <div class="flex justify-between items-center">
+                    <span class="font-semibold text-gray-800">Total estimated price:</span>
+                    <span data-binding-text="'$' + Math.round(computed.totalPrice)" class="text-xl font-bold text-green-700"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Helpful Information -->
+            <div data-binding-show="state.country && !state.city" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div class="flex items-start space-x-2">
+                <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                <div class="text-sm text-yellow-800">
+                  <div class="font-medium">Almost there!</div>
+                  <div>
+                    Please select a city in
+                    <span
+                      data-binding-text="computed.selectedCountryData ? computed.selectedCountryData.name : ''"
+                      class="font-semibold"
+                    ></span>
+                    to see pricing information.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3 mt-6">
+              <button
+                class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200"
+                data-binding-class="{
+                  'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': computed.hasSelection,
+                  'bg-gray-300 text-gray-500 cursor-not-allowed': !computed.hasSelection
+                }"
+                data-binding-disabled="!computed.hasSelection"
+              >
+                Search Flights
+              </button>
+              <button
+                data-action="click->binding#updateState"
+                data-binding-updater-param="state.country = ''; state.city = ''; state.travelers = 1; state.tripType = 'roundtrip'"
+                class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Reset Form
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 12. Terms and Conditions Example -->
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-gray-700">12. Terms & Conditions Agreement</h2>
           <div data-controller="binding" data-binding-initial-state="{ acceptTerms: false, acceptPrivacy: false, email: '' }">
             <!-- Computed Properties Templates -->
             <script type="text/template" data-binding-computed="isValidEmail">
