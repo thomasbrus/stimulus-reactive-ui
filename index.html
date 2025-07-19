@@ -87,57 +87,60 @@
         <!-- 3. Progress Bar Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">3. Progress Bar with Status</h2>
-          <div data-controller="binding" data-binding-initial-state="{ progress: 25 }">
-            <!-- Computed Properties Templates -->
-            <script type="text/template" data-binding-computed="progressColor">
-              ({ 'text-red-600': state.progress < 30, 'text-yellow-600': state.progress >= 30 && state.progress < 70, 'text-green-600':
-                            state.progress >= 70 })
+          <div data-controller="reactive">
+            <input type="range" data-reactive-state="progress" min="0" max="100" value="25" class="hidden" />
+            <script type="text/template" data-reactive-state="progressColor">
+              {
+                "text-red-600": state.progress < 30,
+                "text-yellow-600": state.progress >= 30 && state.progress < 70,
+                "text-green-600": state.progress >= 70,
+              }
             </script>
-            <script type="text/template" data-binding-computed="progressBarColor">
-              ({ 'bg-red-600': state.progress < 30, 'bg-yellow-600': state.progress >= 30 && state.progress < 70, 'bg-green-600':
-                            state.progress >= 70 })
+            <script type="text/template" data-reactive-state="progressBarColor">
+              {
+                "bg-red-600": state.progress < 30,
+                "bg-yellow-600": state.progress >= 30 && state.progress < 70,
+                "bg-green-600": state.progress >= 70,
+              }
             </script>
-
-            <script type="text/template" data-binding-computed="canDecrease">
+            <script type="text/template" data-reactive-state="canDecrease">
               state.progress > 0
             </script>
-            <script type="text/template" data-binding-computed="canIncrease">
+            <script type="text/template" data-reactive-state="canIncrease">
               state.progress < 100
             </script>
 
             <div class="flex justify-between items-center mb-2">
               <span class="text-sm font-medium text-gray-700">Progress:</span>
-              <span data-binding-text="state.progress + '%'" data-binding-class="computed.progressColor" class="text-sm font-bold">
-                25%
-              </span>
+              <span :text="state.progress + '%'" :class="state.progressColor" class="text-sm font-bold"></span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
               <div
-                data-binding-class="computed.progressBarColor"
+                :class="state.progressBarColor"
                 class="h-4 rounded-full transition-all duration-300"
-                data-binding-style="{ width: state.progress + '%' }"
+                :style="{ width: state.progress + '%' }"
               ></div>
             </div>
             <div class="flex gap-2">
               <button
-                data-action="click->binding#updateState"
-                data-binding-updater-param="state.progress = Math.max(0, state.progress - 10)"
-                data-binding-disabled="!computed.canDecrease"
+                data-action="click->reactive#mutate"
+                data-reactive-mutate-param="state.progress = Math.max(0, state.progress - 10)"
+                :disabled="!state.canDecrease"
                 class="bg-red-500 text-white hover:bg-red-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed px-3 py-1 rounded text-sm transition-colors"
               >
                 -10%
               </button>
               <button
-                data-action="click->binding#updateState"
-                data-binding-updater-param="state.progress = Math.min(100, state.progress + 10)"
-                data-binding-disabled="!computed.canIncrease"
+                data-action="click->reactive#mutate"
+                data-reactive-mutate-param="state.progress = Math.min(100, state.progress + 10)"
+                :disabled="!state.canIncrease"
                 class="bg-green-500 text-white hover:bg-green-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed px-3 py-1 rounded text-sm transition-colors"
               >
                 +10%
               </button>
               <button
-                data-action="click->binding#updateState"
-                data-binding-updater-param="state.progress = 25"
+                data-action="click->reactive#mutate"
+                data-reactive-mutate-param="state.progress = 25"
                 class="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600"
               >
                 Reset
@@ -1389,7 +1392,11 @@
         }
 
         connectInputState(name, element) {
-          this.defineState(name, { get: () => element.value, set: (value) => (element.value = value) });
+          this.defineState(name, { get: () => this.parseNumber(element.value), set: (value) => (element.value = value) });
+        }
+
+        parseNumber(value) {
+          return isNaN(value) ? value : Number(value);
         }
 
         connectScriptState(name, element) {
@@ -1427,7 +1434,7 @@
         }
 
         get supportedAttributes() {
-          return [":text", ":class"];
+          return [":text", ":class", ":style", ":disabled"];
         }
 
         pauseObserver(callback) {
@@ -1444,6 +1451,18 @@
         applyClassBinding(element, expression) {
           const classes = this.evaluateExpression(expression);
           Object.keys(classes).forEach((classNames) => this.applyClass(element, classNames, classes[classNames]));
+        }
+
+        applyStyleBinding(element, expression) {
+          const styles = this.evaluateExpression(expression);
+          Object.keys(styles).forEach((property) => {
+            this.pauseObserver(() => (element.style[property] = styles[property]));
+          });
+        }
+
+        applyDisabledBinding(element, expression) {
+          const isDisabled = this.evaluateExpression(expression);
+          this.pauseObserver(() => (element.disabled = isDisabled));
         }
 
         applyClass(element, classNames, isToggled) {
