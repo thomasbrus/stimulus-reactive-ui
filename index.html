@@ -20,34 +20,34 @@
   <body class="bg-gray-100 min-h-screen pt-12 pb-24">
     <div class="container mx-auto px-4">
       <div class="max-w-2xl mx-auto space-y-6">
-        <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Stimulus Data Binding Examples</h1>
+        <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Stimulus State Management Examples</h1>
 
         <!-- 1. Counter Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">1. Counter with Conditional Styling</h2>
-          <div class="flex gap-3" data-controller="reactive">
-            <input type="hidden" data-reactive-state="count" value="0" data-action="input->reactive#mutate" />
-            <script type="text/template" data-reactive-state="isNegative">
+          <div class="flex gap-3" data-controller="state">
+            <input type="hidden" data-state-name="count" value="0" data-action="input->state#update" />
+            <script type="text/template" data-state-name="isNegative">
               state.count < 0
             </script>
-            <script type="text/template" data-reactive-state="isPositive">
+            <script type="text/template" data-state-name="isPositive">
               state.count > 0
             </script>
             <button
-              data-action="click->reactive#mutate"
-              data-reactive-mutate-param="state.count--"
+              data-action="click->state#update"
+              data-state-update-param="state.count--"
               class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
             >
               -
             </button>
             <div
               class="flex-1 text-center p-2 bg-gray-100 rounded font-medium"
-              :text="state.count"
-              :class="{ '!bg-red-100': state.isNegative, '!bg-green-100': state.isPositive }"
+              @text="state.count"
+              @class="{ '!bg-red-100': state.isNegative, '!bg-green-100': state.isPositive }"
             ></div>
             <button
-              data-action="click->reactive#mutate"
-              data-reactive-mutate-param="state.count++"
+              data-action="click->state#update"
+              data-state-update-param="state.count++"
               class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
             >
               +
@@ -58,25 +58,25 @@
         <!-- 2. Text Input Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">2. Text Input with Dynamic Styling</h2>
-          <div class="flex gap-3" data-controller="reactive">
+          <div class="flex gap-3" data-controller="state">
             <input
               type="text"
-              data-reactive-state="message"
+              data-state-name="message"
               value="hello"
-              :class="{ 'bg-green-100': state.message === 'hello' }"
+              @class="{ 'bg-green-100': state.message === 'hello' }"
               class="flex-1 p-2 border border-gray-300 rounded"
-              data-action="input->reactive#mutate"
+              data-action="input->state#update"
             />
             <button
-              data-action="click->reactive#mutate"
-              data-reactive-mutate-param="state.message = ''"
+              data-action="click->state#update"
+              data-state-update-param="state.message = ''"
               class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
             >
               Clear
             </button>
             <button
-              data-action="click->reactive#mutate"
-              data-reactive-mutate-param="state.message = 'hello'"
+              data-action="click->state#update"
+              data-state-update-param="state.message = 'hello'"
               class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
             >
               Reset
@@ -87,60 +87,60 @@
         <!-- 3. Progress Bar Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">3. Progress Bar with Status</h2>
-          <div data-controller="reactive">
-            <input type="range" data-reactive-state="progress" min="0" max="100" value="25" class="hidden" />
-            <script type="text/template" data-reactive-state="progressPercentageColor">
+          <div data-controller="state">
+            <input type="range" data-state-name="progress" min="0" max="100" value="25" class="hidden" />
+            <script type="text/template" data-state-name="progressPercentageColor">
               {
                 "text-red-600": state.progress < 30,
                 "text-yellow-600": state.progress >= 30 && state.progress < 70,
                 "text-green-600": state.progress >= 70,
               }
             </script>
-            <script type="text/template" data-reactive-state="progressBarColor">
+            <script type="text/template" data-state-name="progressBarColor">
               {
                 "bg-red-600": state.progress < 30,
                 "bg-yellow-600": state.progress >= 30 && state.progress < 70,
                 "bg-green-600": state.progress >= 70,
               }
             </script>
-            <script type="text/template" data-reactive-state="canDecrease">
+            <script type="text/template" data-state-name="canDecrease">
               state.progress > 0
             </script>
-            <script type="text/template" data-reactive-state="canIncrease">
+            <script type="text/template" data-state-name="canIncrease">
               state.progress < 100
             </script>
 
             <div class="flex justify-between items-center mb-2">
               <span class="text-sm font-medium text-gray-700">Progress:</span>
-              <span :text="state.progress + '%'" :class="state.progressPercentageColor" class="text-sm font-bold"></span>
+              <span @text="state.progress + '%'" @class="state.progressPercentageColor" class="text-sm font-bold"></span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
               <div
-                :class="state.progressBarColor"
+                @class="state.progressBarColor"
                 class="h-4 rounded-full transition-all duration-150"
-                :style="{ width: state.progress + '%' }"
+                @style="{ width: state.progress + '%' }"
               ></div>
             </div>
             <div class="flex gap-2">
               <button
-                data-action="click->reactive#mutate"
-                data-reactive-mutate-param="state.progress = Math.max(0, state.progress - 10)"
-                :disabled="!state.canDecrease"
+                data-action="click->state#update"
+                data-state-update-param="state.progress = Math.max(0, state.progress - 10)"
+                @disabled="!state.canDecrease"
                 class="bg-red-500 text-white hover:bg-red-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed px-3 py-1 rounded text-sm transition-colors"
               >
                 -10%
               </button>
               <button
-                data-action="click->reactive#mutate"
-                data-reactive-mutate-param="state.progress = Math.min(100, state.progress + 10)"
-                :disabled="!state.canIncrease"
+                data-action="click->state#update"
+                data-state-update-param="state.progress = Math.min(100, state.progress + 10)"
+                @disabled="!state.canIncrease"
                 class="bg-green-500 text-white hover:bg-green-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed px-3 py-1 rounded text-sm transition-colors"
               >
                 +10%
               </button>
               <button
-                data-action="click->reactive#mutate"
-                data-reactive-mutate-param="state.progress = 25"
+                data-action="click->state#update"
+                data-state-update-param="state.progress = 25"
                 class="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600"
               >
                 Reset
@@ -152,14 +152,14 @@
         <!-- 4. Shopping Cart Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">4. Shopping Cart Calculator</h2>
-          <div data-controller="reactive">
-            <script type="text/template" data-reactive-state="subtotal">
+          <div data-controller="state">
+            <script type="text/template" data-state-name="subtotal">
               state.quantity * state.price;
             </script>
-            <script type="text/template" data-reactive-state="discountAmount">
+            <script type="text/template" data-state-name="discountAmount">
               (state.subtotal * state.discount) / 100;
             </script>
-            <script type="text/template" data-reactive-state="total">
+            <script type="text/template" data-state-name="total">
               state.subtotal - state.discountAmount;
             </script>
 
@@ -170,8 +170,8 @@
                   type="number"
                   min="1"
                   value="1"
-                  data-reactive-state="quantity"
-                  data-action="input->reactive#mutate"
+                  data-state-name="quantity"
+                  data-action="input->state#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 />
               </div>
@@ -182,37 +182,29 @@
                   step="0.01"
                   min="0"
                   value="29.99"
-                  data-reactive-state="price"
-                  data-action="input->reactive#mutate"
+                  data-state-name="price"
+                  data-action="input->state#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 />
               </div>
             </div>
             <div class="mb-4">
               <label class="block text-sm font-medium text-gray-700 mb-1">Discount (%)</label>
-              <input
-                type="range"
-                min="0"
-                max="50"
-                value="0"
-                data-reactive-state="discount"
-                data-action="input->reactive#mutate"
-                class="w-full"
-              />
-              <div class="text-center text-sm text-gray-600 mt-1" :text="state.discount + '% off'">0% off</div>
+              <input type="range" min="0" max="50" value="0" data-state-name="discount" data-action="input->state#update" class="w-full" />
+              <div class="text-center text-sm text-gray-600 mt-1" @text="state.discount + '% off'">0% off</div>
             </div>
             <div class="bg-gray-50 p-4 rounded">
               <div class="flex justify-between items-center text-sm text-gray-600 mb-1">
                 <span>Subtotal:</span>
-                <span :text="'$' + state.subtotal.toFixed(2)">$29.99</span>
+                <span @text="'$' + state.subtotal.toFixed(2)">$29.99</span>
               </div>
               <div class="flex justify-between items-center text-sm text-gray-600 mb-1">
                 <span>Discount:</span>
-                <span :text="'-$' + state.discountAmount.toFixed(2)">-$0.00</span>
+                <span @text="'-$' + state.discountAmount.toFixed(2)">-$0.00</span>
               </div>
               <div class="flex justify-between items-center text-lg font-bold text-gray-800 border-t pt-2">
                 <span>Total:</span>
-                <span :text="'$' + state.total.toFixed(2)">$29.99</span>
+                <span @text="'$' + state.total.toFixed(2)">$29.99</span>
               </div>
             </div>
           </div>
@@ -221,12 +213,12 @@
         <!-- 5. Theme Switcher Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">5. Theme Switcher</h2>
-          <div data-controller="reactive">
-            <script type="text/template" data-reactive-state="previewClasses">
+          <div data-controller="state">
+            <script type="text/template" data-state-name="previewClasses">
               { 'p-4 rounded transition-all duration-150': true, 'text-sm': state.fontSize === 'small', 'text-base': state.fontSize === 'medium', 'text-lg': state.fontSize === 'large' }
             </script>
 
-            <script type="text/template" data-reactive-state="previewHtml">
+            <script type="text/template" data-state-name="previewHtml">
               (theme) => `
                 <h3 class="font-bold mb-2">${theme} theme</h3>
                 <p>This is what your content will look with the selected theme and font size.</p>
@@ -242,22 +234,15 @@
                       type="radio"
                       name="theme"
                       value="light"
-                      data-reactive-state="theme"
-                      data-action="change->reactive#mutate"
+                      data-state-name="theme"
+                      data-action="change->state#update"
                       class="mr-2"
                       checked
                     />
                     Light
                   </label>
                   <label class="flex items-center">
-                    <input
-                      type="radio"
-                      name="theme"
-                      value="dark"
-                      data-reactive-state="theme"
-                      data-action="change->reactive#mutate"
-                      class="mr-2"
-                    />
+                    <input type="radio" name="theme" value="dark" data-state-name="theme" data-action="change->state#update" class="mr-2" />
                     Dark
                   </label>
                   <label class="flex items-center">
@@ -265,8 +250,8 @@
                       type="radio"
                       name="theme"
                       value="colorful"
-                      data-reactive-state="theme"
-                      data-action="change->reactive#mutate"
+                      data-state-name="theme"
+                      data-action="change->state#update"
                       class="mr-2"
                     />
                     Colorful
@@ -275,11 +260,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
-                <select
-                  data-reactive-state="fontSize"
-                  data-action="change->reactive#mutate"
-                  class="w-full p-2 border border-gray-300 rounded"
-                >
+                <select data-state-name="fontSize" data-action="change->state#update" class="w-full p-2 border border-gray-300 rounded">
                   <option value="small">Small</option>
                   <option value="medium" selected>Medium</option>
                   <option value="large">Large</option>
@@ -288,21 +269,21 @@
             </div>
             <div
               class="bg-gray-50 text-gray-800"
-              :class="state.previewClasses"
-              :show="state.theme === 'light'"
-              :html="state.previewHtml('Light')"
+              @class="state.previewClasses"
+              @show="state.theme === 'light'"
+              @html="state.previewHtml('Light')"
             ></div>
             <div
               class="bg-gray-800 border-gray-600 text-gray-100"
-              :class="state.previewClasses"
-              :show="state.theme === 'dark'"
-              :html="state.previewHtml('Dark')"
+              @class="state.previewClasses"
+              @show="state.theme === 'dark'"
+              @html="state.previewHtml('Dark')"
             ></div>
             <div
               class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white"
-              :class="state.previewClasses"
-              :show="state.theme === 'colorful'"
-              :html="state.previewHtml('Colorful')"
+              @class="state.previewClasses"
+              @show="state.theme === 'colorful'"
+              @html="state.previewHtml('Colorful')"
             ></div>
           </div>
         </div>
@@ -310,22 +291,22 @@
         <!-- 6. Accordion Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">6. Stateful Accordion</h2>
-          <div data-controller="reactive">
+          <div data-controller="state">
             <!-- Hidden input to track which panel is open -->
-            <input type="hidden" data-reactive-state="openPanel" value="" data-action="input->reactive#mutate" />
+            <input type="hidden" data-state-name="openPanel" value="" data-action="input->state#update" />
 
             <!-- Panel 1 -->
             <div class="border border-gray-200 rounded-lg mb-2">
               <button
                 class="w-full px-4 py-3 text-left font-medium text-gray-800 hover:bg-gray-50 rounded-t-lg flex justify-between items-center"
-                data-action="click->reactive#mutate"
-                data-reactive-mutate-param="state.openPanel = state.openPanel === 'panel1' ? '' : 'panel1'"
-                :class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel1' }"
+                data-action="click->state#update"
+                data-state-update-param="state.openPanel = state.openPanel === 'panel1' ? '' : 'panel1'"
+                @class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel1' }"
               >
                 <span>What is Stimulus?</span>
                 <svg
                   class="w-5 h-5 transition-transform duration-150"
-                  :class="{ 'rotate-180': state.openPanel === 'panel1' }"
+                  @class="{ 'rotate-180': state.openPanel === 'panel1' }"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -333,7 +314,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              <div class="overflow-hidden transition-all duration-150" :class="{ 'hidden': state.openPanel !== 'panel1' }">
+              <div class="overflow-hidden transition-all duration-150" @class="{ 'hidden': state.openPanel !== 'panel1' }">
                 <div class="p-4 text-gray-600">
                   Stimulus is a JavaScript framework with modest ambitions. It doesn't seek to take over your entire front-end—in fact, it's
                   not concerned with rendering HTML at all. Instead, it's designed to augment your HTML with just enough behavior to make it
@@ -346,14 +327,14 @@
             <div class="border border-gray-200 rounded-lg mb-2">
               <button
                 class="w-full px-4 py-3 text-left font-medium text-gray-800 hover:bg-gray-50 rounded-t-lg flex justify-between items-center"
-                data-action="click->reactive#mutate"
-                data-reactive-mutate-param="state.openPanel = state.openPanel === 'panel2' ? '' : 'panel2'"
-                :class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel2' }"
+                data-action="click->state#update"
+                data-state-update-param="state.openPanel = state.openPanel === 'panel2' ? '' : 'panel2'"
+                @class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel2' }"
               >
                 <span>How does data binding work?</span>
                 <svg
                   class="w-5 h-5 transition-transform duration-150"
-                  :class="{ 'rotate-180': state.openPanel === 'panel2' }"
+                  @class="{ 'rotate-180': state.openPanel === 'panel2' }"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -361,7 +342,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              <div class="overflow-hidden transition-all duration-150" :class="{ 'hidden': state.openPanel !== 'panel2' }">
+              <div class="overflow-hidden transition-all duration-150" @class="{ 'hidden': state.openPanel !== 'panel2' }">
                 <div class="p-4 text-gray-600">
                   Data binding allows you to automatically sync your application state with the DOM. When state changes, the UI updates
                   automatically without manual DOM manipulation. This creates reactive interfaces with minimal code.
@@ -373,14 +354,14 @@
             <div class="border border-gray-200 rounded-lg mb-2">
               <button
                 class="w-full px-4 py-3 text-left font-medium text-gray-800 hover:bg-gray-50 rounded-t-lg flex justify-between items-center"
-                data-action="click->reactive#mutate"
-                data-reactive-mutate-param="state.openPanel = state.openPanel === 'panel3' ? '' : 'panel3'"
-                :class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel3' }"
+                data-action="click->state#update"
+                data-state-update-param="state.openPanel = state.openPanel === 'panel3' ? '' : 'panel3'"
+                @class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel3' }"
               >
                 <span>Why use this approach?</span>
                 <svg
                   class="w-5 h-5 transition-transform duration-150"
-                  :class="{ 'rotate-180': state.openPanel === 'panel3' }"
+                  @class="{ 'rotate-180': state.openPanel === 'panel3' }"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -388,7 +369,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              <div class="overflow-hidden transition-all duration-150" :class="{ 'hidden': state.openPanel !== 'panel3' }">
+              <div class="overflow-hidden transition-all duration-150" @class="{ 'hidden': state.openPanel !== 'panel3' }">
                 <div class="p-4 text-gray-600">
                   This approach provides a clean separation between state and presentation. It's declarative, easy to understand, and
                   reduces the complexity of managing UI state. Plus, it works great with server-rendered HTML!
@@ -399,7 +380,7 @@
             <!-- Status indicator -->
             <div class="mt-4 text-sm text-gray-500 text-center">
               Currently open:
-              <span :text="state.openPanel || 'None'">None</span>
+              <span @text="state.openPanel || 'None'">None</span>
             </div>
           </div>
         </div>
@@ -407,23 +388,23 @@
         <!-- 7. Live Search Results Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">7. Live Search Results</h2>
-          <div data-controller="reactive">
-            <script type="text/template" data-reactive-state="items">
+          <div data-controller="state">
+            <script type="text/template" data-state-name="items">
               ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape']
             </script>
-            <script type="text/template" data-reactive-state="hasQuery">
+            <script type="text/template" data-state-name="hasQuery">
               state.query !== ''
             </script>
-            <script type="text/template" data-reactive-state="filteredResults">
+            <script type="text/template" data-state-name="filteredResults">
               state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase()))
             </script>
-            <script type="text/template" data-reactive-state="resultsText">
+            <script type="text/template" data-state-name="resultsText">
               state.hasQuery ? state.filteredResults.length + ' results found' : state.items.length + ' items available'
             </script>
-            <script type="text/template" data-reactive-state="hasNoResults">
+            <script type="text/template" data-state-name="hasNoResults">
               state.hasQuery && state.filteredResults.length === 0
             </script>
-            <script type="text/template" data-reactive-state="itemsHtml">
+            <script type="text/template" data-state-name="itemsHtml">
               state.filteredResults.map(item => `
                 <div class="p-2 bg-gray-50 rounded border-l-4 ${state.hasQuery ? 'border-blue-500' : 'border-gray-300'}">
                   ${item}
@@ -435,22 +416,22 @@
               type="text"
               placeholder="Search fruits..."
               value=""
-              data-reactive-state="query"
-              data-action="input->reactive#mutate"
+              data-state-name="query"
+              data-action="input->state#update"
               class="w-full p-3 border border-gray-300 rounded-lg mb-4"
             />
 
             <!-- Results counter -->
             <div class="text-sm text-gray-600 mb-2">
-              <span :text="state.resultsText">7 items available</span>
+              <span @text="state.resultsText">7 items available</span>
             </div>
 
             <!-- Results list -->
-            <div class="space-y-2" :html="state.itemsHtml"></div>
+            <div class="space-y-2" @html="state.itemsHtml"></div>
 
             <!-- No results message -->
-            <div :show="state.hasNoResults">
-              <p class="text-center text-gray-500 mt-4">No results found for "<span :text="state.query"></span>"</p>
+            <div @show="state.hasNoResults">
+              <p class="text-center text-gray-500 mt-4">No results found for "<span @text="state.query"></span>"</p>
             </div>
           </div>
         </div>
@@ -458,33 +439,33 @@
         <!-- 8. Character Counter Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">8. Character Counter & Text Analysis</h2>
-          <div data-controller="reactive">
+          <div data-controller="state">
             <!-- Computed Properties Templates -->
-            <script type="text/template" data-reactive-state="lineCount">
+            <script type="text/template" data-state-name="lineCount">
               state.text.split('\n').length
             </script>
-            <script type="text/template" data-reactive-state="wordCount">
+            <script type="text/template" data-state-name="wordCount">
               state.text.trim().split(/\s+/).filter(word => word.length > 0).length
             </script>
-            <script type="text/template" data-reactive-state="readingTime">
+            <script type="text/template" data-state-name="readingTime">
               Math.ceil(state.wordCount / 200)
             </script>
-            <script type="text/template" data-reactive-state="usagePercentage">
+            <script type="text/template" data-state-name="usagePercentage">
               Math.round((state.text.length / state.maxLength) * 100)
             </script>
-            <script type="text/template" data-reactive-state="isOverLimit">
+            <script type="text/template" data-state-name="isOverLimit">
               state.text.length > state.maxLength
             </script>
-            <script type="text/template" data-reactive-state="isNearLimit">
+            <script type="text/template" data-state-name="isNearLimit">
               state.text.length > state.maxLength * 0.8 && state.text.length <= state.maxLength
             </script>
-            <script type="text/template" data-reactive-state="isComfortable">
+            <script type="text/template" data-state-name="isComfortable">
               state.text.length > 0 && state.text.length <= state.maxLength * 0.8
             </script>
-            <script type="text/template" data-reactive-state="isEmpty">
+            <script type="text/template" data-state-name="isEmpty">
               state.text.length === 0
             </script>
-            <script type="text/template" data-reactive-state="isHalfway">
+            <script type="text/template" data-state-name="isHalfway">
               state.text.length > 0 && state.text.length <= state.maxLength * 0.5
             </script>
 
@@ -495,19 +476,19 @@
                 min="50"
                 max="500"
                 step="10"
-                data-reactive-state="maxLength"
-                data-action="input->reactive#mutate"
+                data-state-name="maxLength"
+                data-action="input->state#update"
                 class="w-full"
               />
-              <div class="text-center text-sm text-gray-600 mt-1" :text="state.maxLength + ' characters max'">280 characters max</div>
+              <div class="text-center text-sm text-gray-600 mt-1" @text="state.maxLength + ' characters max'">280 characters max</div>
             </div>
 
             <div class="relative">
               <textarea
                 placeholder="Start typing your message..."
-                data-reactive-state="text"
-                data-action="input->reactive#mutate"
-                :class="{
+                data-state-name="text"
+                data-action="input->state#update"
+                @class="{
                   'border-red-500 bg-red-50': state.isOverLimit,
                   'border-yellow-500 bg-yellow-50': state.isNearLimit,
                   'border-green-500 bg-green-50': state.isComfortable
@@ -520,13 +501,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <!-- Character count overlay -->
               <div
                 class="absolute bottom-3 right-3 px-2 py-1 rounded text-xs font-medium text-white"
-                :class="{
+                @class="{
                   'bg-red-600': state.isOverLimit,
                   'bg-yellow-600': state.isNearLimit,
                   'bg-green-600': state.isComfortable,
                   'bg-gray-500': state.isEmpty
                 }"
-                :text="state.text.length + '/' + state.maxLength"
+                @text="state.text.length + '/' + state.maxLength"
               >
                 0/280
               </div>
@@ -535,19 +516,19 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             <!-- Text Statistics -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" :text="state.text.length">0</div>
+                <div class="text-lg font-bold text-gray-800" @text="state.text.length">0</div>
                 <div class="text-sm text-gray-600">Characters</div>
               </div>
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" :text="state.wordCount">0</div>
+                <div class="text-lg font-bold text-gray-800" @text="state.wordCount">0</div>
                 <div class="text-sm text-gray-600">Words</div>
               </div>
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" :text="state.lineCount">1</div>
+                <div class="text-lg font-bold text-gray-800" @text="state.lineCount">1</div>
                 <div class="text-sm text-gray-600">Lines</div>
               </div>
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" :text="state.readingTime">0</div>
+                <div class="text-lg font-bold text-gray-800" @text="state.readingTime">0</div>
                 <div class="text-sm text-gray-600">Est. Reading (min)</div>
               </div>
             </div>
@@ -558,12 +539,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <span class="text-sm font-medium text-gray-700">Usage:</span>
                 <span
                   class="text-sm font-bold"
-                  :class="{
+                  @class="{
                     'text-red-600': state.isOverLimit,
                     'text-yellow-600': state.isNearLimit,
                     'text-green-600': !state.isOverLimit && !state.isNearLimit
                   }"
-                  :text="state.usagePercentage + '%'"
+                  @text="state.usagePercentage + '%'"
                 >
                   0%
                 </span>
@@ -571,12 +552,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div class="w-full bg-gray-200 rounded-full h-3">
                 <div
                   class="h-3 rounded-full transition-all duration-150"
-                  :class="{
+                  @class="{
                     'bg-red-500': state.isOverLimit,
                     'bg-yellow-500': state.isNearLimit,
                     'bg-green-500': !state.isOverLimit && !state.isNearLimit
                   }"
-                  :style="{ width: Math.min(100, state.usagePercentage) + '%' }"
+                  @style="{ width: Math.min(100, state.usagePercentage) + '%' }"
                 ></div>
               </div>
             </div>
@@ -585,26 +566,26 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             <div class="mt-4 space-y-2">
               <div
                 class="text-sm p-2 rounded"
-                :class="{
+                @class="{
                   'hidden': !state.isOverLimit,
                   'bg-red-100 text-red-700 border border-red-200': state.isOverLimit
                 }"
               >
                 ⚠️ You've exceeded the character limit by
-                <span :text="Math.max(0, state.text.length - state.maxLength)">0</span> characters.
+                <span @text="Math.max(0, state.text.length - state.maxLength)">0</span> characters.
               </div>
               <div
                 class="text-sm p-2 rounded"
-                :class="{
+                @class="{
                   'hidden': !state.isNearLimit,
                   'bg-yellow-100 text-yellow-700 border border-yellow-200': state.isNearLimit
                 }"
               >
-                ⚡ Approaching character limit - <span :text="state.maxLength - state.text.length">0</span> characters remaining.
+                ⚡ Approaching character limit - <span @text="state.maxLength - state.text.length">0</span> characters remaining.
               </div>
               <div
                 class="text-sm p-2 rounded"
-                :class="{
+                @class="{
                   'hidden': !state.isHalfway,
                   'bg-green-100 text-green-700 border border-green-200': state.isHalfway
                 }"
@@ -618,14 +599,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         <!-- 9. Subdomain Input Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">9. Subdomain Input with Validation</h2>
-          <div data-controller="reactive">
-            <script type="text/template" data-reactive-state="containsDomain">
+          <div data-controller="state">
+            <script type="text/template" data-state-name="containsDomain">
               state.subdomain.toLowerCase().includes('example.com')
             </script>
-            <script type="text/template" data-reactive-state="isEmpty">
+            <script type="text/template" data-state-name="isEmpty">
               state.subdomain.length === 0
             </script>
-            <script type="text/template" data-reactive-state="isValid">
+            <script type="text/template" data-state-name="isValid">
               state.subdomain.length > 0 && !state.containsDomain && /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(state.subdomain)
             </script>
 
@@ -637,9 +618,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                     type="text"
                     placeholder="www"
                     value="www.example.com"
-                    data-reactive-state="subdomain"
-                    data-action="input->reactive#mutate"
-                    :class="{
+                    data-state-name="subdomain"
+                    data-action="input->state#update"
+                    @class="{
                       'border-red-500 bg-red-50': !state.isValid && !state.isEmpty,
                       'border-green-500 bg-green-50': state.isValid,
                       'border-gray-300': state.isEmpty,
@@ -651,16 +632,16 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               </div>
 
               <!-- Preview of full domain -->
-              <div :show="state.subdomain.length > 0" class="p-3 bg-gray-50 rounded-lg">
+              <div @show="state.subdomain.length > 0" class="p-3 bg-gray-50 rounded-lg">
                 <div class="text-sm text-gray-600 mb-1">Your full domain will be:</div>
                 <div
                   class="font-mono text-lg font-medium"
-                  :class="{
+                  @class="{
                     'text-red-600': state.containsDomain,
                     'text-green-600': state.isValid,
                     'text-gray-800': !state.containsDomain && !state.isValid
                   }"
-                  :text="state.subdomain + '.example.com'"
+                  @text="state.subdomain + '.example.com'"
                 >
                   .example.com
                 </div>
@@ -669,7 +650,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <!-- Validation Messages -->
               <div class="space-y-2">
                 <!-- Domain warning -->
-                <div :show="state.containsDomain" class="flex items-start space-x-2 p-3 bg-red-100 border border-red-200 rounded-lg">
+                <div @show="state.containsDomain" class="flex items-start space-x-2 p-3 bg-red-100 border border-red-200 rounded-lg">
                   <svg class="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fill-rule="evenodd"
@@ -684,7 +665,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 </div>
 
                 <!-- Success message -->
-                <div :show="state.isValid" class="flex items-start space-x-2 p-3 bg-green-100 border border-green-200 rounded-lg">
+                <div @show="state.isValid" class="flex items-start space-x-2 p-3 bg-green-100 border border-green-200 rounded-lg">
                   <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fill-rule="evenodd"
@@ -700,7 +681,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
 
                 <!-- Invalid format message -->
                 <div
-                  :show="state.subdomain.length > 0 && !state.containsDomain && !state.isValid"
+                  @show="state.subdomain.length > 0 && !state.containsDomain && !state.isValid"
                   class="flex items-start space-x-2 p-3 bg-yellow-100 border border-yellow-200 rounded-lg"
                 >
                   <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -721,17 +702,17 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div class="flex gap-3 pt-2">
                 <button
                   class="px-4 py-2 rounded-lg font-medium transition-all duration-150"
-                  :class="{
+                  @class="{
                     'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.isValid,
                     'bg-gray-300 text-gray-500 cursor-not-allowed': !state.isValid
                   }"
-                  :disabled="!state.isValid"
+                  @disabled="!state.isValid"
                 >
                   Create Subdomain
                 </button>
                 <button
-                  data-action="click->reactive#mutate"
-                  data-reactive-mutate-param="state.subdomain = ''"
+                  data-action="click->state#update"
+                  data-state-update-param="state.subdomain = ''"
                   class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   Clear
@@ -744,9 +725,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         <!-- 10. User Management Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">10. User Management (Advanced Filtering)</h2>
-          <div data-controller="reactive">
+          <div data-controller="state">
             <!-- Initial data -->
-            <script type="text/template" data-reactive-state="users">
+            <script type="text/template" data-state-name="users">
               [
                 { name: 'Alice', role: 'admin', active: true, score: 91 },
                 { name: 'Bob', role: 'user', active: false, score: 78 },
@@ -756,14 +737,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </script>
 
             <!-- Computed Properties Templates -->
-            <script type="text/template" data-reactive-state="classifyScore">
+            <script type="text/template" data-state-name="classifyScore">
               (score) => {
                 if (score >= 90) return { level: 'excellent', color: 'text-green-600', label: 'Excellent' };
                 if (score >= 80) return { level: 'good', color: 'text-blue-600', label: 'Good' };
                 return { level: 'needs-improvement', color: 'text-yellow-600', label: 'Needs Improvement' };
               }
             </script>
-            <script type="text/template" data-reactive-state="filteredUsers">
+            <script type="text/template" data-state-name="filteredUsers">
               state.users.filter(user => {
                 // Role filter
                 const roleMatch = state.role === 'all' ||
@@ -777,7 +758,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 return roleMatch && scoreMatch;
               })
             </script>
-            <script type="text/template" data-reactive-state="sortedUsers">
+            <script type="text/template" data-state-name="sortedUsers">
               [...state.filteredUsers].sort((a, b) => {
                 if (state.sortBy === 'score') {
                   return b.score - a.score; // Sort by score descending
@@ -786,7 +767,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 return a.name.localeCompare(b.name);
               })
             </script>
-            <script type="text/template" data-reactive-state="usersHtml">
+            <script type="text/template" data-state-name="usersHtml">
               state.sortedUsers.map(user => {
                 const statusColor = user.active ? 'bg-green-500' : 'bg-red-500';
                 const scoreInfo = state.classifyScore(user.score);
@@ -817,8 +798,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
                 <select
                   value="all"
-                  data-reactive-state="role"
-                  data-action="change->reactive#mutate"
+                  data-state-name="role"
+                  data-action="change->state#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
                   <option value="all">All</option>
@@ -830,8 +811,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Score</label>
                 <select
                   value="all"
-                  data-reactive-state="scoreFilter"
-                  data-action="change->reactive#mutate"
+                  data-state-name="scoreFilter"
+                  data-action="change->state#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
                   <option value="all">All Scores</option>
@@ -844,8 +825,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
                 <select
                   value="name"
-                  data-reactive-state="sortBy"
-                  data-action="change->reactive#mutate"
+                  data-state-name="sortBy"
+                  data-action="change->state#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
                   <option value="name">Name (A-Z)</option>
@@ -855,21 +836,21 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </div>
 
             <!-- No users message -->
-            <div :show="state.sortedUsers.length === 0" class="text-center py-8 text-gray-500">
+            <div @show="state.sortedUsers.length === 0" class="text-center py-8 text-gray-500">
               <p>No users match the current filters</p>
             </div>
 
             <!-- User List -->
-            <div class="space-y-2" :html="state.usersHtml"></div>
+            <div class="space-y-2" @html="state.usersHtml"></div>
           </div>
         </div>
 
         <!-- 11. Travel Booking Form (Dependent Dropdowns) -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">11. Travel Booking Form (Dependent Dropdowns)</h2>
-          <div data-controller="reactive">
+          <div data-controller="state">
             <!-- Initial data -->
-            <script type="text/template" data-reactive-state="countries">
+            <script type="text/template" data-state-name="countries">
               {
                 'usa': { name: 'United States', cities: ['New York', 'Los Angeles', 'Chicago', 'Miami', 'San Francisco'] },
                 'france': { name: 'France', cities: ['Paris', 'Lyon', 'Marseille', 'Nice', 'Bordeaux'] },
@@ -880,24 +861,24 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </script>
 
             <!-- Computed Properties Templates -->
-            <script type="text/template" data-reactive-state="selectedCountryData">
+            <script type="text/template" data-state-name="selectedCountryData">
               state.country ? state.countries[state.country] : null
             </script>
-            <script type="text/template" data-reactive-state="availableCities">
+            <script type="text/template" data-state-name="availableCities">
               state.selectedCountryData ? state.selectedCountryData.cities : []
             </script>
-            <script type="text/template" data-reactive-state="cityOptionsHtml">
+            <script type="text/template" data-state-name="cityOptionsHtml">
               `<option value="">Select a city...</option>` + state.availableCities.map(city =>
                 `<option value="${city}" ${state.city === city ? 'selected' : ''}>${city}</option>`
               ).join('')
             </script>
-            <script type="text/template" data-reactive-state="hasSelection">
+            <script type="text/template" data-state-name="hasSelection">
               state.country && state.city
             </script>
-            <script type="text/template" data-reactive-state="estimatedPrice">
+            <script type="text/template" data-state-name="estimatedPrice">
               state.hasSelection ? Math.floor(Math.random() * 800) + 400 : 0
             </script>
-            <script type="text/template" data-reactive-state="totalPrice">
+            <script type="text/template" data-state-name="totalPrice">
               state.estimatedPrice * state.travelers * (state.tripType === 'roundtrip' ? 1 : 0.6)
             </script>
 
@@ -912,9 +893,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 </label>
                 <select
                   value="usa"
-                  data-reactive-state="country"
-                  data-action="change->reactive#mutate"
-                  data-reactive-mutate-param="state.city = ''"
+                  data-state-name="country"
+                  data-action="change->state#update"
+                  data-state-update-param="state.city = ''"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select a country...</option>
@@ -936,15 +917,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 </label>
                 <select
                   value=""
-                  data-reactive-state="city"
-                  data-action="change->reactive#mutate"
-                  :disabled="!state.country"
-                  :html="state.cityOptionsHtml"
+                  data-state-name="city"
+                  data-action="change->state#update"
+                  @disabled="!state.country"
+                  @html="state.cityOptionsHtml"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                   <option value="">Select a city...</option>
                 </select>
-                <div :show="!state.country" class="text-xs text-gray-500 mt-1">Please select a country first</div>
+                <div @show="!state.country" class="text-xs text-gray-500 mt-1">Please select a country first</div>
               </div>
 
               <!-- Number of Travelers -->
@@ -952,8 +933,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Number of Travelers </label>
                 <select
                   value="1"
-                  data-reactive-state="travelers"
-                  data-action="change->reactive#mutate"
+                  data-state-name="travelers"
+                  data-action="change->state#update"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="1">1 Traveler</option>
@@ -969,8 +950,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Trip Type </label>
                 <select
                   value="roundtrip"
-                  data-reactive-state="tripType"
-                  data-action="change->reactive#mutate"
+                  data-state-name="tripType"
+                  data-action="change->state#update"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="roundtrip">Round Trip</option>
@@ -980,61 +961,61 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </div>
 
             <!-- Selected Destination Preview -->
-            <div :show="state.hasSelection" class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+            <div @show="state.hasSelection" class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
               <h3 class="text-lg font-semibold text-gray-800 mb-2">Your Selected Destination</h3>
               <div class="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span class="font-medium text-gray-600">Country:</span>
                   <span
-                    :text="state.selectedCountryData ? state.selectedCountryData.name : ''"
+                    @text="state.selectedCountryData ? state.selectedCountryData.name : ''"
                     class="ml-2 font-semibold text-blue-700"
                   ></span>
                 </div>
                 <div>
                   <span class="font-medium text-gray-600">City:</span>
-                  <span :text="state.city" class="ml-2 font-semibold text-blue-700"></span>
+                  <span @text="state.city" class="ml-2 font-semibold text-blue-700"></span>
                 </div>
                 <div>
                   <span class="font-medium text-gray-600">Travelers:</span>
                   <span
-                    :text="state.travelers + (state.travelers === 1 ? ' person' : ' people')"
+                    @text="state.travelers + (state.travelers === 1 ? ' person' : ' people')"
                     class="ml-2 font-semibold text-blue-700"
                   ></span>
                 </div>
                 <div>
                   <span class="font-medium text-gray-600">Trip Type:</span>
-                  <span :text="state.tripType === 'roundtrip' ? 'Round Trip' : 'One Way'" class="ml-2 font-semibold text-blue-700"></span>
+                  <span @text="state.tripType === 'roundtrip' ? 'Round Trip' : 'One Way'" class="ml-2 font-semibold text-blue-700"></span>
                 </div>
               </div>
             </div>
 
             <!-- Price Estimation -->
-            <div :show="state.hasSelection" class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+            <div @show="state.hasSelection" class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
               <h3 class="text-lg font-semibold text-gray-800 mb-3">Price Estimation</h3>
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Base price per person:</span>
-                  <span :text="'$' + state.estimatedPrice" class="font-medium text-gray-800"></span>
+                  <span @text="'$' + state.estimatedPrice" class="font-medium text-gray-800"></span>
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Number of travelers:</span>
-                  <span :text="state.travelers + 'x'" class="font-medium text-gray-800"></span>
+                  <span @text="state.travelers + 'x'" class="font-medium text-gray-800"></span>
                 </div>
-                <div :show="state.tripType === 'oneway'" class="flex justify-between items-center">
+                <div @show="state.tripType === 'oneway'" class="flex justify-between items-center">
                   <span class="text-gray-600">One-way discount:</span>
                   <span class="font-medium text-green-600">-40%</span>
                 </div>
                 <div class="border-t border-green-300 pt-2 mt-2">
                   <div class="flex justify-between items-center">
                     <span class="font-semibold text-gray-800">Total estimated price:</span>
-                    <span :text="'$' + Math.round(state.totalPrice)" class="text-xl font-bold text-green-700"></span>
+                    <span @text="'$' + Math.round(state.totalPrice)" class="text-xl font-bold text-green-700"></span>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Helpful Information -->
-            <div :show="state.country && !state.city" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div @show="state.country && !state.city" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <div class="flex items-start space-x-2">
                 <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path
@@ -1047,7 +1028,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                   <div class="font-medium">Almost there!</div>
                   <div>
                     Please select a city in
-                    <span :text="state.selectedCountryData ? state.selectedCountryData.name : ''" class="font-semibold"></span>
+                    <span @text="state.selectedCountryData ? state.selectedCountryData.name : ''" class="font-semibold"></span>
                     to see pricing information.
                   </div>
                 </div>
@@ -1058,17 +1039,17 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             <div class="flex gap-3 mt-6">
               <button
                 class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-150"
-                :class="{
+                @class="{
                   'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.hasSelection,
                   'bg-gray-300 text-gray-500 cursor-not-allowed': !state.hasSelection
                 }"
-                :disabled="!state.hasSelection"
+                @disabled="!state.hasSelection"
               >
                 Search Flights
               </button>
               <button
-                data-action="click->reactive#mutate"
-                data-reactive-mutate-param="state.country = 'usa'; state.city = ''; state.travelers = 1; state.tripType = 'roundtrip'"
+                data-action="click->state#update"
+                data-state-update-param="state.country = 'usa'; state.city = ''; state.travelers = 1; state.tripType = 'roundtrip'"
                 class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Reset Form
@@ -1080,12 +1061,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         <!-- 12. Terms and Conditions Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">12. Terms & Conditions Agreement</h2>
-          <div data-controller="reactive">
+          <div data-controller="state">
             <!-- Computed Properties Templates -->
-            <script type="text/template" data-reactive-state="isValidEmail">
+            <script type="text/template" data-state-name="isValidEmail">
               state.email && state.email.includes('@') && state.email.length > 5
             </script>
-            <script type="text/template" data-reactive-state="allRequirementsMet">
+            <script type="text/template" data-state-name="allRequirementsMet">
               state.acceptTerms && state.acceptPrivacy && state.isValidEmail
             </script>
 
@@ -1096,8 +1077,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 type="email"
                 placeholder="Enter your email address"
                 value=""
-                data-reactive-state="email"
-                data-action="input->reactive#mutate"
+                data-state-name="email"
+                data-action="input->state#update"
                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -1107,8 +1088,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <label class="flex items-start space-x-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  data-reactive-state="acceptTerms"
-                  data-action="change->reactive#mutate"
+                  data-state-name="acceptTerms"
+                  data-action="change->state#update"
                   class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <div class="text-sm">
@@ -1122,8 +1103,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <label class="flex items-start space-x-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  data-reactive-state="acceptPrivacy"
-                  data-action="change->reactive#mutate"
+                  data-state-name="acceptPrivacy"
+                  data-action="change->state#update"
                   class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <div class="text-sm">
@@ -1141,36 +1122,36 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <div class="flex items-center space-x-2">
                   <div
                     class="w-4 h-4 rounded-full flex items-center justify-center"
-                    :class="{
+                    @class="{
                       'bg-green-500': state.isValidEmail,
                       'bg-red-500': !state.isValidEmail
                     }"
                   >
-                    <span class="text-xs text-white font-bold" :text="state.isValidEmail ? '✓' : '✗'">✗</span>
+                    <span class="text-xs text-white font-bold" @text="state.isValidEmail ? '✓' : '✗'">✗</span>
                   </div>
                   <span class="text-gray-600">Valid email address</span>
                 </div>
                 <div class="flex items-center space-x-2">
                   <div
                     class="w-4 h-4 rounded-full flex items-center justify-center"
-                    :class="{
+                    @class="{
                       'bg-green-500': state.acceptTerms,
                       'bg-red-500': !state.acceptTerms
                     }"
                   >
-                    <span class="text-xs text-white font-bold" :text="state.acceptTerms ? '✓' : '✗'">✗</span>
+                    <span class="text-xs text-white font-bold" @text="state.acceptTerms ? '✓' : '✗'">✗</span>
                   </div>
                   <span class="text-gray-600">Terms and Conditions accepted</span>
                 </div>
                 <div class="flex items-center space-x-2">
                   <div
                     class="w-4 h-4 rounded-full flex items-center justify-center"
-                    :class="{
+                    @class="{
                       'bg-green-500': state.acceptPrivacy,
                       'bg-red-500': !state.acceptPrivacy
                     }"
                   >
-                    <span class="text-xs text-white font-bold" :text="state.acceptPrivacy ? '✓' : '✗'">✗</span>
+                    <span class="text-xs text-white font-bold" @text="state.acceptPrivacy ? '✓' : '✗'">✗</span>
                   </div>
                   <span class="text-gray-600">Privacy Policy accepted</span>
                 </div>
@@ -1181,17 +1162,17 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             <div class="flex gap-3 mt-6">
               <button
                 class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-150"
-                :class="{
+                @class="{
                   'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.allRequirementsMet,
                   'bg-gray-300 text-gray-500 cursor-not-allowed': !state.allRequirementsMet
                 }"
-                :text="state.allRequirementsMet ? 'Create Account' : 'Complete Requirements'"
+                @text="state.allRequirementsMet ? 'Create Account' : 'Complete Requirements'"
               >
                 Complete Requirements
               </button>
               <button
-                data-action="click->reactive#mutate"
-                data-reactive-mutate-param="state.acceptTerms = false; state.acceptPrivacy = false; state.email = ''"
+                data-action="click->state#update"
+                data-state-update-param="state.acceptTerms = false; state.acceptPrivacy = false; state.email = ''"
                 class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Cancel
@@ -1204,11 +1185,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <span class="text-sm font-medium text-gray-700">Completion Progress:</span>
                 <span
                   class="text-sm font-bold"
-                  :class="{
+                  @class="{
                     'text-green-600': state.allRequirementsMet,
                     'text-blue-600': !state.allRequirementsMet
                   }"
-                  :text="Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (state.isValidEmail ? 1 : 0)) / 3 * 100) + '%'"
+                  @text="Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (state.isValidEmail ? 1 : 0)) / 3 * 100) + '%'"
                 >
                   0%
                 </span>
@@ -1216,19 +1197,19 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div class="w-full bg-gray-200 rounded-full h-2">
                 <div
                   class="h-2 rounded-full transition-all duration-150"
-                  :class="{
+                  @class="{
                     'bg-green-500': state.allRequirementsMet,
                     'bg-blue-500': !state.allRequirementsMet
                   }"
-                  :style="{ width: Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (state.isValidEmail ? 1 : 0)) / 3 * 100) + '%' }"
+                  @style="{ width: Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (state.isValidEmail ? 1 : 0)) / 3 * 100) + '%' }"
                 ></div>
               </div>
             </div>
 
             <!-- Help Text -->
             <div class="mt-4 text-sm text-gray-600">
-              <p :class="{ 'hidden': state.allRequirementsMet }">Please complete all requirements above to create your account.</p>
-              <p class="text-green-600 font-medium" :class="{ 'hidden': !state.allRequirementsMet }">
+              <p @class="{ 'hidden': state.allRequirementsMet }">Please complete all requirements above to create your account.</p>
+              <p class="text-green-600 font-medium" @class="{ 'hidden': !state.allRequirementsMet }">
                 ✅ All requirements met! You can now create your account.
               </p>
             </div>
@@ -1240,113 +1221,24 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
     <script type="module">
       import { Application, Controller } from "@hotwired/stimulus";
 
-      class BindingController extends Controller {
-        connect() {
-          this.state = new Function(`return ${this.data.get("initial-state")}`)();
-          this.computed = {};
-          this.applyBindings();
-        }
-
-        updateState(event) {
-          this.evaluateUpdate(event.params.updater, event.target);
-          this.applyBindings();
-        }
-
-        applyBindings() {
-          this.bindingElements("computed").forEach(this.applyComputedBinding.bind(this));
-          this.bindingElements("text").forEach(this.applyTextBinding.bind(this));
-          this.bindingElements("value").forEach(this.applyValueBinding.bind(this));
-          this.bindingElements("class").forEach(this.applyClassBinding.bind(this));
-          this.bindingElements("style").forEach(this.applyStyleBinding.bind(this));
-          this.bindingElements("checked").forEach(this.applyCheckedBinding.bind(this));
-          this.bindingElements("disabled").forEach(this.applyDisabledBinding.bind(this));
-          this.bindingElements("show").forEach(this.applyShowBinding.bind(this));
-          this.bindingElements("html").forEach(this.applyHtmlBinding.bind(this));
-        }
-
-        bindingElements(bindingName) {
-          return this.element.querySelectorAll(`[data-binding-${bindingName}]`);
-        }
-
-        applyTextBinding(element) {
-          element.textContent = this.evaluateExpression(element.dataset.bindingText);
-        }
-
-        applyValueBinding(element) {
-          element.value = this.evaluateExpression(element.dataset.bindingValue);
-        }
-
-        applyClassBinding(element) {
-          const classes = this.evaluateExpression(element.dataset.bindingClass);
-          Object.keys(classes).forEach((classNames) => this.applyClass(element, classNames, classes[classNames]));
-        }
-
-        applyClass(element, classNames, isToggled) {
-          classNames.split(" ").forEach((className) => element.classList.toggle(className.trim(), isToggled));
-        }
-
-        applyStyleBinding(element) {
-          const styles = this.evaluateExpression(element.dataset.bindingStyle);
-
-          Object.keys(styles).forEach((property) => {
-            element.style[property] = styles[property];
-          });
-        }
-
-        applyCheckedBinding(element) {
-          element.checked = this.evaluateExpression(element.dataset.bindingChecked);
-        }
-
-        applyDisabledBinding(element) {
-          element.disabled = this.evaluateExpression(element.dataset.bindingDisabled);
-        }
-
-        applyShowBinding(element) {
-          const shouldShow = this.evaluateExpression(element.dataset.bindingShow);
-          element.style.display = shouldShow ? "" : "none";
-        }
-
-        applyHtmlBinding(element) {
-          element.innerHTML = this.evaluateExpression(element.dataset.bindingHtml);
-        }
-
-        applyComputedBinding(element) {
-          const name = element.dataset.bindingComputed;
-          const templateContent = element.textContent.trim();
-
-          Object.defineProperty(this.computed, name, {
-            get: () => this.evaluateExpression(templateContent),
-            configurable: true,
-          });
-        }
-
-        evaluateUpdate(updater, target) {
-          this.state = new Function("state", "target", `${updater}; return state;`)(this.state, target);
-        }
-
-        evaluateExpression(expression) {
-          return new Function("state", "computed", `return ${expression};`)(this.state, this.computed);
-        }
-      }
-
       class BoundAttribute {
         constructor(element, attribute) {
           this.element = element;
           this.attribute = attribute;
           this.expression = element.getAttribute(attribute);
-          this.type = attribute.slice(1); // Remove the colon
+          this.type = attribute.slice(1); // Remove the @
         }
       }
 
       class StateElement {
         constructor(element) {
           this.element = element;
-          this.name = element.dataset.reactiveState;
+          this.name = element.dataset.stateName;
           this.tagName = element.tagName[0] + element.tagName.slice(1).toLowerCase();
         }
       }
 
-      class ReactiveController extends Controller {
+      class StateController extends Controller {
         connect() {
           this.state = {};
 
@@ -1365,9 +1257,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         collectStateElements() {
-          this.stateElements = Array.from(this.element.querySelectorAll("[data-reactive-state]")).map(
-            (element) => new StateElement(element)
-          );
+          this.stateElements = Array.from(this.element.querySelectorAll("[data-state-name]")).map((element) => new StateElement(element));
         }
 
         processStateElements() {
@@ -1426,7 +1316,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         get supportedAttributes() {
-          return [":text", ":html", ":class", ":style", ":show", ":disabled"];
+          return ["@text", "@html", "@class", "@style", "@show", "@disabled"];
         }
 
         pauseObserver(callback) {
@@ -1480,8 +1370,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           return isNaN(value) ? value : Number(value);
         }
 
-        mutate(event) {
-          this.evaluateExpression(event.params.mutate);
+        update(event) {
+          this.evaluateExpression(event.params.update);
           this.processBoundAttributes();
         }
 
@@ -1491,8 +1381,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
       }
 
       const application = Application.start();
-      application.register("binding", BindingController);
-      application.register("reactive", ReactiveController);
+      application.register("state", StateController);
     </script>
   </body>
 </html>
