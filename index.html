@@ -619,13 +619,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         <!-- 9. Subdomain Input Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">9. Subdomain Input with Validation</h2>
-          <div data-controller="binding" data-binding-initial-state="{ subdomain: '' }">
-            <!-- Computed Properties Templates -->
-            <script type="text/template" data-binding-computed="containsDomain">
+          <div data-controller="reactive">
+            <script type="text/template" data-reactive-state="containsDomain">
               state.subdomain.toLowerCase().includes('example.com')
             </script>
-            <script type="text/template" data-binding-computed="isValidSubdomain">
-              state.subdomain.length > 0 && !computed.containsDomain && /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(state.subdomain)
+            <script type="text/template" data-reactive-state="isEmpty">
+              state.subdomain.length === 0
+            </script>
+            <script type="text/template" data-reactive-state="isValid">
+              state.subdomain.length > 0 && !state.containsDomain && /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(state.subdomain)
             </script>
 
             <div class="space-y-4">
@@ -634,14 +636,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <div class="relative">
                   <input
                     type="text"
-                    placeholder="mysite"
-                    data-binding-value="state.subdomain"
-                    data-action="input->binding#updateState"
-                    data-binding-updater-param="state.subdomain = target.value"
-                    data-binding-class="{
-                      'border-red-500 bg-red-50': computed.containsDomain,
-                      'border-green-500 bg-green-50': computed.isValidSubdomain,
-                      'border-gray-300': state.subdomain.length === 0
+                    placeholder="www"
+                    value="www.example.com"
+                    data-reactive-state="subdomain"
+                    data-action="input->reactive#mutate"
+                    :class="{
+                      'border-red-500 bg-red-50': !state.isValid && !state.isEmpty,
+                      'border-green-500 bg-green-50': state.isValid,
+                      'border-gray-300': state.isEmpty,
                     }"
                     class="w-full pl-3 pr-32 py-2 border rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -650,16 +652,16 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               </div>
 
               <!-- Preview of full domain -->
-              <div data-binding-show="state.subdomain.length > 0" class="p-3 bg-gray-50 rounded-lg">
+              <div :show="state.subdomain.length > 0" class="p-3 bg-gray-50 rounded-lg">
                 <div class="text-sm text-gray-600 mb-1">Your full domain will be:</div>
                 <div
                   class="font-mono text-lg font-medium"
-                  data-binding-class="{
-                    'text-red-600': computed.containsDomain,
-                    'text-green-600': computed.isValidSubdomain,
-                    'text-gray-800': !computed.containsDomain && !computed.isValidSubdomain
+                  :class="{
+                    'text-red-600': state.containsDomain,
+                    'text-green-600': state.isValid,
+                    'text-gray-800': !state.containsDomain && !state.isValid
                   }"
-                  data-binding-text="state.subdomain + '.example.com'"
+                  :text="state.subdomain + '.example.com'"
                 >
                   .example.com
                 </div>
@@ -668,10 +670,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <!-- Validation Messages -->
               <div class="space-y-2">
                 <!-- Domain warning -->
-                <div
-                  data-binding-show="computed.containsDomain"
-                  class="flex items-start space-x-2 p-3 bg-red-100 border border-red-200 rounded-lg"
-                >
+                <div :show="state.containsDomain" class="flex items-start space-x-2 p-3 bg-red-100 border border-red-200 rounded-lg">
                   <svg class="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fill-rule="evenodd"
@@ -686,10 +685,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 </div>
 
                 <!-- Success message -->
-                <div
-                  data-binding-show="computed.isValidSubdomain"
-                  class="flex items-start space-x-2 p-3 bg-green-100 border border-green-200 rounded-lg"
-                >
+                <div :show="state.isValid" class="flex items-start space-x-2 p-3 bg-green-100 border border-green-200 rounded-lg">
                   <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fill-rule="evenodd"
@@ -705,7 +701,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
 
                 <!-- Invalid format message -->
                 <div
-                  data-binding-show="state.subdomain.length > 0 && !computed.containsDomain && !computed.isValidSubdomain"
+                  :show="state.subdomain.length > 0 && !state.containsDomain && !state.isValid"
                   class="flex items-start space-x-2 p-3 bg-yellow-100 border border-yellow-200 rounded-lg"
                 >
                   <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -726,17 +722,17 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div class="flex gap-3 pt-2">
                 <button
                   class="px-4 py-2 rounded-lg font-medium transition-all duration-200"
-                  data-binding-class="{
-                    'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': computed.isValidSubdomain,
-                    'bg-gray-300 text-gray-500 cursor-not-allowed': !computed.isValidSubdomain
+                  :class="{
+                    'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.isValid,
+                    'bg-gray-300 text-gray-500 cursor-not-allowed': !state.isValid
                   }"
-                  data-binding-disabled="!computed.isValidSubdomain"
+                  :disabled="!state.isValid"
                 >
                   Create Subdomain
                 </button>
                 <button
-                  data-action="click->binding#updateState"
-                  data-binding-updater-param="state.subdomain = ''"
+                  data-action="click->reactive#mutate"
+                  data-reactive-mutate-param="state.subdomain = ''"
                   class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   Clear
@@ -1373,7 +1369,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         connectState() {
-          // TODO: Figure out radio buttons and checkboxes that reuse the same state name
           this.element.querySelectorAll("[data-reactive-state]").forEach((element) => {
             const name = element.dataset.reactiveState;
             const tagName = element.tagName[0] + element.tagName.slice(1).toLowerCase();
@@ -1392,7 +1387,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           } else if (element.type === "radio") {
             return this.element.querySelector(`input[name="${name}"]:checked`)?.value || "";
           }
-          return this.parseNumber(element.value);
+          return element.value ? this.parseNumber(element.value) : "";
         }
 
         connectTextareaState(name, element) {
