@@ -592,7 +592,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 }"
               >
                 ⚠️ You've exceeded the character limit by
-                <span :text="Math.max(0, state.text.length - state.maxLength)">0</span> characters
+                <span :text="Math.max(0, state.text.length - state.maxLength)">0</span> characters.
               </div>
               <div
                 class="text-sm p-2 rounded"
@@ -601,7 +601,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                   'bg-yellow-100 text-yellow-700 border border-yellow-200': state.isNearLimit
                 }"
               >
-                ⚡ Approaching character limit - <span :text="state.maxLength - state.text.length">0</span> characters remaining
+                ⚡ Approaching character limit - <span :text="state.maxLength - state.text.length">0</span> characters remaining.
               </div>
               <div
                 class="text-sm p-2 rounded"
@@ -610,7 +610,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                   'bg-green-100 text-green-700 border border-green-200': state.isHalfway
                 }"
               >
-                ✅ Looking good! Plenty of room for more content
+                ✅ Looking good! Plenty of room for more content.
               </div>
             </div>
           </div>
@@ -1358,26 +1358,46 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
       }
 
+      class StateElement {
+        constructor(element) {
+          this.element = element;
+          this.name = element.dataset.reactiveState;
+          this.tagName = element.tagName[0] + element.tagName.slice(1).toLowerCase();
+        }
+      }
+
       class ReactiveController extends Controller {
         connect() {
           this.state = {};
-          this.observer = new MutationObserver((mutations) => this.collectBoundAttributes());
-          this.connectState();
+
+          this.observer = new MutationObserver((mutations) => {
+            this.collectStateElements();
+            this.collectBoundAttributes();
+          });
+
+          this.collectStateElements();
+          this.processStateElements();
+
           this.collectBoundAttributes();
-          this.evaluateBindings();
+          this.processBoundAttributes();
+
           this.connectObserver();
         }
 
-        connectState() {
-          this.element.querySelectorAll("[data-reactive-state]").forEach((element) => {
-            const name = element.dataset.reactiveState;
-            const tagName = element.tagName[0] + element.tagName.slice(1).toLowerCase();
-            const functionName = `connect${tagName}State`;
-            this[functionName](name, element);
+        collectStateElements() {
+          this.stateElements = Array.from(this.element.querySelectorAll("[data-reactive-state]")).map(
+            (element) => new StateElement(element)
+          );
+        }
+
+        processStateElements() {
+          this.stateElements.forEach((stateElement) => {
+            const functionName = `define${stateElement.tagName}State`;
+            this[functionName](stateElement.name, stateElement.element);
           });
         }
 
-        connectInputState(name, element) {
+        defineInputState(name, element) {
           this.defineState(name, { get: () => this.getInputValue(element, name), set: (value) => (element.value = value) });
         }
 
@@ -1390,15 +1410,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           return element.value ? this.parseNumber(element.value) : "";
         }
 
-        connectTextareaState(name, element) {
+        defineTextareaState(name, element) {
           this.defineState(name, { get: () => element.value, set: (value) => (element.value = value) });
         }
 
-        connectSelectState(name, element) {
+        defineSelectState(name, element) {
           this.defineState(name, { get: () => element.value, set: (value) => (element.value = value) });
         }
 
-        connectScriptState(name, element) {
+        defineScriptState(name, element) {
           this.defineState(name, { get: () => this.evaluateExpression(element.textContent.trim()) });
         }
 
@@ -1435,25 +1455,22 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           this.connectObserver();
         }
 
-        evaluateBindings() {
+        processBoundAttributes() {
           this.boundAttributes.forEach((binding) => {
-            const functionName = "evaluate" + binding.type[0].toUpperCase() + binding.type.slice(1) + "Binding";
-            this[functionName](binding.element, binding.expression);
+            const functionName = "apply" + binding.type[0].toUpperCase() + binding.type.slice(1) + "Binding";
+            this[functionName](binding.element, this.evaluateExpression(binding.expression));
           });
         }
 
-        evaluateTextBinding(element, expression) {
-          const newContent = this.evaluateExpression(expression);
+        applyTextBinding(element, newContent) {
           this.pauseObserver(() => (element.textContent = newContent));
         }
 
-        evaluateHtmlBinding(element, expression) {
-          const newContent = this.evaluateExpression(expression);
-          this.pauseObserver(() => (element.innerHTML = newContent));
+        applyHtmlBinding(element, newHtml) {
+          this.pauseObserver(() => (element.innerHTML = newHtml));
         }
 
-        evaluateClassBinding(element, expression) {
-          const classes = this.evaluateExpression(expression);
+        applyClassBinding(element, classes) {
           Object.keys(classes).forEach((classNames) => this.toggleClasses(element, classNames, classes[classNames]));
         }
 
@@ -1461,20 +1478,17 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           classNames.split(" ").forEach((className) => this.pauseObserver(() => element.classList.toggle(className.trim(), isToggled)));
         }
 
-        evaluateStyleBinding(element, expression) {
-          const styles = this.evaluateExpression(expression);
+        applyStyleBinding(element, styles) {
           Object.keys(styles).forEach((property) => {
             this.pauseObserver(() => (element.style[property] = styles[property]));
           });
         }
 
-        evaluateShowBinding(element, expression) {
-          const shouldShow = this.evaluateExpression(expression);
-          this.pauseObserver(() => (element.style.display = shouldShow ? "" : "none"));
+        applyShowBinding(element, isVisible) {
+          this.pauseObserver(() => (element.style.display = isVisible ? "" : "none"));
         }
 
-        evaluateDisabledBinding(element, expression) {
-          const isDisabled = this.evaluateExpression(expression);
+        applyDisabledBinding(element, isDisabled) {
           this.pauseObserver(() => (element.disabled = isDisabled));
         }
 
@@ -1488,7 +1502,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
 
         mutate(event) {
           this.evaluateExpression(event.params.mutate);
-          this.evaluateBindings();
+          this.processBoundAttributes();
         }
 
         disconnect() {
