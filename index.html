@@ -544,6 +544,163 @@
             </div>
           </div>
         </div>
+
+        <!-- Terms and Conditions Example -->
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-gray-700">Terms & Conditions Agreement</h2>
+          <div data-controller="binding" data-binding-initial-state="{ acceptTerms: false, acceptPrivacy: false, email: '' }">
+            <!-- Email Input -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+              <input
+                type="email"
+                placeholder="Enter your email address"
+                data-binding-value="state.email"
+                data-action="input->binding#updateState"
+                data-binding-updater-param="state.email = target.value"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <!-- Terms and Conditions Checkbox -->
+            <div class="space-y-4">
+              <label class="flex items-start space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  data-binding-checked="state.acceptTerms"
+                  data-action="change->binding#updateState"
+                  data-binding-updater-param="state.acceptTerms = target.checked"
+                  class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <div class="text-sm">
+                  <span class="text-gray-700">I agree to the </span>
+                  <a href="#" class="text-blue-600 hover:text-blue-800 underline">Terms and Conditions</a>
+                  <span class="text-gray-700"> and understand that my account will be subject to the platform rules and guidelines.</span>
+                </div>
+              </label>
+
+              <!-- Privacy Policy Checkbox -->
+              <label class="flex items-start space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  data-binding-checked="state.acceptPrivacy"
+                  data-action="change->binding#updateState"
+                  data-binding-updater-param="state.acceptPrivacy = target.checked"
+                  class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <div class="text-sm">
+                  <span class="text-gray-700">I have read and accept the </span>
+                  <a href="#" class="text-blue-600 hover:text-blue-800 underline">Privacy Policy</a>
+                  <span class="text-gray-700"> and consent to the collection and use of my personal data as described.</span>
+                </div>
+              </label>
+            </div>
+
+            <!-- Status Indicators -->
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+              <h3 class="text-sm font-medium text-gray-700 mb-3">Requirements Status:</h3>
+              <div class="space-y-2 text-sm">
+                <div class="flex items-center space-x-2">
+                  <div
+                    class="w-4 h-4 rounded-full flex items-center justify-center"
+                    data-binding-class="{
+                      'bg-green-500': state.email.includes('@') && state.email.length > 5,
+                      'bg-red-500': !(state.email.includes('@') && state.email.length > 5)
+                    }"
+                  >
+                    <span
+                      class="text-xs text-white font-bold"
+                      data-binding-text="(state.email.includes('@') && state.email.length > 5) ? '✓' : '✗'"
+                      >✗</span
+                    >
+                  </div>
+                  <span class="text-gray-600">Valid email address</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <div
+                    class="w-4 h-4 rounded-full flex items-center justify-center"
+                    data-binding-class="{
+                      'bg-green-500': state.acceptTerms,
+                      'bg-red-500': !state.acceptTerms
+                    }"
+                  >
+                    <span class="text-xs text-white font-bold" data-binding-text="state.acceptTerms ? '✓' : '✗'">✗</span>
+                  </div>
+                  <span class="text-gray-600">Terms and Conditions accepted</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <div
+                    class="w-4 h-4 rounded-full flex items-center justify-center"
+                    data-binding-class="{
+                      'bg-green-500': state.acceptPrivacy,
+                      'bg-red-500': !state.acceptPrivacy
+                    }"
+                  >
+                    <span class="text-xs text-white font-bold" data-binding-text="state.acceptPrivacy ? '✓' : '✗'">✗</span>
+                  </div>
+                  <span class="text-gray-600">Privacy Policy accepted</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3 mt-6">
+              <button
+                class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200"
+                data-binding-class="{
+                  'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.acceptTerms && state.acceptPrivacy && state.email.includes('@') && state.email.length > 5,
+                  'bg-gray-300 text-gray-500 cursor-not-allowed': !(state.acceptTerms && state.acceptPrivacy && state.email.includes('@') && state.email.length > 5)
+                }"
+                data-binding-text="(state.acceptTerms && state.acceptPrivacy && state.email.includes('@') && state.email.length > 5) ? 'Create Account' : 'Complete Requirements'"
+              >
+                Complete Requirements
+              </button>
+              <button class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
+            </div>
+
+            <!-- Progress Indicator -->
+            <div class="mt-4">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-gray-700">Completion Progress:</span>
+                <span
+                  class="text-sm font-bold"
+                  data-binding-class="{
+                    'text-green-600': (state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + ((state.email.includes('@') && state.email.length > 5) ? 1 : 0) === 3,
+                    'text-blue-600': (state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + ((state.email.includes('@') && state.email.length > 5) ? 1 : 0) < 3
+                  }"
+                  data-binding-text="Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + ((state.email.includes('@') && state.email.length > 5) ? 1 : 0)) / 3 * 100) + '%'"
+                >
+                  0%
+                </span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  class="h-2 rounded-full transition-all duration-300"
+                  data-binding-class="{
+                    'bg-green-500': (state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + ((state.email.includes('@') && state.email.length > 5) ? 1 : 0) === 3,
+                    'bg-blue-500': (state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + ((state.email.includes('@') && state.email.length > 5) ? 1 : 0) < 3
+                  }"
+                  data-binding-style="{ width: Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + ((state.email.includes('@') && state.email.length > 5) ? 1 : 0)) / 3 * 100) + '%' }"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Help Text -->
+            <div class="mt-4 text-sm text-gray-600">
+              <p
+                data-binding-class="{ 'hidden': state.acceptTerms && state.acceptPrivacy && state.email.includes('@') && state.email.length > 5 }"
+              >
+                Please complete all requirements above to create your account.
+              </p>
+              <p
+                class="text-green-600 font-medium"
+                data-binding-class="{ 'hidden': !(state.acceptTerms && state.acceptPrivacy && state.email.includes('@') && state.email.length > 5) }"
+              >
+                ✅ All requirements met! You can now create your account.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
