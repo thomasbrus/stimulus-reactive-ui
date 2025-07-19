@@ -26,7 +26,7 @@
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">1. Counter with Conditional Styling</h2>
           <div class="flex gap-3" data-controller="reactive">
-            <input type="text" data-reactive-state="count" value="0" data-action="input->reactive#effect" />
+            <input type="hidden" data-reactive-state="count" value="0" data-action="input->reactive#mutate" />
             <script type="text/template" data-reactive-state="isNegative">
               state.count < 0
             </script>
@@ -34,8 +34,8 @@
               state.count > 0
             </script>
             <button
-              data-action="click->reactive#effect"
-              data-reactive-effect-param="state.count--"
+              data-action="click->reactive#mutate"
+              data-reactive-mutate-param="state.count--"
               class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
             >
               -
@@ -46,8 +46,8 @@
               :class="{ '!bg-red-100': state.isNegative, '!bg-green-100': state.isPositive }"
             ></div>
             <button
-              data-action="click->reactive#effect"
-              data-reactive-effect-param="state.count++"
+              data-action="click->reactive#mutate"
+              data-reactive-mutate-param="state.count++"
               class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
             >
               +
@@ -1454,8 +1454,8 @@
           return new Function("state", `return ${expression};`)(this.state);
         }
 
-        effect(event) {
-          this.evaluateExpression(event.params.effect);
+        mutate(event) {
+          this.evaluateExpression(event.params.mutate);
           this.evaluateBindings();
         }
 
