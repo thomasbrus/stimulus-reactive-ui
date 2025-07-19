@@ -26,7 +26,7 @@
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">1. Counter with Conditional Styling</h2>
           <div class="flex gap-3" data-controller="reactive">
-            <input type="text" data-reactive-state="count" value="0" />
+            <input type="text" data-reactive-state="count" value="0" data-action="input->reactive#effect" />
             <script type="text/template" data-reactive-state="isNegative">
               state.count < 0
             </script>
@@ -1361,12 +1361,23 @@
         }
       }
 
+      class BoundAttribute {
+        constructor(element, attribute) {
+          this.element = element;
+          this.attribute = attribute;
+          this.expression = element.getAttribute(attribute);
+          this.type = attribute.slice(1); // Remove the colon
+        }
+      }
+
       class ReactiveController extends Controller {
         connect() {
           this.state = {};
+          this.observer = new MutationObserver((mutations) => this.collectBoundAttributes());
           this.connectState();
-          this.observer = new MutationObserver((mutations) => this.applyBindings());
-          this.connectBindings();
+          this.collectBoundAttributes();
+          this.evaluateBindings();
+          this.connectObserver();
         }
 
         connectState() {
@@ -1378,24 +1389,28 @@
         }
 
         connectInputState(name, element) {
-          Object.defineProperty(this.state, name, {
-            get: () => element.value,
-            set: (value) => (element.value = value),
-            configurable: true,
-            enumerable: true,
-          });
+          this.defineState(name, { get: () => element.value, set: (value) => (element.value = value) });
         }
 
         connectScriptState(name, element) {
-          Object.defineProperty(this.state, name, {
-            get: () => this.evaluateExpression(element.textContent.trim()),
-            configurable: true,
-            enumerable: true,
-          });
+          this.defineState(name, { get: () => this.evaluateExpression(element.textContent.trim()) });
         }
 
-        connectBindings() {
-          this.applyBindings();
+        defineState(name, descriptor) {
+          Object.defineProperty(this.state, name, { configurable: true, enumerable: true, ...descriptor });
+        }
+
+        collectBoundAttributes() {
+          this.boundAttributes = this.supportedAttributes.flatMap((attribute) =>
+            Array.from(this.element.querySelectorAll(`[\\${attribute}]`)).map((element) => new BoundAttribute(element, attribute))
+          );
+        }
+
+        evaluateBindings() {
+          this.boundAttributes.forEach((binding) => {
+            const functionName = "apply" + binding.type[0].toUpperCase() + binding.type.slice(1) + "Binding";
+            this[functionName](binding.element, binding.expression);
+          });
         }
 
         connectObserver() {
@@ -1403,7 +1418,7 @@
             attributes: true,
             childList: true,
             subtree: true,
-            attributeFilter: this.bindingAttributes,
+            attributeFilter: this.supportedAttributes,
           });
         }
 
@@ -1411,7 +1426,7 @@
           this.observer.disconnect();
         }
 
-        get bindingAttributes() {
+        get supportedAttributes() {
           return [":text", ":class"];
         }
 
@@ -1419,15 +1434,6 @@
           this.disconnectObserver();
           callback();
           this.connectObserver();
-        }
-
-        applyBindings() {
-          this.bindingAttributes.forEach((attribute) => {
-            const functionName = "apply" + attribute.slice(1, 2).toUpperCase() + attribute.slice(2) + "Binding";
-            this.element
-              .querySelectorAll(`[\\${attribute}]`)
-              .forEach((element) => this[functionName](element, element.getAttribute(attribute)));
-          });
         }
 
         applyTextBinding(element, expression) {
@@ -1450,7 +1456,7 @@
 
         effect(event) {
           this.evaluateExpression(event.params.effect);
-          this.applyBindings();
+          this.evaluateBindings();
         }
 
         disconnect() {
