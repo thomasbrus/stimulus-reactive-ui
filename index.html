@@ -209,27 +209,27 @@
             <!-- Status Messages -->
             <div class="mt-4 space-y-2">
               <div
-                class="bg-yellow-100 text-yellow-800 border border-yellow-200 p-3 rounded-lg"
+                class="text-sm bg-yellow-100 text-yellow-800 border border-yellow-200 p-3 rounded-lg"
                 live:show="state.absCount >= 25 && state.absCount < 35"
                 style="display: none"
               >
-                ⚡️ You're getting close to the limits, keep going!
+                <span class="pr-1">⚡️</span> You're getting close to the limits, keep going!
               </div>
 
               <div
-                class="bg-orange-100 text-orange-800 border border-orange-200 p-3 rounded-lg"
+                class="text-sm bg-orange-100 text-orange-800 border border-orange-200 p-3 rounded-lg"
                 live:show="state.absCount >= 35 && state.absCount < state.absMax"
                 style="display: none"
               >
-                🔥 Close to the ultimate number, almost there!
+                <span class="pr-1">🔥</span> Close to the ultimate number, almost there!
               </div>
 
               <div
-                class="p-3 rounded-lg bg-green-100 text-green-800 border border-green-200"
+                class="text-sm p-3 rounded-lg bg-green-100 text-green-800 border border-green-200"
                 live:show="state.count === state.absMax"
                 style="display: none"
               >
-                🎉 The answer to the ultimate question of life, the universe, and everything!
+                <span class="pr-1">🎉</span> The answer to the ultimate question of life, the universe, and everything!
               </div>
 
               <div
@@ -237,7 +237,8 @@
                 live:show="state.totalClicks > 0 && state.count === 0"
                 style="display: none"
               >
-                🎯 Back to the beginning! You've used up <span live:text="state.totalClicks">0</span> clicks total.
+                <span class="pr-1">🎯</span> Back to the beginning! You've used up <span live:text="state.totalClicks">0</span> clicks
+                total.
               </div>
             </div>
           </div>
