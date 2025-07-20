@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stimulus with Tailwind</title>
+    <title>Stimulus Reactive UI</title>
 
     <!-- Tailwind CSS via Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,17 +20,17 @@
   <body class="bg-gray-100 min-h-screen pt-12 pb-24">
     <div class="container mx-auto px-4">
       <div class="max-w-2xl mx-auto space-y-6">
-        <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Stimulus State Management Examples</h1>
+        <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Stimulus Reactive UI</h1>
 
         <!-- 1. Counter Example -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">1. Counter with Conditional Styling</h2>
           <div class="flex gap-3" data-controller="live">
-            <input type="hidden" data-live-state="count" value="0" data-action="input->live#update" />
-            <script type="text/template" data-live-state="isNegative">
+            <input type="hidden" data-live-property="count" value="0" data-action="input->live#update" />
+            <script type="text/template" data-live-property="isNegative">
               state.count < 0
             </script>
-            <script type="text/template" data-live-state="isPositive">
+            <script type="text/template" data-live-property="isPositive">
               state.count > 0
             </script>
             <button
@@ -42,8 +42,8 @@
             </button>
             <div
               class="flex-1 text-center p-2 bg-gray-100 rounded font-medium"
-              @text="state.count"
-              @class="{ '!bg-red-100': state.isNegative, '!bg-green-100': state.isPositive }"
+              live:text="state.count"
+              live:class="{ '!bg-red-100': state.isNegative, '!bg-green-100': state.isPositive }"
             ></div>
             <button
               data-action="click->live#update"
@@ -61,9 +61,9 @@
           <div class="flex gap-3" data-controller="live">
             <input
               type="text"
-              data-live-state="message"
+              data-live-property="message"
               value="hello"
-              @class="{ 'bg-green-100': state.message === 'hello' }"
+              live:class="{ 'bg-green-100': state.message === 'hello' }"
               class="flex-1 p-2 border border-gray-300 rounded"
               data-action="input->live#update"
             />
@@ -88,44 +88,44 @@
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">3. Progress Bar with Status</h2>
           <div data-controller="live">
-            <input type="range" data-live-state="progress" min="0" max="100" value="25" class="hidden" />
-            <script type="text/template" data-live-state="progressPercentageColor">
+            <input type="range" data-live-property="progress" min="0" max="100" value="25" class="hidden" />
+            <script type="text/template" data-live-property="progressPercentageColor">
               {
                 "text-red-600": state.progress < 30,
                 "text-yellow-600": state.progress >= 30 && state.progress < 70,
                 "text-green-600": state.progress >= 70,
               }
             </script>
-            <script type="text/template" data-live-state="progressBarColor">
+            <script type="text/template" data-live-property="progressBarColor">
               {
                 "bg-red-600": state.progress < 30,
                 "bg-yellow-600": state.progress >= 30 && state.progress < 70,
                 "bg-green-600": state.progress >= 70,
               }
             </script>
-            <script type="text/template" data-live-state="canDecrease">
+            <script type="text/template" data-live-property="canDecrease">
               state.progress > 0
             </script>
-            <script type="text/template" data-live-state="canIncrease">
+            <script type="text/template" data-live-property="canIncrease">
               state.progress < 100
             </script>
 
             <div class="flex justify-between items-center mb-2">
               <span class="text-sm font-medium text-gray-700">Progress:</span>
-              <span @text="state.progress + '%'" @class="state.progressPercentageColor" class="text-sm font-bold"></span>
+              <span live:text="state.progress + '%'" live:class="state.progressPercentageColor" class="text-sm font-bold"></span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
               <div
-                @class="state.progressBarColor"
+                live:class="state.progressBarColor"
                 class="h-4 rounded-full transition-all duration-150"
-                @style="{ width: state.progress + '%' }"
+                live:style="{ width: state.progress + '%' }"
               ></div>
             </div>
             <div class="flex gap-2">
               <button
                 data-action="click->live#update"
                 data-live-update-param="state.progress = Math.max(0, state.progress - 10)"
-                @disabled="!state.canDecrease"
+                live:disabled="!state.canDecrease"
                 class="bg-red-500 text-white hover:bg-red-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed px-3 py-1 rounded text-sm transition-colors"
               >
                 -10%
@@ -133,7 +133,7 @@
               <button
                 data-action="click->live#update"
                 data-live-update-param="state.progress = Math.min(100, state.progress + 10)"
-                @disabled="!state.canIncrease"
+                live:disabled="!state.canIncrease"
                 class="bg-green-500 text-white hover:bg-green-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed px-3 py-1 rounded text-sm transition-colors"
               >
                 +10%
@@ -153,13 +153,13 @@
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">4. Shopping Cart Calculator</h2>
           <div data-controller="live">
-            <script type="text/template" data-live-state="subtotal">
+            <script type="text/template" data-live-property="subtotal">
               state.quantity * state.price;
             </script>
-            <script type="text/template" data-live-state="discountAmount">
+            <script type="text/template" data-live-property="discountAmount">
               (state.subtotal * state.discount) / 100;
             </script>
-            <script type="text/template" data-live-state="total">
+            <script type="text/template" data-live-property="total">
               state.subtotal - state.discountAmount;
             </script>
 
@@ -170,7 +170,7 @@
                   type="number"
                   min="1"
                   value="1"
-                  data-live-state="quantity"
+                  data-live-property="quantity"
                   data-action="input->live#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 />
@@ -182,7 +182,7 @@
                   step="0.01"
                   min="0"
                   value="29.99"
-                  data-live-state="price"
+                  data-live-property="price"
                   data-action="input->live#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 />
@@ -190,21 +190,29 @@
             </div>
             <div class="mb-4">
               <label class="block text-sm font-medium text-gray-700 mb-1">Discount (%)</label>
-              <input type="range" min="0" max="50" value="0" data-live-state="discount" data-action="input->live#update" class="w-full" />
-              <div class="text-center text-sm text-gray-600 mt-1" @text="state.discount + '% off'">0% off</div>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                value="0"
+                data-live-property="discount"
+                data-action="input->live#update"
+                class="w-full"
+              />
+              <div class="text-center text-sm text-gray-600 mt-1" live:text="state.discount + '% off'">0% off</div>
             </div>
             <div class="bg-gray-50 p-4 rounded">
               <div class="flex justify-between items-center text-sm text-gray-600 mb-1">
                 <span>Subtotal:</span>
-                <span @text="'$' + state.subtotal.toFixed(2)">$29.99</span>
+                <span live:text="'$' + state.subtotal.toFixed(2)">$29.99</span>
               </div>
               <div class="flex justify-between items-center text-sm text-gray-600 mb-1">
                 <span>Discount:</span>
-                <span @text="'-$' + state.discountAmount.toFixed(2)">-$0.00</span>
+                <span live:text="'-$' + state.discountAmount.toFixed(2)">-$0.00</span>
               </div>
               <div class="flex justify-between items-center text-lg font-bold text-gray-800 border-t pt-2">
                 <span>Total:</span>
-                <span @text="'$' + state.total.toFixed(2)">$29.99</span>
+                <span live:text="'$' + state.total.toFixed(2)">$29.99</span>
               </div>
             </div>
           </div>
@@ -214,11 +222,11 @@
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">5. Theme Switcher</h2>
           <div data-controller="live">
-            <script type="text/template" data-live-state="previewClasses">
+            <script type="text/template" data-live-property="previewClasses">
               { 'p-4 rounded transition-all duration-150': true, 'text-sm': state.fontSize === 'small', 'text-base': state.fontSize === 'medium', 'text-lg': state.fontSize === 'large' }
             </script>
 
-            <script type="text/template" data-live-state="previewHtml">
+            <script type="text/template" data-live-property="previewHtml">
               (theme) => `
                 <h3 class="font-bold mb-2">${theme} theme</h3>
                 <p>This is what your content will look with the selected theme and font size.</p>
@@ -234,7 +242,7 @@
                       type="radio"
                       name="theme"
                       value="light"
-                      data-live-state="theme"
+                      data-live-property="theme"
                       data-action="change->live#update"
                       class="mr-2"
                       checked
@@ -242,7 +250,14 @@
                     Light
                   </label>
                   <label class="flex items-center">
-                    <input type="radio" name="theme" value="dark" data-live-state="theme" data-action="change->live#update" class="mr-2" />
+                    <input
+                      type="radio"
+                      name="theme"
+                      value="dark"
+                      data-live-property="theme"
+                      data-action="change->live#update"
+                      class="mr-2"
+                    />
                     Dark
                   </label>
                   <label class="flex items-center">
@@ -250,7 +265,7 @@
                       type="radio"
                       name="theme"
                       value="colorful"
-                      data-live-state="theme"
+                      data-live-property="theme"
                       data-action="change->live#update"
                       class="mr-2"
                     />
@@ -260,7 +275,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
-                <select data-live-state="fontSize" data-action="change->live#update" class="w-full p-2 border border-gray-300 rounded">
+                <select data-live-property="fontSize" data-action="change->live#update" class="w-full p-2 border border-gray-300 rounded">
                   <option value="small">Small</option>
                   <option value="medium" selected>Medium</option>
                   <option value="large">Large</option>
@@ -269,21 +284,21 @@
             </div>
             <div
               class="bg-gray-50 text-gray-800"
-              @class="state.previewClasses"
-              @show="state.theme === 'light'"
-              @html="state.previewHtml('Light')"
+              live:class="state.previewClasses"
+              live:show="state.theme === 'light'"
+              live:html="state.previewHtml('Light')"
             ></div>
             <div
               class="bg-gray-800 border-gray-600 text-gray-100"
-              @class="state.previewClasses"
-              @show="state.theme === 'dark'"
-              @html="state.previewHtml('Dark')"
+              live:class="state.previewClasses"
+              live:show="state.theme === 'dark'"
+              live:html="state.previewHtml('Dark')"
             ></div>
             <div
               class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white"
-              @class="state.previewClasses"
-              @show="state.theme === 'colorful'"
-              @html="state.previewHtml('Colorful')"
+              live:class="state.previewClasses"
+              live:show="state.theme === 'colorful'"
+              live:html="state.previewHtml('Colorful')"
             ></div>
           </div>
         </div>
@@ -293,7 +308,7 @@
           <h2 class="text-xl font-semibold text-gray-700">6. Stateful Accordion</h2>
           <div data-controller="live">
             <!-- Hidden input to track which panel is open -->
-            <input type="hidden" data-live-state="openPanel" value="" data-action="input->live#update" />
+            <input type="hidden" data-live-property="openPanel" value="" data-action="input->live#update" />
 
             <!-- Panel 1 -->
             <div class="border border-gray-200 rounded-lg mb-2">
@@ -301,12 +316,12 @@
                 class="w-full px-4 py-3 text-left font-medium text-gray-800 hover:bg-gray-50 rounded-t-lg flex justify-between items-center"
                 data-action="click->live#update"
                 data-live-update-param="state.openPanel = state.openPanel === 'panel1' ? '' : 'panel1'"
-                @class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel1' }"
+                live:class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel1' }"
               >
                 <span>What is Stimulus?</span>
                 <svg
                   class="w-5 h-5 transition-transform duration-150"
-                  @class="{ 'rotate-180': state.openPanel === 'panel1' }"
+                  live:class="{ 'rotate-180': state.openPanel === 'panel1' }"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -314,7 +329,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              <div class="overflow-hidden transition-all duration-150" @class="{ 'hidden': state.openPanel !== 'panel1' }">
+              <div class="overflow-hidden transition-all duration-150" live:class="{ 'hidden': state.openPanel !== 'panel1' }">
                 <div class="p-4 text-gray-600">
                   Stimulus is a JavaScript framework with modest ambitions. It doesn't seek to take over your entire front-end—in fact, it's
                   not concerned with rendering HTML at all. Instead, it's designed to augment your HTML with just enough behavior to make it
@@ -329,12 +344,12 @@
                 class="w-full px-4 py-3 text-left font-medium text-gray-800 hover:bg-gray-50 rounded-t-lg flex justify-between items-center"
                 data-action="click->live#update"
                 data-live-update-param="state.openPanel = state.openPanel === 'panel2' ? '' : 'panel2'"
-                @class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel2' }"
+                live:class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel2' }"
               >
                 <span>How does data binding work?</span>
                 <svg
                   class="w-5 h-5 transition-transform duration-150"
-                  @class="{ 'rotate-180': state.openPanel === 'panel2' }"
+                  live:class="{ 'rotate-180': state.openPanel === 'panel2' }"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -342,7 +357,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              <div class="overflow-hidden transition-all duration-150" @class="{ 'hidden': state.openPanel !== 'panel2' }">
+              <div class="overflow-hidden transition-all duration-150" live:class="{ 'hidden': state.openPanel !== 'panel2' }">
                 <div class="p-4 text-gray-600">
                   Data binding allows you to automatically sync your application state with the DOM. When state changes, the UI updates
                   automatically without manual DOM manipulation. This creates reactive interfaces with minimal code.
@@ -356,12 +371,12 @@
                 class="w-full px-4 py-3 text-left font-medium text-gray-800 hover:bg-gray-50 rounded-t-lg flex justify-between items-center"
                 data-action="click->live#update"
                 data-live-update-param="state.openPanel = state.openPanel === 'panel3' ? '' : 'panel3'"
-                @class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel3' }"
+                live:class="{ 'bg-blue-50 border-b border-gray-200': state.openPanel === 'panel3' }"
               >
                 <span>Why use this approach?</span>
                 <svg
                   class="w-5 h-5 transition-transform duration-150"
-                  @class="{ 'rotate-180': state.openPanel === 'panel3' }"
+                  live:class="{ 'rotate-180': state.openPanel === 'panel3' }"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -369,7 +384,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </button>
-              <div class="overflow-hidden transition-all duration-150" @class="{ 'hidden': state.openPanel !== 'panel3' }">
+              <div class="overflow-hidden transition-all duration-150" live:class="{ 'hidden': state.openPanel !== 'panel3' }">
                 <div class="p-4 text-gray-600">
                   This approach provides a clean separation between state and presentation. It's declarative, easy to understand, and
                   reduces the complexity of managing UI state. Plus, it works great with server-rendered HTML!
@@ -380,7 +395,7 @@
             <!-- Status indicator -->
             <div class="mt-4 text-sm text-gray-500 text-center">
               Currently open:
-              <span @text="state.openPanel || 'None'">None</span>
+              <span live:text="state.openPanel || 'None'">None</span>
             </div>
           </div>
         </div>
@@ -389,22 +404,22 @@
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">7. Live Search Results</h2>
           <div data-controller="live">
-            <script type="text/template" data-live-state="items">
+            <script type="text/template" data-live-property="items">
               ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape']
             </script>
-            <script type="text/template" data-live-state="hasQuery">
+            <script type="text/template" data-live-property="hasQuery">
               state.query !== ''
             </script>
-            <script type="text/template" data-live-state="filteredResults">
+            <script type="text/template" data-live-property="filteredResults">
               state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase()))
             </script>
-            <script type="text/template" data-live-state="resultsText">
+            <script type="text/template" data-live-property="resultsText">
               state.hasQuery ? state.filteredResults.length + ' results found' : state.items.length + ' items available'
             </script>
-            <script type="text/template" data-live-state="hasNoResults">
+            <script type="text/template" data-live-property="hasNoResults">
               state.hasQuery && state.filteredResults.length === 0
             </script>
-            <script type="text/template" data-live-state="itemsHtml">
+            <script type="text/template" data-live-property="itemsHtml">
               state.filteredResults.map(item => `
                 <div class="p-2 bg-gray-50 rounded border-l-4 ${state.hasQuery ? 'border-blue-500' : 'border-gray-300'}">
                   ${item}
@@ -416,22 +431,22 @@
               type="text"
               placeholder="Search fruits..."
               value=""
-              data-live-state="query"
+              data-live-property="query"
               data-action="input->live#update"
               class="w-full p-3 border border-gray-300 rounded-lg mb-4"
             />
 
             <!-- Results counter -->
             <div class="text-sm text-gray-600 mb-2">
-              <span @text="state.resultsText">7 items available</span>
+              <span live:text="state.resultsText">7 items available</span>
             </div>
 
             <!-- Results list -->
-            <div class="space-y-2" @html="state.itemsHtml"></div>
+            <div class="space-y-2" live:html="state.itemsHtml"></div>
 
             <!-- No results message -->
-            <div @show="state.hasNoResults">
-              <p class="text-center text-gray-500 mt-4">No results found for "<span @text="state.query"></span>"</p>
+            <div live:show="state.hasNoResults">
+              <p class="text-center text-gray-500 mt-4">No results found for "<span live:text="state.query"></span>"</p>
             </div>
           </div>
         </div>
@@ -441,31 +456,31 @@
           <h2 class="text-xl font-semibold text-gray-700">8. Character Counter & Text Analysis</h2>
           <div data-controller="live">
             <!-- Computed Properties Templates -->
-            <script type="text/template" data-live-state="lineCount">
+            <script type="text/template" data-live-property="lineCount">
               state.text.split('\n').length
             </script>
-            <script type="text/template" data-live-state="wordCount">
+            <script type="text/template" data-live-property="wordCount">
               state.text.trim().split(/\s+/).filter(word => word.length > 0).length
             </script>
-            <script type="text/template" data-live-state="readingTime">
+            <script type="text/template" data-live-property="readingTime">
               Math.ceil(state.wordCount / 200)
             </script>
-            <script type="text/template" data-live-state="usagePercentage">
+            <script type="text/template" data-live-property="usagePercentage">
               Math.round((state.text.length / state.maxLength) * 100)
             </script>
-            <script type="text/template" data-live-state="isOverLimit">
+            <script type="text/template" data-live-property="isOverLimit">
               state.text.length > state.maxLength
             </script>
-            <script type="text/template" data-live-state="isNearLimit">
+            <script type="text/template" data-live-property="isNearLimit">
               state.text.length > state.maxLength * 0.8 && state.text.length <= state.maxLength
             </script>
-            <script type="text/template" data-live-state="isComfortable">
+            <script type="text/template" data-live-property="isComfortable">
               state.text.length > 0 && state.text.length <= state.maxLength * 0.8
             </script>
-            <script type="text/template" data-live-state="isEmpty">
+            <script type="text/template" data-live-property="isEmpty">
               state.text.length === 0
             </script>
-            <script type="text/template" data-live-state="isHalfway">
+            <script type="text/template" data-live-property="isHalfway">
               state.text.length > 0 && state.text.length <= state.maxLength * 0.5
             </script>
 
@@ -476,19 +491,19 @@
                 min="50"
                 max="500"
                 step="10"
-                data-live-state="maxLength"
+                data-live-property="maxLength"
                 data-action="input->live#update"
                 class="w-full"
               />
-              <div class="text-center text-sm text-gray-600 mt-1" @text="state.maxLength + ' characters max'">280 characters max</div>
+              <div class="text-center text-sm text-gray-600 mt-1" live:text="state.maxLength + ' characters max'">280 characters max</div>
             </div>
 
             <div class="relative">
               <textarea
                 placeholder="Start typing your message..."
-                data-live-state="text"
+                data-live-property="text"
                 data-action="input->live#update"
-                @class="{
+                live:class="{
                   'border-red-500 bg-red-50': state.isOverLimit,
                   'border-yellow-500 bg-yellow-50': state.isNearLimit,
                   'border-green-500 bg-green-50': state.isComfortable
@@ -501,13 +516,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <!-- Character count overlay -->
               <div
                 class="absolute bottom-3 right-3 px-2 py-1 rounded text-xs font-medium text-white"
-                @class="{
+                live:class="{
                   'bg-red-600': state.isOverLimit,
                   'bg-yellow-600': state.isNearLimit,
                   'bg-green-600': state.isComfortable,
                   'bg-gray-500': state.isEmpty
                 }"
-                @text="state.text.length + '/' + state.maxLength"
+                live:text="state.text.length + '/' + state.maxLength"
               >
                 0/280
               </div>
@@ -516,19 +531,19 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             <!-- Text Statistics -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" @text="state.text.length">0</div>
+                <div class="text-lg font-bold text-gray-800" live:text="state.text.length">0</div>
                 <div class="text-sm text-gray-600">Characters</div>
               </div>
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" @text="state.wordCount">0</div>
+                <div class="text-lg font-bold text-gray-800" live:text="state.wordCount">0</div>
                 <div class="text-sm text-gray-600">Words</div>
               </div>
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" @text="state.lineCount">1</div>
+                <div class="text-lg font-bold text-gray-800" live:text="state.lineCount">1</div>
                 <div class="text-sm text-gray-600">Lines</div>
               </div>
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" @text="state.readingTime">0</div>
+                <div class="text-lg font-bold text-gray-800" live:text="state.readingTime">0</div>
                 <div class="text-sm text-gray-600">Est. Reading (min)</div>
               </div>
             </div>
@@ -539,12 +554,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <span class="text-sm font-medium text-gray-700">Usage:</span>
                 <span
                   class="text-sm font-bold"
-                  @class="{
+                  live:class="{
                     'text-red-600': state.isOverLimit,
                     'text-yellow-600': state.isNearLimit,
                     'text-green-600': !state.isOverLimit && !state.isNearLimit
                   }"
-                  @text="state.usagePercentage + '%'"
+                  live:text="state.usagePercentage + '%'"
                 >
                   0%
                 </span>
@@ -552,12 +567,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div class="w-full bg-gray-200 rounded-full h-3">
                 <div
                   class="h-3 rounded-full transition-all duration-150"
-                  @class="{
+                  live:class="{
                     'bg-red-500': state.isOverLimit,
                     'bg-yellow-500': state.isNearLimit,
                     'bg-green-500': !state.isOverLimit && !state.isNearLimit
                   }"
-                  @style="{ width: Math.min(100, state.usagePercentage) + '%' }"
+                  live:style="{ width: Math.min(100, state.usagePercentage) + '%' }"
                 ></div>
               </div>
             </div>
@@ -566,26 +581,26 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             <div class="mt-4 space-y-2">
               <div
                 class="text-sm p-2 rounded"
-                @class="{
+                live:class="{
                   'hidden': !state.isOverLimit,
                   'bg-red-100 text-red-700 border border-red-200': state.isOverLimit
                 }"
               >
                 ⚠️ You've exceeded the character limit by
-                <span @text="Math.max(0, state.text.length - state.maxLength)">0</span> characters.
+                <span live:text="Math.max(0, state.text.length - state.maxLength)">0</span> characters.
               </div>
               <div
                 class="text-sm p-2 rounded"
-                @class="{
+                live:class="{
                   'hidden': !state.isNearLimit,
                   'bg-yellow-100 text-yellow-700 border border-yellow-200': state.isNearLimit
                 }"
               >
-                ⚡ Approaching character limit - <span @text="state.maxLength - state.text.length">0</span> characters remaining.
+                ⚡ Approaching character limit - <span live:text="state.maxLength - state.text.length">0</span> characters remaining.
               </div>
               <div
                 class="text-sm p-2 rounded"
-                @class="{
+                live:class="{
                   'hidden': !state.isHalfway,
                   'bg-green-100 text-green-700 border border-green-200': state.isHalfway
                 }"
@@ -600,13 +615,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 class="text-xl font-semibold text-gray-700">9. Subdomain Input with Validation</h2>
           <div data-controller="live">
-            <script type="text/template" data-live-state="containsDomain">
+            <script type="text/template" data-live-property="containsDomain">
               state.subdomain.toLowerCase().includes('example.com')
             </script>
-            <script type="text/template" data-live-state="isEmpty">
+            <script type="text/template" data-live-property="isEmpty">
               state.subdomain.length === 0
             </script>
-            <script type="text/template" data-live-state="isValid">
+            <script type="text/template" data-live-property="isValid">
               state.subdomain.length > 0 && !state.containsDomain && /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(state.subdomain)
             </script>
 
@@ -618,9 +633,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                     type="text"
                     placeholder="www"
                     value="www.example.com"
-                    data-live-state="subdomain"
+                    data-live-property="subdomain"
                     data-action="input->live#update"
-                    @class="{
+                    live:class="{
                       'border-red-500 bg-red-50': !state.isValid && !state.isEmpty,
                       'border-green-500 bg-green-50': state.isValid,
                       'border-gray-300': state.isEmpty,
@@ -632,16 +647,16 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               </div>
 
               <!-- Preview of full domain -->
-              <div @show="state.subdomain.length > 0" class="p-3 bg-gray-50 rounded-lg">
+              <div live:show="state.subdomain.length > 0" class="p-3 bg-gray-50 rounded-lg">
                 <div class="text-sm text-gray-600 mb-1">Your full domain will be:</div>
                 <div
                   class="font-mono text-lg font-medium"
-                  @class="{
+                  live:class="{
                     'text-red-600': state.containsDomain,
                     'text-green-600': state.isValid,
                     'text-gray-800': !state.containsDomain && !state.isValid
                   }"
-                  @text="state.subdomain + '.example.com'"
+                  live:text="state.subdomain + '.example.com'"
                 >
                   .example.com
                 </div>
@@ -650,7 +665,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <!-- Validation Messages -->
               <div class="space-y-2">
                 <!-- Domain warning -->
-                <div @show="state.containsDomain" class="flex items-start space-x-2 p-3 bg-red-100 border border-red-200 rounded-lg">
+                <div live:show="state.containsDomain" class="flex items-start space-x-2 p-3 bg-red-100 border border-red-200 rounded-lg">
                   <svg class="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fill-rule="evenodd"
@@ -665,7 +680,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 </div>
 
                 <!-- Success message -->
-                <div @show="state.isValid" class="flex items-start space-x-2 p-3 bg-green-100 border border-green-200 rounded-lg">
+                <div live:show="state.isValid" class="flex items-start space-x-2 p-3 bg-green-100 border border-green-200 rounded-lg">
                   <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fill-rule="evenodd"
@@ -681,7 +696,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
 
                 <!-- Invalid format message -->
                 <div
-                  @show="state.subdomain.length > 0 && !state.containsDomain && !state.isValid"
+                  live:show="state.subdomain.length > 0 && !state.containsDomain && !state.isValid"
                   class="flex items-start space-x-2 p-3 bg-yellow-100 border border-yellow-200 rounded-lg"
                 >
                   <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -702,11 +717,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div class="flex gap-3 pt-2">
                 <button
                   class="px-4 py-2 rounded-lg font-medium transition-all duration-150"
-                  @class="{
+                  live:class="{
                     'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.isValid,
                     'bg-gray-300 text-gray-500 cursor-not-allowed': !state.isValid
                   }"
-                  @disabled="!state.isValid"
+                  live:disabled="!state.isValid"
                 >
                   Create Subdomain
                 </button>
@@ -727,7 +742,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           <h2 class="text-xl font-semibold text-gray-700">10. User Management (Advanced Filtering)</h2>
           <div data-controller="live">
             <!-- Initial data -->
-            <script type="text/template" data-live-state="users">
+            <script type="text/template" data-live-property="users">
               [
                 { name: 'Alice', role: 'admin', active: true, score: 91 },
                 { name: 'Bob', role: 'user', active: false, score: 78 },
@@ -737,14 +752,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </script>
 
             <!-- Computed Properties Templates -->
-            <script type="text/template" data-live-state="classifyScore">
+            <script type="text/template" data-live-property="classifyScore">
               (score) => {
                 if (score >= 90) return { level: 'excellent', color: 'text-green-600', label: 'Excellent' };
                 if (score >= 80) return { level: 'good', color: 'text-blue-600', label: 'Good' };
                 return { level: 'needs-improvement', color: 'text-yellow-600', label: 'Needs Improvement' };
               }
             </script>
-            <script type="text/template" data-live-state="filteredUsers">
+            <script type="text/template" data-live-property="filteredUsers">
               state.users.filter(user => {
                 // Role filter
                 const roleMatch = state.role === 'all' ||
@@ -758,7 +773,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 return roleMatch && scoreMatch;
               })
             </script>
-            <script type="text/template" data-live-state="sortedUsers">
+            <script type="text/template" data-live-property="sortedUsers">
               [...state.filteredUsers].sort((a, b) => {
                 if (state.sortBy === 'score') {
                   return b.score - a.score; // Sort by score descending
@@ -767,7 +782,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 return a.name.localeCompare(b.name);
               })
             </script>
-            <script type="text/template" data-live-state="usersHtml">
+            <script type="text/template" data-live-property="usersHtml">
               state.sortedUsers.map(user => {
                 const statusColor = user.active ? 'bg-green-500' : 'bg-red-500';
                 const scoreInfo = state.classifyScore(user.score);
@@ -798,7 +813,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
                 <select
                   value="all"
-                  data-live-state="role"
+                  data-live-property="role"
                   data-action="change->live#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
@@ -811,7 +826,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Score</label>
                 <select
                   value="all"
-                  data-live-state="scoreFilter"
+                  data-live-property="scoreFilter"
                   data-action="change->live#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
@@ -825,7 +840,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
                 <select
                   value="name"
-                  data-live-state="sortBy"
+                  data-live-property="sortBy"
                   data-action="change->live#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
@@ -836,12 +851,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </div>
 
             <!-- No users message -->
-            <div @show="state.sortedUsers.length === 0" class="text-center py-8 text-gray-500">
+            <div live:show="state.sortedUsers.length === 0" class="text-center py-8 text-gray-500">
               <p>No users match the current filters</p>
             </div>
 
             <!-- User List -->
-            <div class="space-y-2" @html="state.usersHtml"></div>
+            <div class="space-y-2" live:html="state.usersHtml"></div>
           </div>
         </div>
 
@@ -850,7 +865,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           <h2 class="text-xl font-semibold text-gray-700">11. Travel Booking Form (Dependent Dropdowns)</h2>
           <div data-controller="live">
             <!-- Initial data -->
-            <script type="text/template" data-live-state="countries">
+            <script type="text/template" data-live-property="countries">
               {
                 'usa': { name: 'United States', cities: ['New York', 'Los Angeles', 'Chicago', 'Miami', 'San Francisco'] },
                 'france': { name: 'France', cities: ['Paris', 'Lyon', 'Marseille', 'Nice', 'Bordeaux'] },
@@ -861,24 +876,24 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </script>
 
             <!-- Computed Properties Templates -->
-            <script type="text/template" data-live-state="selectedCountryData">
+            <script type="text/template" data-live-property="selectedCountryData">
               state.country ? state.countries[state.country] : null
             </script>
-            <script type="text/template" data-live-state="availableCities">
+            <script type="text/template" data-live-property="availableCities">
               state.selectedCountryData ? state.selectedCountryData.cities : []
             </script>
-            <script type="text/template" data-live-state="cityOptionsHtml">
+            <script type="text/template" data-live-property="cityOptionsHtml">
               `<option value="">Select a city...</option>` + state.availableCities.map(city =>
                 `<option value="${city}" ${state.city === city ? 'selected' : ''}>${city}</option>`
               ).join('')
             </script>
-            <script type="text/template" data-live-state="hasSelection">
+            <script type="text/template" data-live-property="hasSelection">
               state.country && state.city
             </script>
-            <script type="text/template" data-live-state="estimatedPrice">
+            <script type="text/template" data-live-property="estimatedPrice">
               state.hasSelection ? Math.floor(Math.random() * 800) + 400 : 0
             </script>
-            <script type="text/template" data-live-state="totalPrice">
+            <script type="text/template" data-live-property="totalPrice">
               state.estimatedPrice * state.travelers * (state.tripType === 'roundtrip' ? 1 : 0.6)
             </script>
 
@@ -893,7 +908,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 </label>
                 <select
                   value="usa"
-                  data-live-state="country"
+                  data-live-property="country"
                   data-action="change->live#update"
                   data-live-update-param="state.city = ''"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -917,15 +932,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 </label>
                 <select
                   value=""
-                  data-live-state="city"
+                  data-live-property="city"
                   data-action="change->live#update"
-                  @disabled="!state.country"
-                  @html="state.cityOptionsHtml"
+                  live:disabled="!state.country"
+                  live:html="state.cityOptionsHtml"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                   <option value="">Select a city...</option>
                 </select>
-                <div @show="!state.country" class="text-xs text-gray-500 mt-1">Please select a country first</div>
+                <div live:show="!state.country" class="text-xs text-gray-500 mt-1">Please select a country first</div>
               </div>
 
               <!-- Number of Travelers -->
@@ -933,7 +948,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Number of Travelers </label>
                 <select
                   value="1"
-                  data-live-state="travelers"
+                  data-live-property="travelers"
                   data-action="change->live#update"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
@@ -950,7 +965,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Trip Type </label>
                 <select
                   value="roundtrip"
-                  data-live-state="tripType"
+                  data-live-property="tripType"
                   data-action="change->live#update"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
@@ -961,61 +976,67 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </div>
 
             <!-- Selected Destination Preview -->
-            <div @show="state.hasSelection" class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+            <div
+              live:show="state.hasSelection"
+              class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200"
+            >
               <h3 class="text-lg font-semibold text-gray-800 mb-2">Your Selected Destination</h3>
               <div class="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span class="font-medium text-gray-600">Country:</span>
                   <span
-                    @text="state.selectedCountryData ? state.selectedCountryData.name : ''"
+                    live:text="state.selectedCountryData ? state.selectedCountryData.name : ''"
                     class="ml-2 font-semibold text-blue-700"
                   ></span>
                 </div>
                 <div>
                   <span class="font-medium text-gray-600">City:</span>
-                  <span @text="state.city" class="ml-2 font-semibold text-blue-700"></span>
+                  <span live:text="state.city" class="ml-2 font-semibold text-blue-700"></span>
                 </div>
                 <div>
                   <span class="font-medium text-gray-600">Travelers:</span>
                   <span
-                    @text="state.travelers + (state.travelers === 1 ? ' person' : ' people')"
+                    live:text="state.travelers + (state.travelers === 1 ? ' person' : ' people')"
                     class="ml-2 font-semibold text-blue-700"
                   ></span>
                 </div>
                 <div>
                   <span class="font-medium text-gray-600">Trip Type:</span>
-                  <span @text="state.tripType === 'roundtrip' ? 'Round Trip' : 'One Way'" class="ml-2 font-semibold text-blue-700"></span>
+                  <span
+                    live:text="state.tripType === 'roundtrip' ? 'Round Trip' : 'One Way'"
+                    class="ml-2 font-semibold text-blue-700"
+                  ></span>
                 </div>
               </div>
             </div>
 
             <!-- Price Estimation -->
-            <div @show="state.hasSelection" class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+            <div live:show="state.hasSelection" class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
               <h3 class="text-lg font-semibold text-gray-800 mb-3">Price Estimation</h3>
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Base price per person:</span>
-                  <span @text="'$' + state.estimatedPrice" class="font-medium text-gray-800"></span>
+                  <span live:text="'$' + state.estimatedPrice" class="font-medium text-gray-800"></span>
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Number of travelers:</span>
-                  <span @text="state.travelers + 'x'" class="font-medium text-gray-800"></span>
+                  <span live:text="state.travelers + 'x'" class="font-medium text-gray-800"></span>
                 </div>
-                <div @show="state.tripType === 'oneway'" class="flex justify-between items-center">
+                <div live:show="state.tripType === 'oneway'" class="flex justify-between items-center">
                   <span class="text-gray-600">One-way discount:</span>
                   <span class="font-medium text-green-600">-40%</span>
                 </div>
                 <div class="border-t border-green-300 pt-2 mt-2">
                   <div class="flex justify-between items-center">
                     <span class="font-semibold text-gray-800">Total estimated price:</span>
-                    <span @text="'$' + Math.round(state.totalPrice)" class="text-xl font-bold text-green-700"></span>
+                    <span live:text="'$' + Math.round(state.totalPrice)" class="text-xl font-bold text-green-700"></span>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Helpful Information -->
-            <div @show="state.country && !state.city" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div live:show="state.country && !state.city" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <div class="flex items-start space-x-2">
                 <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path
@@ -1028,7 +1049,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                   <div class="font-medium">Almost there!</div>
                   <div>
                     Please select a city in
-                    <span @text="state.selectedCountryData ? state.selectedCountryData.name : ''" class="font-semibold"></span>
+                    <span live:text="state.selectedCountryData ? state.selectedCountryData.name : ''" class="font-semibold"></span>
                     to see pricing information.
                   </div>
                 </div>
@@ -1039,11 +1060,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             <div class="flex gap-3 mt-6">
               <button
                 class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-150"
-                @class="{
+                live:class="{
                   'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.hasSelection,
                   'bg-gray-300 text-gray-500 cursor-not-allowed': !state.hasSelection
                 }"
-                @disabled="!state.hasSelection"
+                live:disabled="!state.hasSelection"
               >
                 Search Flights
               </button>
@@ -1063,10 +1084,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           <h2 class="text-xl font-semibold text-gray-700">12. Terms & Conditions Agreement</h2>
           <div data-controller="live">
             <!-- Computed Properties Templates -->
-            <script type="text/template" data-live-state="isValidEmail">
+            <script type="text/template" data-live-property="isValidEmail">
               state.email && state.email.includes('@') && state.email.length > 5
             </script>
-            <script type="text/template" data-live-state="allRequirementsMet">
+            <script type="text/template" data-live-property="allRequirementsMet">
               state.acceptTerms && state.acceptPrivacy && state.isValidEmail
             </script>
 
@@ -1077,7 +1098,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 type="email"
                 placeholder="Enter your email address"
                 value=""
-                data-live-state="email"
+                data-live-property="email"
                 data-action="input->live#update"
                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
@@ -1088,7 +1109,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <label class="flex items-start space-x-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  data-live-state="acceptTerms"
+                  data-live-property="acceptTerms"
                   data-action="change->live#update"
                   class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
@@ -1103,7 +1124,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <label class="flex items-start space-x-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  data-live-state="acceptPrivacy"
+                  data-live-property="acceptPrivacy"
                   data-action="change->live#update"
                   class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
@@ -1122,36 +1143,36 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <div class="flex items-center space-x-2">
                   <div
                     class="w-4 h-4 rounded-full flex items-center justify-center"
-                    @class="{
+                    live:class="{
                       'bg-green-500': state.isValidEmail,
                       'bg-red-500': !state.isValidEmail
                     }"
                   >
-                    <span class="text-xs text-white font-bold" @text="state.isValidEmail ? '✓' : '✗'">✗</span>
+                    <span class="text-xs text-white font-bold" live:text="state.isValidEmail ? '✓' : '✗'">✗</span>
                   </div>
                   <span class="text-gray-600">Valid email address</span>
                 </div>
                 <div class="flex items-center space-x-2">
                   <div
                     class="w-4 h-4 rounded-full flex items-center justify-center"
-                    @class="{
+                    live:class="{
                       'bg-green-500': state.acceptTerms,
                       'bg-red-500': !state.acceptTerms
                     }"
                   >
-                    <span class="text-xs text-white font-bold" @text="state.acceptTerms ? '✓' : '✗'">✗</span>
+                    <span class="text-xs text-white font-bold" live:text="state.acceptTerms ? '✓' : '✗'">✗</span>
                   </div>
                   <span class="text-gray-600">Terms and Conditions accepted</span>
                 </div>
                 <div class="flex items-center space-x-2">
                   <div
                     class="w-4 h-4 rounded-full flex items-center justify-center"
-                    @class="{
+                    live:class="{
                       'bg-green-500': state.acceptPrivacy,
                       'bg-red-500': !state.acceptPrivacy
                     }"
                   >
-                    <span class="text-xs text-white font-bold" @text="state.acceptPrivacy ? '✓' : '✗'">✗</span>
+                    <span class="text-xs text-white font-bold" live:text="state.acceptPrivacy ? '✓' : '✗'">✗</span>
                   </div>
                   <span class="text-gray-600">Privacy Policy accepted</span>
                 </div>
@@ -1162,11 +1183,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             <div class="flex gap-3 mt-6">
               <button
                 class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-150"
-                @class="{
+                live:class="{
                   'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.allRequirementsMet,
                   'bg-gray-300 text-gray-500 cursor-not-allowed': !state.allRequirementsMet
                 }"
-                @text="state.allRequirementsMet ? 'Create Account' : 'Complete Requirements'"
+                live:text="state.allRequirementsMet ? 'Create Account' : 'Complete Requirements'"
               >
                 Complete Requirements
               </button>
@@ -1185,11 +1206,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <span class="text-sm font-medium text-gray-700">Completion Progress:</span>
                 <span
                   class="text-sm font-bold"
-                  @class="{
+                  live:class="{
                     'text-green-600': state.allRequirementsMet,
                     'text-blue-600': !state.allRequirementsMet
                   }"
-                  @text="Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (state.isValidEmail ? 1 : 0)) / 3 * 100) + '%'"
+                  live:text="Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (state.isValidEmail ? 1 : 0)) / 3 * 100) + '%'"
                 >
                   0%
                 </span>
@@ -1197,19 +1218,19 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div class="w-full bg-gray-200 rounded-full h-2">
                 <div
                   class="h-2 rounded-full transition-all duration-150"
-                  @class="{
+                  live:class="{
                     'bg-green-500': state.allRequirementsMet,
                     'bg-blue-500': !state.allRequirementsMet
                   }"
-                  @style="{ width: Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (state.isValidEmail ? 1 : 0)) / 3 * 100) + '%' }"
+                  live:style="{ width: Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (state.isValidEmail ? 1 : 0)) / 3 * 100) + '%' }"
                 ></div>
               </div>
             </div>
 
             <!-- Help Text -->
             <div class="mt-4 text-sm text-gray-600">
-              <p @class="{ 'hidden': state.allRequirementsMet }">Please complete all requirements above to create your account.</p>
-              <p class="text-green-600 font-medium" @class="{ 'hidden': !state.allRequirementsMet }">
+              <p live:class="{ 'hidden': state.allRequirementsMet }">Please complete all requirements above to create your account.</p>
+              <p class="text-green-600 font-medium" live:class="{ 'hidden': !state.allRequirementsMet }">
                 ✅ All requirements met! You can now create your account.
               </p>
             </div>
@@ -1221,21 +1242,66 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
     <script type="module">
       import { Application, Controller } from "@hotwired/stimulus";
 
-      // TODO: Use element.attributes[name] as only constructor argument
-      class BoundAttribute {
-        constructor(element, attribute) {
+      class LiveProperty {
+        constructor(element) {
           this.element = element;
-          this.attribute = attribute;
-          this.expression = element.getAttribute(attribute);
-          this.type = attribute.slice(1); // Remove the @
+          this.name = element.dataset.liveProperty;
+        }
+
+        get processFunctionName() {
+          return `processLive${toTitleCase(this.element.tagName)}Property`;
+        }
+
+        toString() {
+          return `LiveProperty(${this.name})`;
         }
       }
 
-      class StateElement {
-        constructor(element) {
+      class LiveDirective {
+        constructor(attributeNode) {
+          this.element = attributeNode.ownerElement;
+          this.name = attributeNode.name;
+          this.expression = attributeNode.value;
+        }
+
+        get processFunctionName() {
+          return `processLive${toTitleCase(this.name.replace("live:", ""))}Directive`;
+        }
+
+        toString() {
+          return `LiveDirective(${this.name}, ${this.expression})`;
+        }
+      }
+
+      class LiveObserver extends MutationObserver {
+        constructor(element, callback) {
+          super(callback);
           this.element = element;
-          this.name = element.dataset.liveState;
-          this.tagName = element.tagName[0] + element.tagName.slice(1).toLowerCase();
+        }
+
+        connect() {
+          this.observe(this.element, { attributes: true, childList: true, subtree: true });
+        }
+
+        paused(callback) {
+          try {
+            this.disconnect();
+            callback();
+          } finally {
+            this.connect();
+          }
+        }
+      }
+
+      function toTitleCase(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+      }
+
+      function typecast(value) {
+        try {
+          return JSON.parse(value);
+        } catch (_error) {
+          return value;
         }
       }
 
@@ -1243,141 +1309,142 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         connect() {
           this.state = {};
 
-          this.observer = new MutationObserver((mutations) => {
-            this.collectStateElements();
-            this.collectBoundAttributes();
+          this.observer = new LiveObserver(this.element, (mutations) => {
+            this.collectLiveDirectives();
+            this.processLiveDirectives();
           });
 
-          this.collectStateElements();
-          this.processStateElements();
+          this.collectLiveProperties();
+          this.processLiveProperties();
 
-          this.collectBoundAttributes();
-          this.processBoundAttributes();
+          this.collectLiveDirectives();
+          this.processLiveDirectives();
 
-          this.connectObserver();
+          this.observer.connect();
         }
 
-        collectStateElements() {
-          this.stateElements = Array.from(this.element.querySelectorAll("[data-live-state]")).map((element) => new StateElement(element));
+        get liveDirectiveAttributeNames() {
+          return ["live:text", "live:html", "live:class", "live:style", "live:show", "live:disabled"];
         }
 
-        processStateElements() {
-          this.stateElements.forEach((stateElement) => {
-            const functionName = `define${stateElement.tagName}State`;
-            this[functionName](stateElement.name, stateElement.element);
+        collectLiveProperties() {
+          this.liveProperties = this.queryElementsByAttribute("data-live-property").map((element) => new LiveProperty(element));
+        }
+
+        collectLiveDirectives() {
+          this.liveDirectives = this.liveDirectiveAttributeNames.flatMap((attributeName) => {
+            return this.queryElementsByAttribute(attributeName).map((element) => {
+              const attributeNode = element.getAttributeNode(attributeName);
+              return new LiveDirective(attributeNode);
+            });
           });
         }
 
-        defineInputState(name, element) {
-          this.defineState(name, { get: () => this.getInputValue(element, name), set: (value) => (element.value = value) });
+        processLiveProperties() {
+          this.liveProperties.forEach(this.processLiveProperty.bind(this));
         }
 
-        getInputValue(element, name) {
-          if (element.type === "checkbox") {
-            return element.checked;
-          } else if (element.type === "radio") {
-            return this.element.querySelector(`input[name="${name}"]:checked`)?.value || "";
+        processLiveProperty(liveProperty) {
+          const functionName = liveProperty.processFunctionName;
+
+          if (typeof this[functionName] !== "function") {
+            console.warn(`Could not find state define function ${functionName} for ${liveProperty}`);
+            return;
           }
-          return element.value ? this.parseNumber(element.value) : "";
+
+          this[functionName](liveProperty);
         }
 
-        defineTextareaState(name, element) {
-          this.defineState(name, { get: () => element.value, set: (value) => (element.value = value) });
+        processLiveInputProperty({ element, name }) {
+          this.defineStateProperty(name, { get: () => this.getInputValue({ element, name }), set: (value) => (element.value = value) });
         }
 
-        defineSelectState(name, element) {
-          this.defineState(name, { get: () => element.value, set: (value) => (element.value = value) });
+        processLiveTextareaProperty({ element, name }) {
+          this.defineStateProperty(name, { get: () => element.value, set: (value) => (element.value = value) });
         }
 
-        defineScriptState(name, element) {
-          this.defineState(name, { get: () => this.evaluateExpression(element.textContent.trim()) });
+        processLiveSelectProperty({ element, name }) {
+          this.defineStateProperty(name, { get: () => element.value, set: (value) => (element.value = value) });
         }
 
-        defineState(name, descriptor) {
-          Object.defineProperty(this.state, name, { configurable: true, enumerable: true, ...descriptor });
+        processLiveScriptProperty({ element, name }) {
+          this.defineStateProperty(name, { get: () => this.evaluateExpression(element.textContent.trim()) });
         }
 
-        collectBoundAttributes() {
-          this.boundAttributes = this.supportedAttributes.flatMap((attribute) =>
-            Array.from(this.element.querySelectorAll(`[\\${attribute}]`)).map((element) => new BoundAttribute(element, attribute))
-          );
+        processLiveDirectives() {
+          this.liveDirectives.forEach(this.processLiveDirective.bind(this));
         }
 
-        connectObserver() {
-          this.observer.observe(this.element, {
-            attributes: true,
-            childList: true,
-            subtree: true,
-            attributeFilter: this.supportedAttributes,
+        processLiveDirective(liveDirective) {
+          const functionName = liveDirective.processFunctionName;
+
+          if (typeof this[functionName] !== "function") {
+            console.warn(`Could not find binding function ${functionName} for ${liveDirective}`);
+            return;
+          }
+
+          this[functionName](liveDirective, this.evaluateExpression(liveDirective.expression));
+        }
+
+        processLiveTextDirective({ element }, result) {
+          this.observer.paused(() => (element.textContent = result));
+        }
+
+        processLiveHtmlDirective({ element }, result) {
+          this.observer.paused(() => (element.innerHTML = result));
+        }
+
+        processLiveClassDirective({ element }, result) {
+          Object.keys(result).forEach((classNames) => this.toggleClasses(element, classNames, result[classNames]));
+        }
+
+        processLiveStyleDirective({ element }, result) {
+          Object.keys(result).forEach((property) => {
+            this.observer.paused(() => (element.style[property] = result[property]));
           });
         }
 
-        disconnectObserver() {
+        processLiveShowDirective({ element }, result) {
+          this.observer.paused(() => (element.style.display = result ? "" : "none"));
+        }
+
+        processLiveDisabledDirective({ element }, result) {
+          this.observer.paused(() => (element.disabled = result));
+        }
+
+        update(event) {
+          this.evaluateExpression(event.params.update);
+          this.processLiveDirectives();
+        }
+
+        disconnect() {
           this.observer.disconnect();
         }
 
-        get supportedAttributes() {
-          return ["@text", "@html", "@class", "@style", "@show", "@disabled"];
+        queryElementsByAttribute(attributeName) {
+          return Array.from(this.element.querySelectorAll(`[${attributeName.replace(":", "\\:")}]`));
         }
 
-        pauseObserver(callback) {
-          this.disconnectObserver();
-          callback();
-          this.connectObserver();
-        }
-
-        processBoundAttributes() {
-          this.boundAttributes.forEach((binding) => {
-            const functionName = "apply" + binding.type[0].toUpperCase() + binding.type.slice(1) + "Binding";
-            this[functionName](binding.element, this.evaluateExpression(binding.expression));
-          });
-        }
-
-        applyTextBinding(element, newContent) {
-          this.pauseObserver(() => (element.textContent = newContent));
-        }
-
-        applyHtmlBinding(element, newHtml) {
-          this.pauseObserver(() => (element.innerHTML = newHtml));
-        }
-
-        applyClassBinding(element, classes) {
-          Object.keys(classes).forEach((classNames) => this.toggleClasses(element, classNames, classes[classNames]));
-        }
-
-        toggleClasses(element, classNames, isToggled) {
-          classNames.split(" ").forEach((className) => this.pauseObserver(() => element.classList.toggle(className.trim(), isToggled)));
-        }
-
-        applyStyleBinding(element, styles) {
-          Object.keys(styles).forEach((property) => {
-            this.pauseObserver(() => (element.style[property] = styles[property]));
-          });
-        }
-
-        applyShowBinding(element, isVisible) {
-          this.pauseObserver(() => (element.style.display = isVisible ? "" : "none"));
-        }
-
-        applyDisabledBinding(element, isDisabled) {
-          this.pauseObserver(() => (element.disabled = isDisabled));
+        defineStateProperty(name, descriptor) {
+          Object.defineProperty(this.state, name, { configurable: true, enumerable: true, ...descriptor });
         }
 
         evaluateExpression(expression) {
           return new Function("state", `return ${expression};`)(this.state);
         }
 
-        parseNumber(value) {
-          return isNaN(value) ? value : Number(value);
+        toggleClasses(element, classNames, isToggled) {
+          classNames.split(/\s+/).forEach((className) => this.observer.paused(() => element.classList.toggle(className.trim(), isToggled)));
         }
 
-        update(event) {
-          this.evaluateExpression(event.params.update);
-          this.processBoundAttributes();
-        }
+        getInputValue({ element, name }) {
+          if (element.type === "checkbox") {
+            return element.checked;
+          } else if (element.type === "radio") {
+            return this.element.querySelector(`input[name="${name}"]:checked`)?.value || "";
+          }
 
-        disconnect() {
-          this.disconnectObserver();
+          return typecast(element.value);
         }
       }
 
