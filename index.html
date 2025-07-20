@@ -145,7 +145,7 @@
             <div class="flex justify-center gap-4 mb-6">
               <button
                 data-action="click->live#update"
-                data-live-update-param="state.count = Math.max(-state.absMax, state.count - state.stepSize); state.totalClicks++"
+                data-live-update-param="state.count = Math.max(-state.absMax, state.count - state.stepSize), state.totalClicks++"
                 live:disabled="!state.canDecrement"
                 class="flex items-center gap-2 px-6 py-3 text-lg font-semibold rounded-lg transform hover:scale-105 disabled:hover:scale-100"
                 live:class="{
@@ -159,7 +159,7 @@
 
               <button
                 data-action="click->live#update"
-                data-live-update-param="state.count = 0; state.totalClicks++"
+                data-live-update-param="state.count = 0, state.totalClicks++"
                 class="px-6 py-3 text-lg font-semibold bg-gray-500 hover:bg-gray-600 text-white rounded-lg transform hover:scale-105"
               >
                 Reset
@@ -167,7 +167,7 @@
 
               <button
                 data-action="click->live#update"
-                data-live-update-param="state.count = Math.min(state.absMax, state.count + state.stepSize); state.totalClicks++"
+                data-live-update-param="state.count = Math.min(state.absMax, state.count + state.stepSize), state.totalClicks++"
                 live:disabled="!state.canIncrement"
                 class="flex items-center gap-2 px-6 py-3 text-lg font-semibold rounded-lg transform hover:scale-105 disabled:hover:scale-100"
                 live:class="{
@@ -237,7 +237,7 @@
                 live:show="state.totalClicks > 0 && state.count === 0"
                 style="display: none"
               >
-                🎯 Back to the beginning! You've made <span live:text="state.totalClicks">0</span> clicks total.
+                🎯 Back to the beginning! You've used up <span live:text="state.totalClicks">0</span> clicks total.
               </div>
             </div>
           </div>
@@ -1515,19 +1515,19 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         processLiveInputProperty({ element, name }) {
-          this.defineStateProperty(name, { get: () => this.getInputValue({ element, name }), set: (value) => (element.value = value) });
+          this.defineLiveProperty(name, { get: () => this.getInputValue({ element, name }), set: (value) => (element.value = value) });
         }
 
         processLiveTextareaProperty({ element, name }) {
-          this.defineStateProperty(name, { get: () => element.value, set: (value) => (element.value = value) });
+          this.defineLiveProperty(name, { get: () => element.value, set: (value) => (element.value = value) });
         }
 
         processLiveSelectProperty({ element, name }) {
-          this.defineStateProperty(name, { get: () => element.value, set: (value) => (element.value = value) });
+          this.defineLiveProperty(name, { get: () => element.value, set: (value) => (element.value = value) });
         }
 
         processLiveScriptProperty({ element, name }) {
-          this.defineStateProperty(name, { get: () => this.evaluateExpression(element.textContent.trim()) });
+          this.defineLiveProperty(name, { get: () => this.evaluateExpression(element.textContent.trim()) });
         }
 
         processLiveDirectives() {
@@ -1584,7 +1584,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           return Array.from(this.element.querySelectorAll(`[${attributeName.replace(":", "\\:")}]`));
         }
 
-        defineStateProperty(name, descriptor) {
+        defineLiveProperty(name, descriptor) {
           Object.defineProperty(this.state, name, { configurable: true, enumerable: true, ...descriptor });
         }
 

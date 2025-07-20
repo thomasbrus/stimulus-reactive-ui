@@ -13,6 +13,32 @@ The demo is entirely self-contained in a single `index.html` file that showcases
 - **LiveController** - Custom Stimulus controller that implements the reactive system
 - **Interactive Examples** - 11 demonstrations of reactive UI patterns
 
+![Demo Screenshot](demo.png)
+
+Here's a simple example of how you would build a reactive counter:
+
+```html
+<div data-controller="live">
+  <!-- State -->
+  <input type="hidden" data-live-property="count" value="0" />
+
+  <!-- Computed property -->
+  <script type="text/template" data-live-property="isPositive">
+    state.count > 0
+  </script>
+
+  <!-- Display -->
+  <h2 live:text="state.count">0</h2>
+  <p live:class="{ 'bg-green-100': state.isPositive, 'bg-red-100': !state.isPositive }">
+    Counter is <span live:text="state.isPositive ? 'positive' : 'negative'">negative</span>
+  </p>
+
+  <!-- Controls -->
+  <button data-action="click->live#update" data-live-update-param="state.count++">Increment</button>
+  <button data-action="click->live#update" data-live-update-param="state.count--">Decrement</button>
+</div>
+```
+
 The demo works by extending Stimulus with a `LiveController` that:
 
 1. Manages reactive state through JavaScript proxies
@@ -33,9 +59,9 @@ The demo works by extending Stimulus with a `LiveController` that:
 
 The system centers around a custom `LiveController` that extends Stimulus.js with reactive capabilities:
 
-### State Properties
+### Live Properties
 
-Define reactive state properties using `data-live-property` attributes on form inputs or `<script type="text/template">` tags for computed values.
+Define reactive Live properties using `data-live-property` attributes on form inputs or `<script type="text/template">` tags for computed values.
 
 ### Live Directives
 
@@ -65,9 +91,9 @@ The controller uses a MutationObserver to detect DOM changes and re-evaluate rea
 | `live:show`     | Shows/hides element           | `live:show="state.isVisible"`               |
 | `live:disabled` | Enables/disables element      | `live:disabled="!state.isValid"`            |
 
-### State Properties
+### Live Properties
 
-State properties can be defined in two ways:
+Live properties can be defined in two ways:
 
 1. **Form Input Binding** - Use `data-live-property="propertyName"` on inputs
 2. **Computed Properties** - Use `<script type="text/template" data-live-property="propertyName">` with JavaScript expressions
