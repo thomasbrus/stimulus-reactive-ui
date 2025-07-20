@@ -15,7 +15,6 @@ A reactive UI system built on top of Stimulus.js that enables declarative, state
 
 ---
 
-
 ```html
 <div data-controller="live">
   <!-- State -->
@@ -145,3 +144,9 @@ This project uses modern JavaScript features including:
 - Template literals
 
 Supported in all modern browsers (Chrome 61+, Firefox 60+, Safari 12+, Edge 79+).
+
+## Security Considerations
+
+When implementing reactive UI systems that interpolate user input, it's important to consider security implications. This demo evaluates dynamic code using `new Function()`, which is safer and more performant than `eval()` but still carries risks with untrusted input.
+
+For production applications planning to interpolate user input, it is recommended to restrict JavaScript execution to a safe subset using libraries like [jse-eval](https://www.npmjs.com/package/jse-eval), which provides secure expression evaluation without full JavaScript access. Always validate and sanitize user input before incorporating it into reactive expressions to prevent cross-site scripting (XSS) and code injection vulnerabilities.
