@@ -6,12 +6,12 @@ A reactive UI system built on top of Stimulus.js that enables declarative, state
 
 🚀 **[View Live Demo](https://thomasbrus.github.io/stimulus-reactive-ui/)**
 
-The demo is entirely self-contained in a single `index.html` file that showcases 12 different interactive examples. Everything needed to run the demo is included:
+The demo is entirely self-contained in a single `index.html` file that showcases 11 different interactive examples. Everything needed to run the demo is included:
 
 - **Tailwind CSS** - Loaded via CDN for styling
 - **Stimulus.js** - Imported via ES modules from unpkg
 - **LiveController** - Custom Stimulus controller that implements the reactive system
-- **Interactive Examples** - 12 demonstrations of reactive UI patterns
+- **Interactive Examples** - 11 demonstrations of reactive UI patterns
 
 The demo works by extending Stimulus with a `LiveController` that:
 
