@@ -22,71 +22,230 @@
       <div class="max-w-2xl mx-auto space-y-6">
         <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Stimulus Reactive UI</h1>
 
-        <!-- 1. Counter Example -->
+        <!-- 1. Interactive Counter -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">1. Counter with Conditional Styling</h2>
-          <div class="flex gap-3" data-controller="live">
-            <input type="hidden" data-live-property="count" value="0" data-action="input->live#update" />
+          <h2 class="text-xl font-semibold text-gray-700">1. Interactive Counter</h2>
+          <div data-controller="live">
+            <!-- State Properties -->
+            <input type="hidden" data-live-property="count" value="0" />
+            <input type="hidden" data-live-property="totalClicks" value="0" />
+            <input type="hidden" data-live-property="stepSize" value="5" />
+
+            <!-- Computed Properties -->
+            <script type="text/template" data-live-property="absMax">
+              42
+            </script>
             <script type="text/template" data-live-property="isNegative">
               state.count < 0
             </script>
             <script type="text/template" data-live-property="isPositive">
               state.count > 0
             </script>
-            <button
-              data-action="click->live#update"
-              data-live-update-param="state.count--"
-              class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
-            >
-              -
-            </button>
-            <div
-              class="flex-1 text-center p-2 bg-gray-100 rounded font-medium"
-              live:text="state.count"
-              live:class="{ '!bg-red-100': state.isNegative, '!bg-green-100': state.isPositive }"
-            ></div>
-            <button
-              data-action="click->live#update"
-              data-live-update-param="state.count++"
-              class="bg-blue-500 text-white rounded p-2 w-12 hover:bg-blue-600"
-            >
-              +
-            </button>
+            <script type="text/template" data-live-property="isZero">
+              state.count === 0
+            </script>
+            <script type="text/template" data-live-property="absCount">
+              Math.abs(state.count)
+            </script>
+            <script type="text/template" data-live-property="countCategory">
+              state.count === 0 ? 'neutral' :
+              state.count > 0 && state.count <= 10 ? 'small-positive' :
+              state.count > 10 ? 'large-positive' :
+              state.count < 0 && state.count >= -10 ? 'small-negative' :
+              'large-negative'
+            </script>
+            <script type="text/template" data-live-property="progressWidth">
+              Math.min(100, (state.absCount / state.absMax) * 100)
+            </script>
+            <script type="text/template" data-live-property="canDecrement">
+              state.count > -state.absMax
+            </script>
+            <script type="text/template" data-live-property="canIncrement">
+              state.count < state.absMax
+            </script>
+
+            <!-- Step Size Selector -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Step Size</label>
+              <div class="flex gap-2">
+                <button
+                  data-action="click->live#update"
+                  data-live-update-param="state.stepSize = 1"
+                  class="px-3 py-1 text-sm rounded transition-colors"
+                  live:class="{
+                    'bg-blue-600 text-white': state.stepSize === 1,
+                    'bg-gray-200 text-gray-700 hover:bg-gray-300': state.stepSize !== 1
+                  }"
+                >
+                  1x
+                </button>
+                <button
+                  data-action="click->live#update"
+                  data-live-update-param="state.stepSize = 5"
+                  class="px-3 py-1 text-sm rounded transition-colors"
+                  live:class="{
+                    'bg-blue-600 text-white': state.stepSize === 5,
+                    'bg-gray-200 text-gray-700 hover:bg-gray-300': state.stepSize !== 5
+                  }"
+                >
+                  5x
+                </button>
+                <button
+                  data-action="click->live#update"
+                  data-live-update-param="state.stepSize = 10"
+                  class="px-3 py-1 text-sm rounded transition-colors"
+                  live:class="{
+                    'bg-blue-600 text-white': state.stepSize === 10,
+                    'bg-gray-200 text-gray-700 hover:bg-gray-300': state.stepSize !== 10
+                  }"
+                >
+                  10x
+                </button>
+              </div>
+            </div>
+
+            <!-- Main Counter Display -->
+            <div class="text-center mb-6">
+              <div
+                class="inline-block text-6xl font-bold p-6 rounded-2xl transition-all duration-300 transform"
+                live:class="{
+                  'text-gray-600 bg-gray-100 scale-100': state.isZero,
+                  'text-green-600 bg-green-100 scale-105': state.countCategory === 'small-positive',
+                  'text-green-700 bg-green-200 scale-110': state.countCategory === 'large-positive',
+                  'text-red-600 bg-red-100 scale-105': state.countCategory === 'small-negative',
+                  'text-red-700 bg-red-200 scale-110': state.countCategory === 'large-negative'
+                }"
+                live:text="state.count"
+              >
+                0
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="mt-4 max-w-md mx-auto">
+                <div class="flex justify-between text-xs text-gray-500 mb-1">
+                  <span live:text="`-${state.absMax}`"></span>
+                  <span live:text="`Progress: ${state.absCount}/${state.absMax}`"></span>
+                  <span live:text="`+${state.absMax}`"></span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    class="h-2 rounded-full transition-all duration-300"
+                    live:class="{
+                      'bg-green-500': state.isPositive,
+                      'bg-red-500': state.isNegative,
+                      'bg-gray-400': state.isZero
+                    }"
+                    live:style="{ width: state.progressWidth + '%' }"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Counter Controls -->
+            <div class="flex justify-center gap-4 mb-6">
+              <button
+                data-action="click->live#update"
+                data-live-update-param="state.count = Math.max(-state.absMax, state.count - state.stepSize); state.totalClicks++"
+                live:disabled="!state.canDecrement"
+                class="flex items-center gap-2 px-6 py-3 text-lg font-semibold rounded-lg transform hover:scale-105 disabled:hover:scale-100"
+                live:class="{
+                  'bg-red-500 hover:bg-red-600 text-white shadow-lg': state.canDecrement,
+                  'bg-gray-300 text-gray-500 cursor-not-allowed': !state.canDecrement
+                }"
+              >
+                <span class="text-xl">−</span>
+                <span live:text="state.stepSize">1</span>
+              </button>
+
+              <button
+                data-action="click->live#update"
+                data-live-update-param="state.count = 0; state.totalClicks++"
+                class="px-6 py-3 text-lg font-semibold bg-gray-500 hover:bg-gray-600 text-white rounded-lg transform hover:scale-105"
+              >
+                Reset
+              </button>
+
+              <button
+                data-action="click->live#update"
+                data-live-update-param="state.count = Math.min(state.absMax, state.count + state.stepSize); state.totalClicks++"
+                live:disabled="!state.canIncrement"
+                class="flex items-center gap-2 px-6 py-3 text-lg font-semibold rounded-lg transform hover:scale-105 disabled:hover:scale-100"
+                live:class="{
+                  'bg-green-500 hover:bg-green-600 text-white shadow-lg': state.canIncrement,
+                  'bg-gray-300 text-gray-500 cursor-not-allowed': !state.canIncrement
+                }"
+              >
+                <span class="text-xl">+</span>
+                <span live:text="state.stepSize">1</span>
+              </button>
+            </div>
+
+            <!-- Analytics Panel -->
+            <div class="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-blue-600" live:text="state.totalClicks">0</div>
+                <div class="text-sm text-gray-600">Total Clicks</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-purple-600" live:text="state.progressWidth.toFixed(0) + '%'">0</div>
+                <div class="text-sm text-gray-600">Progress</div>
+              </div>
+              <div class="text-center">
+                <div
+                  class="text-2xl font-bold"
+                  live:class="{
+                    'text-green-600': state.isPositive,
+                    'text-red-600': state.isNegative,
+                    'text-gray-600': state.isZero
+                  }"
+                  live:text="state.isPositive ? 'Positive' : (state.isNegative ? 'Negative' : 'Neutral')"
+                >
+                  Neutral
+                </div>
+                <div class="text-sm text-gray-600">Current State</div>
+              </div>
+            </div>
+
+            <!-- Status Messages -->
+            <div class="mt-4 space-y-2">
+              <div
+                class="bg-yellow-100 text-yellow-800 border border-yellow-200 p-3 rounded-lg"
+                live:show="state.absCount >= 25 && state.absCount < 35"
+                style="display: none"
+              >
+                ⚡️ You're getting close to the limits, keep going!
+              </div>
+
+              <div
+                class="bg-orange-100 text-orange-800 border border-orange-200 p-3 rounded-lg"
+                live:show="state.absCount >= 35 && state.absCount < state.absMax"
+                style="display: none"
+              >
+                🔥 Close to the ultimate number, almost there!
+              </div>
+
+              <div
+                class="p-3 rounded-lg bg-green-100 text-green-800 border border-green-200"
+                live:show="state.count === state.absMax"
+                style="display: none"
+              >
+                🎉 The answer to the ultimate question of life, the universe, and everything!
+              </div>
+
+              <div
+                class="text-sm p-3 rounded-lg bg-blue-100 text-blue-800 border border-blue-200"
+                live:show="state.totalClicks > 0 && state.count === 0"
+                style="display: none"
+              >
+                🎯 Back to the beginning! You've made <span live:text="state.totalClicks">0</span> clicks total.
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- 2. Text Input Example -->
+        <!-- 2. Progress Bar with Status -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">2. Text Input with Dynamic Styling</h2>
-          <div class="flex gap-3" data-controller="live">
-            <input
-              type="text"
-              data-live-property="message"
-              value="hello"
-              live:class="{ 'bg-green-100': state.message === 'hello' }"
-              class="flex-1 p-2 border border-gray-300 rounded"
-              data-action="input->live#update"
-            />
-            <button
-              data-action="click->live#update"
-              data-live-update-param="state.message = ''"
-              class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-            >
-              Clear
-            </button>
-            <button
-              data-action="click->live#update"
-              data-live-update-param="state.message = 'hello'"
-              class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-            >
-              Reset
-            </button>
-          </div>
-        </div>
-
-        <!-- 3. Progress Bar Example -->
-        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">3. Progress Bar with Status</h2>
+          <h2 class="text-xl font-semibold text-gray-700">2. Progress Bar with Status</h2>
           <div data-controller="live">
             <input type="range" data-live-property="progress" min="0" max="100" value="25" class="hidden" />
             <script type="text/template" data-live-property="progressPercentageColor">
@@ -149,9 +308,9 @@
           </div>
         </div>
 
-        <!-- 4. Shopping Cart Example -->
+        <!-- 3. Shopping Cart Calculator -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">4. Shopping Cart Calculator</h2>
+          <h2 class="text-xl font-semibold text-gray-700">3. Shopping Cart Calculator</h2>
           <div data-controller="live">
             <script type="text/template" data-live-property="subtotal">
               state.quantity * state.price;
@@ -218,9 +377,9 @@
           </div>
         </div>
 
-        <!-- 5. Theme Switcher Example -->
+        <!-- 4. Theme Switcher -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">5. Theme Switcher</h2>
+          <h2 class="text-xl font-semibold text-gray-700">4. Theme Switcher</h2>
           <div data-controller="live">
             <script type="text/template" data-live-property="previewClasses">
               { 'p-4 rounded transition-all duration-150': true, 'text-sm': state.fontSize === 'small', 'text-base': state.fontSize === 'medium', 'text-lg': state.fontSize === 'large' }
@@ -303,9 +462,9 @@
           </div>
         </div>
 
-        <!-- 6. Accordion Example -->
+        <!-- 5. Stateful Accordion -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">6. Stateful Accordion</h2>
+          <h2 class="text-xl font-semibold text-gray-700">5. Stateful Accordion</h2>
           <div data-controller="live">
             <!-- Hidden input to track which panel is open -->
             <input type="hidden" data-live-property="openPanel" value="" data-action="input->live#update" />
@@ -400,9 +559,9 @@
           </div>
         </div>
 
-        <!-- 7. Live Search Results Example -->
+        <!-- 6. Live Search Results -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">7. Live Search Results</h2>
+          <h2 class="text-xl font-semibold text-gray-700">6. Live Search Results</h2>
           <div data-controller="live">
             <script type="text/template" data-live-property="items">
               ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape']
@@ -451,9 +610,9 @@
           </div>
         </div>
 
-        <!-- 8. Character Counter Example -->
+        <!-- 7. Character Counter & Text Analysis -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">8. Character Counter & Text Analysis</h2>
+          <h2 class="text-xl font-semibold text-gray-700">7. Character Counter & Text Analysis</h2>
           <div data-controller="live">
             <!-- Computed Properties Templates -->
             <script type="text/template" data-live-property="lineCount">
@@ -611,9 +770,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           </div>
         </div>
 
-        <!-- 9. Subdomain Input Example -->
+        <!-- 8. Subdomain Input with Validation -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">9. Subdomain Input with Validation</h2>
+          <h2 class="text-xl font-semibold text-gray-700">8. Subdomain Input with Validation</h2>
           <div data-controller="live">
             <script type="text/template" data-live-property="containsDomain">
               state.subdomain.toLowerCase().includes('example.com')
@@ -737,9 +896,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           </div>
         </div>
 
-        <!-- 10. User Management Example -->
+        <!-- 9. User Management (Advanced Filtering) -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">10. User Management (Advanced Filtering)</h2>
+          <h2 class="text-xl font-semibold text-gray-700">9. User Management (Advanced Filtering)</h2>
           <div data-controller="live">
             <!-- Initial data -->
             <script type="text/template" data-live-property="users">
@@ -860,9 +1019,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           </div>
         </div>
 
-        <!-- 11. Travel Booking Form (Dependent Dropdowns) -->
+        <!-- 10. Travel Booking Form (Dependent Dropdowns) -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">11. Travel Booking Form (Dependent Dropdowns)</h2>
+          <h2 class="text-xl font-semibold text-gray-700">10. Travel Booking Form (Dependent Dropdowns)</h2>
           <div data-controller="live">
             <!-- Initial data -->
             <script type="text/template" data-live-property="countries">
@@ -1079,9 +1238,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           </div>
         </div>
 
-        <!-- 12. Terms and Conditions Example -->
+        <!-- 11. Terms & Conditions Agreement -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold text-gray-700">12. Terms & Conditions Agreement</h2>
+          <h2 class="text-xl font-semibold text-gray-700">11. Terms & Conditions Agreement</h2>
           <div data-controller="live">
             <!-- Computed Properties Templates -->
             <script type="text/template" data-live-property="isValidEmail">
