@@ -4,9 +4,17 @@ A reactive UI system built on top of Stimulus.js that enables declarative, state
 
 ## Demo
 
-🚀 **[View Live Demo](https://thomasbrus.github.io/stimulus-reactive-ui/)**
+> [!TIP]
+> 🚀 **[View Live Demo](https://thomasbrus.github.io/stimulus-reactive-ui/)**
 
-![Demo Screenshot](demo.png)
+---
+
+<a href="https://thomasbrus.github.io/stimulus-reactive-ui/">
+<img src="https://raw.githubusercontent.com/thomasbrus/stimulus-reactive-ui/refs/heads/main/demo.png" alt="Stimulus Reactive UI Demo" />
+</a>
+
+---
+
 
 ```html
 <div data-controller="live">
@@ -49,14 +57,6 @@ The demo is entirely self-contained in a single `index.html` file that showcases
 - **State Management** - Clean, predictable state updates with automatic UI synchronization
 
 ## Usage
-
-The system centers around a custom `LiveController` that extends Stimulus.js with reactive capabilities:
-
-1. Manages reactive state through JavaScript proxies
-2. Processes `live:*` directives in HTML to bind state to DOM elements
-3. Automatically updates the UI when state changes
-4. Supports computed properties defined in `<script type="text/template">` tags
-5. Uses a MutationObserver to detect DOM changes and re-evaluate reactive bindings
 
 ### Live Properties
 
