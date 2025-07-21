@@ -57,13 +57,13 @@
               'large-negative'
             </script>
             <script type="text/template" data-live-computed="progressWidth">
-              Math.min(100, (state.absCount / state.absMax) * 100)
+              Math.min(100, (computed.absCount / computed.absMax) * 100)
             </script>
             <script type="text/template" data-live-computed="canDecrement">
-              state.count > -state.absMax
+              state.count > -computed.absMax
             </script>
             <script type="text/template" data-live-computed="canIncrement">
-              state.count < state.absMax
+              state.count < computed.absMax
             </script>
 
             <!-- Step Size Selector -->
@@ -111,11 +111,11 @@
               <div
                 class="inline-block text-6xl font-bold p-6 rounded-2xl transition-all duration-300 transform"
                 live:class="{
-                  'text-gray-600 bg-gray-100 scale-100': state.isZero,
-                  'text-green-600 bg-green-100 scale-105': state.countCategory === 'small-positive',
-                  'text-green-700 bg-green-200 scale-110': state.countCategory === 'large-positive',
-                  'text-red-600 bg-red-100 scale-105': state.countCategory === 'small-negative',
-                  'text-red-700 bg-red-200 scale-110': state.countCategory === 'large-negative'
+                  'text-gray-600 bg-gray-100 scale-100': computed.isZero,
+                  'text-green-600 bg-green-100 scale-105': computed.countCategory === 'small-positive',
+                  'text-green-700 bg-green-200 scale-110': computed.countCategory === 'large-positive',
+                  'text-red-600 bg-red-100 scale-105': computed.countCategory === 'small-negative',
+                  'text-red-700 bg-red-200 scale-110': computed.countCategory === 'large-negative'
                 }"
                 live:text="state.count"
               >
@@ -125,19 +125,19 @@
               <!-- Progress Bar -->
               <div class="mt-4 max-w-md mx-auto">
                 <div class="flex justify-between text-xs text-gray-500 mb-1">
-                  <span live:text="`-${state.absMax}`"></span>
-                  <span live:text="`Progress: ${state.absCount}/${state.absMax}`"></span>
-                  <span live:text="`+${state.absMax}`"></span>
+                  <span live:text="`-${computed.absMax}`"></span>
+                  <span live:text="`Progress: ${computed.absCount}/${computed.absMax}`"></span>
+                  <span live:text="`+${computed.absMax}`"></span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2">
                   <div
                     class="h-2 rounded-full transition-all duration-300"
                     live:class="{
-                      'bg-green-500': state.isPositive,
-                      'bg-red-500': state.isNegative,
-                      'bg-gray-400': state.isZero
+                      'bg-green-500': computed.isPositive,
+                      'bg-red-500': computed.isNegative,
+                      'bg-gray-400': computed.isZero
                     }"
-                    live:style="{ width: state.progressWidth + '%' }"
+                    live:style="{ width: computed.progressWidth + '%' }"
                   ></div>
                 </div>
               </div>
@@ -147,12 +147,12 @@
             <div class="flex justify-center gap-4 mb-6">
               <button
                 data-action="click->live#update"
-                data-live-update-param="state.count = Math.max(-state.absMax, state.count - state.stepSize), state.totalClicks++"
-                live:disabled="!state.canDecrement"
+                data-live-update-param="state.count = Math.max(-computed.absMax, state.count - state.stepSize), state.totalClicks++"
+                live:disabled="!computed.canDecrement"
                 class="flex items-center gap-2 px-6 py-3 text-lg font-semibold rounded-lg transform hover:scale-105 disabled:hover:scale-100"
                 live:class="{
-                  'bg-red-500 hover:bg-red-600 text-white shadow-lg': state.canDecrement,
-                  'bg-gray-300 text-gray-500 cursor-not-allowed': !state.canDecrement
+                  'bg-red-500 hover:bg-red-600 text-white shadow-lg': computed.canDecrement,
+                  'bg-gray-300 text-gray-500 cursor-not-allowed': !computed.canDecrement
                 }"
               >
                 <span class="text-xl">−</span>
@@ -169,12 +169,12 @@
 
               <button
                 data-action="click->live#update"
-                data-live-update-param="state.count = Math.min(state.absMax, state.count + state.stepSize), state.totalClicks++"
-                live:disabled="!state.canIncrement"
+                data-live-update-param="state.count = Math.min(computed.absMax, state.count + state.stepSize), state.totalClicks++"
+                live:disabled="!computed.canIncrement"
                 class="flex items-center gap-2 px-6 py-3 text-lg font-semibold rounded-lg transform hover:scale-105 disabled:hover:scale-100"
                 live:class="{
-                  'bg-green-500 hover:bg-green-600 text-white shadow-lg': state.canIncrement,
-                  'bg-gray-300 text-gray-500 cursor-not-allowed': !state.canIncrement
+                  'bg-green-500 hover:bg-green-600 text-white shadow-lg': computed.canIncrement,
+                  'bg-gray-300 text-gray-500 cursor-not-allowed': !computed.canIncrement
                 }"
               >
                 <span class="text-xl">+</span>
@@ -189,18 +189,18 @@
                 <div class="text-sm text-gray-600">Total Clicks</div>
               </div>
               <div class="text-center">
-                <div class="text-2xl font-bold text-purple-600" live:text="state.progressWidth.toFixed(0) + '%'">0</div>
+                <div class="text-2xl font-bold text-purple-600" live:text="computed.progressWidth.toFixed(0) + '%'">0</div>
                 <div class="text-sm text-gray-600">Progress</div>
               </div>
               <div class="text-center">
                 <div
                   class="text-2xl font-bold"
                   live:class="{
-                    'text-green-600': state.isPositive,
-                    'text-red-600': state.isNegative,
-                    'text-gray-600': state.isZero
+                    'text-green-600': computed.isPositive,
+                    'text-red-600': computed.isNegative,
+                    'text-gray-600': computed.isZero
                   }"
-                  live:text="state.isPositive ? 'Positive' : (state.isNegative ? 'Negative' : 'Neutral')"
+                  live:text="computed.isPositive ? 'Positive' : (computed.isNegative ? 'Negative' : 'Neutral')"
                 >
                   Neutral
                 </div>
@@ -212,7 +212,7 @@
             <div class="mt-4 space-y-2">
               <div
                 class="text-sm bg-yellow-100 text-yellow-800 border border-yellow-200 p-3 rounded-lg"
-                live:show="state.absCount >= 25 && state.absCount < 35"
+                live:show="computed.absCount >= 25 && computed.absCount < 35"
                 style="display: none"
               >
                 <span class="pr-1">⚡️</span> You're getting close to the limits, keep going!
@@ -220,7 +220,7 @@
 
               <div
                 class="text-sm bg-orange-100 text-orange-800 border border-orange-200 p-3 rounded-lg"
-                live:show="state.absCount >= 35 && state.absCount < state.absMax"
+                live:show="computed.absCount >= 35 && computed.absCount < computed.absMax"
                 style="display: none"
               >
                 <span class="pr-1">🔥</span> Close to the ultimate number, almost there!
@@ -228,7 +228,7 @@
 
               <div
                 class="text-sm p-3 rounded-lg bg-green-100 text-green-800 border border-green-200"
-                live:show="state.count === state.absMax"
+                live:show="state.count === computed.absMax"
                 style="display: none"
               >
                 <span class="pr-1">🎉</span> The answer to the ultimate question of life, the universe, and everything!
@@ -276,11 +276,11 @@
 
             <div class="flex justify-between items-center mb-2">
               <span class="text-sm font-medium text-gray-700">Progress:</span>
-              <span live:text="state.progress + '%'" live:class="state.progressPercentageColor" class="text-sm font-bold"></span>
+              <span live:text="state.progress + '%'" live:class="computed.progressPercentageColor" class="text-sm font-bold"></span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
               <div
-                live:class="state.progressBarColor"
+                live:class="computed.progressBarColor"
                 class="h-4 rounded-full transition-all duration-150"
                 live:style="{ width: state.progress + '%' }"
               ></div>
@@ -289,7 +289,7 @@
               <button
                 data-action="click->live#update"
                 data-live-update-param="state.progress = Math.max(0, state.progress - 10)"
-                live:disabled="!state.canDecrease"
+                live:disabled="!computed.canDecrease"
                 class="bg-red-500 text-white hover:bg-red-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed px-3 py-1 rounded text-sm transition-colors"
               >
                 -10%
@@ -297,7 +297,7 @@
               <button
                 data-action="click->live#update"
                 data-live-update-param="state.progress = Math.min(100, state.progress + 10)"
-                live:disabled="!state.canIncrease"
+                live:disabled="!computed.canIncrease"
                 class="bg-green-500 text-white hover:bg-green-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed px-3 py-1 rounded text-sm transition-colors"
               >
                 +10%
@@ -323,10 +323,10 @@
               state.quantity * state.price;
             </script>
             <script type="text/template" data-live-computed="discountAmount">
-              (state.subtotal * state.discount) / 100;
+              (computed.subtotal * state.discount) / 100;
             </script>
             <script type="text/template" data-live-computed="total">
-              state.subtotal - state.discountAmount;
+              computed.subtotal - computed.discountAmount;
             </script>
 
             <div class="grid grid-cols-2 gap-4 mb-4">
@@ -362,15 +362,15 @@
             <div class="bg-gray-50 p-4 rounded">
               <div class="flex justify-between items-center text-sm text-gray-600 mb-1">
                 <span>Subtotal:</span>
-                <span live:text="'$' + state.subtotal.toFixed(2)">$29.99</span>
+                <span live:text="'$' + computed.subtotal.toFixed(2)">$29.99</span>
               </div>
               <div class="flex justify-between items-center text-sm text-gray-600 mb-1">
                 <span>Discount:</span>
-                <span live:text="'-$' + state.discountAmount.toFixed(2)">-$0.00</span>
+                <span live:text="'-$' + computed.discountAmount.toFixed(2)">-$0.00</span>
               </div>
               <div class="flex justify-between items-center text-lg font-bold text-gray-800 border-t pt-2">
                 <span>Total:</span>
-                <span live:text="'$' + state.total.toFixed(2)">$29.99</span>
+                <span live:text="'$' + computed.total.toFixed(2)">$29.99</span>
               </div>
             </div>
           </div>
@@ -437,21 +437,21 @@
             </div>
             <div
               class="bg-gray-50 text-gray-800"
-              live:class="state.previewClasses"
+              live:class="computed.previewClasses"
               live:show="state.theme === 'light'"
-              live:html="state.previewHtml('Light')"
+              live:html="computed.previewHtml('Light')"
             ></div>
             <div
               class="bg-gray-800 border-gray-600 text-gray-100"
-              live:class="state.previewClasses"
+              live:class="computed.previewClasses"
               live:show="state.theme === 'dark'"
-              live:html="state.previewHtml('Dark')"
+              live:html="computed.previewHtml('Dark')"
             ></div>
             <div
               class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white"
-              live:class="state.previewClasses"
+              live:class="computed.previewClasses"
               live:show="state.theme === 'colorful'"
-              live:html="state.previewHtml('Colorful')"
+              live:html="computed.previewHtml('Colorful')"
             ></div>
           </div>
         </div>
@@ -568,17 +568,17 @@
               state.query !== ''
             </script>
             <script type="text/template" data-live-computed="filteredResults">
-              state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase()))
+              computed.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase()))
             </script>
             <script type="text/template" data-live-computed="resultsText">
-              state.hasQuery ? state.filteredResults.length + ' results found' : state.items.length + ' items available'
+              computed.hasQuery ? computed.filteredResults.length + ' results found' : computed.items.length + ' items available'
             </script>
             <script type="text/template" data-live-computed="hasNoResults">
-              state.hasQuery && state.filteredResults.length === 0
+              computed.hasQuery && computed.filteredResults.length === 0
             </script>
             <script type="text/template" data-live-computed="itemsHtml">
-              state.filteredResults.map(item => `
-                <div class="p-2 bg-gray-50 rounded border-l-4 ${state.hasQuery ? 'border-blue-500' : 'border-gray-300'}">
+              computed.filteredResults.map(item => `
+                <div class="p-2 bg-gray-50 rounded border-l-4 ${computed.hasQuery ? 'border-blue-500' : 'border-gray-300'}">
                   ${item}
                 </div>
               `).join('')
@@ -595,14 +595,14 @@
 
             <!-- Results counter -->
             <div class="text-sm text-gray-600 mb-2">
-              <span live:text="state.resultsText">7 items available</span>
+              <span live:text="computed.resultsText">7 items available</span>
             </div>
 
             <!-- Results list -->
-            <div class="space-y-2" live:html="state.itemsHtml"></div>
+            <div class="space-y-2" live:html="computed.itemsHtml"></div>
 
             <!-- No results message -->
-            <div live:show="state.hasNoResults">
+            <div live:show="computed.hasNoResults">
               <p class="text-center text-gray-500 mt-4">No results found for "<span live:text="state.query"></span>"</p>
             </div>
           </div>
@@ -622,7 +622,7 @@
               state.text.trim().split(/\s+/).filter(word => word.length > 0).length
             </script>
             <script type="text/template" data-live-computed="readingTime">
-              Math.ceil(state.wordCount / 200)
+              Math.ceil(computed.wordCount / 200)
             </script>
             <script type="text/template" data-live-computed="usagePercentage">
               Math.round((state.text.length / state.maxLength) * 100)
@@ -663,9 +663,9 @@
                 data-live-state="text"
                 data-action="input->live#update"
                 live:class="{
-                  'border-red-500 bg-red-50': state.isOverLimit,
-                  'border-yellow-500 bg-yellow-50': state.isNearLimit,
-                  'border-green-500 bg-green-50': state.isComfortable
+                  'border-red-500 bg-red-50': computed.isOverLimit,
+                  'border-yellow-500 bg-yellow-50': computed.isNearLimit,
+                  'border-green-500 bg-green-50': computed.isComfortable
                 }"
                 class="w-full p-3 border border-gray-300 rounded-lg resize-none h-32 transition-colors"
               >
@@ -676,10 +676,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div
                 class="absolute bottom-3 right-3 px-2 py-1 rounded text-xs font-medium text-white"
                 live:class="{
-                  'bg-red-600': state.isOverLimit,
-                  'bg-yellow-600': state.isNearLimit,
-                  'bg-green-600': state.isComfortable,
-                  'bg-gray-500': state.isEmpty
+                  'bg-red-600': computed.isOverLimit,
+                  'bg-yellow-600': computed.isNearLimit,
+                  'bg-green-600': computed.isComfortable,
+                  'bg-gray-500': computed.isEmpty
                 }"
                 live:text="state.text.length + '/' + state.maxLength"
               >
@@ -694,15 +694,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <div class="text-sm text-gray-600">Characters</div>
               </div>
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" live:text="state.wordCount">0</div>
+                <div class="text-lg font-bold text-gray-800" live:text="computed.wordCount">0</div>
                 <div class="text-sm text-gray-600">Words</div>
               </div>
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" live:text="state.lineCount">1</div>
+                <div class="text-lg font-bold text-gray-800" live:text="computed.lineCount">1</div>
                 <div class="text-sm text-gray-600">Lines</div>
               </div>
               <div class="bg-gray-50 p-3 rounded text-center">
-                <div class="text-lg font-bold text-gray-800" live:text="state.readingTime">0</div>
+                <div class="text-lg font-bold text-gray-800" live:text="computed.readingTime">0</div>
                 <div class="text-sm text-gray-600">Est. Reading (min)</div>
               </div>
             </div>
@@ -714,11 +714,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <span
                   class="text-sm font-bold"
                   live:class="{
-                    'text-red-600': state.isOverLimit,
-                    'text-yellow-600': state.isNearLimit,
-                    'text-green-600': !state.isOverLimit && !state.isNearLimit
+                    'text-red-600': computed.isOverLimit,
+                    'text-yellow-600': computed.isNearLimit,
+                    'text-green-600': !computed.isOverLimit && !computed.isNearLimit
                   }"
-                  live:text="state.usagePercentage + '%'"
+                  live:text="computed.usagePercentage + '%'"
                 >
                   0%
                 </span>
@@ -727,11 +727,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <div
                   class="h-3 rounded-full transition-all duration-150"
                   live:class="{
-                    'bg-red-500': state.isOverLimit,
-                    'bg-yellow-500': state.isNearLimit,
-                    'bg-green-500': !state.isOverLimit && !state.isNearLimit
+                    'bg-red-500': computed.isOverLimit,
+                    'bg-yellow-500': computed.isNearLimit,
+                    'bg-green-500': !computed.isOverLimit && !computed.isNearLimit
                   }"
-                  live:style="{ width: Math.min(100, state.usagePercentage) + '%' }"
+                  live:style="{ width: Math.min(100, computed.usagePercentage) + '%' }"
                 ></div>
               </div>
             </div>
@@ -741,8 +741,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div
                 class="text-sm p-2 rounded"
                 live:class="{
-                  'hidden': !state.isOverLimit,
-                  'bg-red-100 text-red-700 border border-red-200': state.isOverLimit
+                  'hidden': !computed.isOverLimit,
+                  'bg-red-100 text-red-700 border border-red-200': computed.isOverLimit
                 }"
               >
                 ⚠️ You've exceeded the character limit by
@@ -751,8 +751,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div
                 class="text-sm p-2 rounded"
                 live:class="{
-                  'hidden': !state.isNearLimit,
-                  'bg-yellow-100 text-yellow-700 border border-yellow-200': state.isNearLimit
+                  'hidden': !computed.isNearLimit,
+                  'bg-yellow-100 text-yellow-700 border border-yellow-200': computed.isNearLimit
                 }"
               >
                 ⚡ Approaching character limit - <span live:text="state.maxLength - state.text.length">0</span> characters remaining.
@@ -760,8 +760,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <div
                 class="text-sm p-2 rounded"
                 live:class="{
-                  'hidden': !state.isHalfway,
-                  'bg-green-100 text-green-700 border border-green-200': state.isHalfway
+                  'hidden': !computed.isHalfway,
+                  'bg-green-100 text-green-700 border border-green-200': computed.isHalfway
                 }"
               >
                 ✅ Looking good! Plenty of room for more content.
@@ -783,7 +783,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               state.subdomain.length === 0
             </script>
             <script type="text/template" data-live-computed="isValid">
-              state.subdomain.length > 0 && !state.containsDomain && /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(state.subdomain)
+              state.subdomain.length > 0 && !computed.containsDomain && /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(state.subdomain)
             </script>
 
             <div class="space-y-4">
@@ -797,9 +797,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                     data-live-state="subdomain"
                     data-action="input->live#update"
                     live:class="{
-                      'border-red-500 bg-red-50': !state.isValid && !state.isEmpty,
-                      'border-green-500 bg-green-50': state.isValid,
-                      'border-gray-300': state.isEmpty,
+                      'border-red-500 bg-red-50': !computed.isValid && !computed.isEmpty,
+                      'border-green-500 bg-green-50': computed.isValid,
+                      'border-gray-300': computed.isEmpty,
                     }"
                     class="w-full pl-3 pr-32 py-2 border rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -813,9 +813,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <div
                   class="font-mono text-lg font-medium"
                   live:class="{
-                    'text-red-600': state.containsDomain,
-                    'text-green-600': state.isValid,
-                    'text-gray-800': !state.containsDomain && !state.isValid
+                    'text-red-600': computed.containsDomain,
+                    'text-green-600': computed.isValid,
+                    'text-gray-800': !computed.containsDomain && !computed.isValid
                   }"
                   live:text="state.subdomain + '.example.com'"
                 >
@@ -826,7 +826,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <!-- Validation Messages -->
               <div class="space-y-2">
                 <!-- Domain warning -->
-                <div live:show="state.containsDomain" class="flex items-start space-x-2 p-3 bg-red-100 border border-red-200 rounded-lg">
+                <div live:show="computed.containsDomain" class="flex items-start space-x-2 p-3 bg-red-100 border border-red-200 rounded-lg">
                   <svg class="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fill-rule="evenodd"
@@ -841,7 +841,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 </div>
 
                 <!-- Success message -->
-                <div live:show="state.isValid" class="flex items-start space-x-2 p-3 bg-green-100 border border-green-200 rounded-lg">
+                <div live:show="computed.isValid" class="flex items-start space-x-2 p-3 bg-green-100 border border-green-200 rounded-lg">
                   <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fill-rule="evenodd"
@@ -857,7 +857,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
 
                 <!-- Invalid format message -->
                 <div
-                  live:show="state.subdomain.length > 0 && !state.containsDomain && !state.isValid"
+                  live:show="state.subdomain.length > 0 && !computed.containsDomain && !computed.isValid"
                   class="flex items-start space-x-2 p-3 bg-yellow-100 border border-yellow-200 rounded-lg"
                 >
                   <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -879,10 +879,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <button
                   class="px-4 py-2 rounded-lg font-medium transition-all duration-150"
                   live:class="{
-                    'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.isValid,
-                    'bg-gray-300 text-gray-500 cursor-not-allowed': !state.isValid
+                    'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': computed.isValid,
+                    'bg-gray-300 text-gray-500 cursor-not-allowed': !computed.isValid
                   }"
-                  live:disabled="!state.isValid"
+                  live:disabled="!computed.isValid"
                 >
                   Create Subdomain
                 </button>
@@ -923,21 +923,21 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               }
             </script>
             <script type="text/template" data-live-computed="filteredUsers">
-              state.users.filter(user => {
+              computed.users.filter(user => {
                 // Role filter
                 const roleMatch = state.role === 'all' ||
                   (state.role === 'admin-moderator' && (user.role === 'admin' || user.role === 'moderator')) ||
                   (state.role === 'user' && user.role === 'user');
 
                 // Score filter
-                const userScoreLevel = state.classifyScore(user.score).level;
+                const userScoreLevel = computed.classifyScore(user.score).level;
                 const scoreMatch = state.scoreFilter === 'all' || state.scoreFilter === userScoreLevel;
 
                 return roleMatch && scoreMatch;
               })
             </script>
             <script type="text/template" data-live-computed="sortedUsers">
-              [...state.filteredUsers].sort((a, b) => {
+              [...computed.filteredUsers].sort((a, b) => {
                 if (state.sortBy === 'score') {
                   return b.score - a.score; // Sort by score descending
                 }
@@ -946,9 +946,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               })
             </script>
             <script type="text/template" data-live-computed="usersHtml">
-              state.sortedUsers.map(user => {
+              computed.sortedUsers.map(user => {
                 const statusColor = user.active ? 'bg-green-500' : 'bg-red-500';
-                const scoreInfo = state.classifyScore(user.score);
+                const scoreInfo = computed.classifyScore(user.score);
 
                 return `
                   <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
@@ -1014,12 +1014,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </div>
 
             <!-- No users message -->
-            <div live:show="state.sortedUsers.length === 0" class="text-center py-8 text-gray-500">
+            <div live:show="computed.sortedUsers.length === 0" class="text-center py-8 text-gray-500">
               <p>No users match the current filters</p>
             </div>
 
             <!-- User List -->
-            <div class="space-y-2" live:html="state.usersHtml"></div>
+            <div class="space-y-2" live:html="computed.usersHtml"></div>
           </div>
         </div>
 
@@ -1042,13 +1042,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
 
             <!-- Computed States Templates -->
             <script type="text/template" data-live-computed="selectedCountryData">
-              state.country ? state.countries[state.country] : null
+              state.country ? computed.countries[state.country] : null
             </script>
             <script type="text/template" data-live-computed="availableCities">
-              state.selectedCountryData ? state.selectedCountryData.cities : []
+              computed.selectedCountryData ? computed.selectedCountryData.cities : []
             </script>
             <script type="text/template" data-live-computed="cityOptionsHtml">
-              `<option value="">Select a city...</option>` + state.availableCities.map(city =>
+              `<option value="">Select a city...</option>` + computed.availableCities.map(city =>
                 `<option value="${city}" ${state.city === city ? 'selected' : ''}>${city}</option>`
               ).join('')
             </script>
@@ -1056,10 +1056,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               state.country && state.city
             </script>
             <script type="text/template" data-live-computed="estimatedPrice">
-              state.hasSelection ? Math.floor(Math.random() * 800) + 400 : 0
+              computed.hasSelection ? Math.floor(Math.random() * 800) + 400 : 0
             </script>
             <script type="text/template" data-live-computed="totalPrice">
-              state.estimatedPrice * state.travelers * (state.tripType === 'roundtrip' ? 1 : 0.6)
+              computed.estimatedPrice * state.travelers * (state.tripType === 'roundtrip' ? 1 : 0.6)
             </script>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1100,7 +1100,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                   data-live-state="city"
                   data-action="change->live#update"
                   live:disabled="!state.country"
-                  live:html="state.cityOptionsHtml"
+                  live:html="computed.cityOptionsHtml"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                   <option value="">Select a city...</option>
@@ -1142,7 +1142,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
 
             <!-- Selected Destination Preview -->
             <div
-              live:show="state.hasSelection"
+              live:show="computed.hasSelection"
               class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200"
             >
               <h3 class="text-lg font-semibold text-gray-800 mb-2">Your Selected Destination</h3>
@@ -1150,7 +1150,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <div>
                   <span class="font-medium text-gray-600">Country:</span>
                   <span
-                    live:text="state.selectedCountryData ? state.selectedCountryData.name : ''"
+                    live:text="computed.selectedCountryData ? computed.selectedCountryData.name : ''"
                     class="ml-2 font-semibold text-blue-700"
                   ></span>
                 </div>
@@ -1176,12 +1176,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </div>
 
             <!-- Price Estimation -->
-            <div live:show="state.hasSelection" class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+            <div live:show="computed.hasSelection" class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
               <h3 class="text-lg font-semibold text-gray-800 mb-3">Price Estimation</h3>
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Base price per person:</span>
-                  <span live:text="'$' + state.estimatedPrice" class="font-medium text-gray-800"></span>
+                  <span live:text="'$' + computed.estimatedPrice" class="font-medium text-gray-800"></span>
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Number of travelers:</span>
@@ -1194,7 +1194,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <div class="border-t border-green-300 pt-2 mt-2">
                   <div class="flex justify-between items-center">
                     <span class="font-semibold text-gray-800">Total estimated price:</span>
-                    <span live:text="'$' + Math.round(state.totalPrice)" class="text-xl font-bold text-green-700"></span>
+                    <span live:text="'$' + Math.round(computed.totalPrice)" class="text-xl font-bold text-green-700"></span>
                   </div>
                 </div>
               </div>
@@ -1214,7 +1214,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                   <div class="font-medium">Almost there!</div>
                   <div>
                     Please select a city in
-                    <span live:text="state.selectedCountryData ? state.selectedCountryData.name : ''" class="font-semibold"></span>
+                    <span live:text="computed.selectedCountryData ? computed.selectedCountryData.name : ''" class="font-semibold"></span>
                     to see pricing information.
                   </div>
                 </div>
@@ -1226,10 +1226,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <button
                 class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-150"
                 live:class="{
-                  'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.hasSelection,
-                  'bg-gray-300 text-gray-500 cursor-not-allowed': !state.hasSelection
+                  'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': computed.hasSelection,
+                  'bg-gray-300 text-gray-500 cursor-not-allowed': !computed.hasSelection
                 }"
-                live:disabled="!state.hasSelection"
+                live:disabled="!computed.hasSelection"
               >
                 Search Flights
               </button>
@@ -1255,7 +1255,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               state.email && state.email.includes('@') && state.email.length > 5
             </script>
             <script type="text/template" data-live-computed="allRequirementsMet">
-              state.acceptTerms && state.acceptPrivacy && state.isValidEmail
+              state.acceptTerms && state.acceptPrivacy && computed.isValidEmail
             </script>
 
             <!-- Email Input -->
@@ -1311,11 +1311,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                   <div
                     class="w-4 h-4 rounded-full flex items-center justify-center"
                     live:class="{
-                      'bg-green-500': state.isValidEmail,
-                      'bg-red-500': !state.isValidEmail
+                      'bg-green-500': computed.isValidEmail,
+                      'bg-red-500': !computed.isValidEmail
                     }"
                   >
-                    <span class="text-xs text-white font-bold" live:text="state.isValidEmail ? '✓' : '✗'">✗</span>
+                    <span class="text-xs text-white font-bold" live:text="computed.isValidEmail ? '✓' : '✗'">✗</span>
                   </div>
                   <span class="text-gray-600">Valid email address</span>
                 </div>
@@ -1351,10 +1351,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <button
                 class="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-150"
                 live:class="{
-                  'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': state.allRequirementsMet,
-                  'bg-gray-300 text-gray-500 cursor-not-allowed': !state.allRequirementsMet
+                  'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer': computed.allRequirementsMet,
+                  'bg-gray-300 text-gray-500 cursor-not-allowed': !computed.allRequirementsMet
                 }"
-                live:text="state.allRequirementsMet ? 'Create Account' : 'Complete Requirements'"
+                live:text="computed.allRequirementsMet ? 'Create Account' : 'Complete Requirements'"
               >
                 Complete Requirements
               </button>
@@ -1374,10 +1374,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <span
                   class="text-sm font-bold"
                   live:class="{
-                    'text-green-600': state.allRequirementsMet,
-                    'text-blue-600': !state.allRequirementsMet
+                    'text-green-600': computed.allRequirementsMet,
+                    'text-blue-600': !computed.allRequirementsMet
                   }"
-                  live:text="Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (state.isValidEmail ? 1 : 0)) / 3 * 100) + '%'"
+                  live:text="Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (computed.isValidEmail ? 1 : 0)) / 3 * 100) + '%'"
                 >
                   0%
                 </span>
@@ -1386,18 +1386,18 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <div
                   class="h-2 rounded-full transition-all duration-150"
                   live:class="{
-                    'bg-green-500': state.allRequirementsMet,
-                    'bg-blue-500': !state.allRequirementsMet
+                    'bg-green-500': computed.allRequirementsMet,
+                    'bg-blue-500': !computed.allRequirementsMet
                   }"
-                  live:style="{ width: Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (state.isValidEmail ? 1 : 0)) / 3 * 100) + '%' }"
+                  live:style="{ width: Math.round(((state.acceptTerms ? 1 : 0) + (state.acceptPrivacy ? 1 : 0) + (computed.isValidEmail ? 1 : 0)) / 3 * 100) + '%' }"
                 ></div>
               </div>
             </div>
 
             <!-- Help Text -->
             <div class="mt-4 text-sm text-gray-600">
-              <p live:class="{ 'hidden': state.allRequirementsMet }">Please complete all requirements above to create your account.</p>
-              <p class="text-green-600 font-medium" live:class="{ 'hidden': !state.allRequirementsMet }">
+              <p live:class="{ 'hidden': computed.allRequirementsMet }">Please complete all requirements above to create your account.</p>
+              <p class="text-green-600 font-medium" live:class="{ 'hidden': !computed.allRequirementsMet }">
                 ✅ All requirements met! You can now create your account.
               </p>
             </div>
@@ -1575,7 +1575,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         processLiveScriptComputed({ element, name }) {
-          this.defineLiveComputed(name, { get: () => this.evaluator.evaluateExpression(element.textContent.trim()) });
+          this.defineLiveComputed(name, { get: () => this.evaluateExpression(element.textContent.trim()) });
         }
 
         processLiveAttributes() {
@@ -1641,7 +1641,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         evaluateExpression(expression) {
-          return new Function('state', `return ${expression};`)(this.state);
+          try {
+            return new Function('state', 'computed', `return ${expression};`)(this.state, this.computed);
+          } catch (error) {
+            console.error(`Error evaluating expression "${expression}":`, error);
+            return null;
+          }
         }
 
         toggleClasses(element, classNames, isToggled) {
