@@ -18,13 +18,13 @@ A reactive UI system built on top of Stimulus.js that enables declarative, state
 ```html
 <div data-controller="live">
   <!-- State -->
-  <input type="hidden" data-live-property="count" value="0" />
+  <input type="hidden" data-live-state="count" value="0" />
 
   <!-- Computed properties -->
-  <script type="text/template" data-live-property="isPositive">
+  <script type="text/template" data-live-computed="isPositive">
     state.count > 0
   </script>
-  <script type="text/template" data-live-property="statusText">
+  <script type="text/template" data-live-computed="statusText">
     state.count < 0 ? 'negative' : 'positive'
   </script>
 
@@ -49,7 +49,7 @@ The demo is entirely self-contained in a single `index.html` file that showcases
 ## Features
 
 - **Declarative Reactive Bindings** - Use `live:text`, `live:class`, `live:show`, etc. to bind state to DOM elements
-- **Computed Properties** - Define derived state using template scripts
+- **Computed States** - Define derived state using template scripts
 - **Two-way Data Binding** - Automatic synchronization between form inputs and state
 - **Conditional Rendering** - Show/hide elements based on state
 - **Dynamic Styling** - Apply CSS classes and styles reactively
@@ -57,37 +57,37 @@ The demo is entirely self-contained in a single `index.html` file that showcases
 
 ## Usage
 
-### Live Properties
+### Live States
 
 Define reactive state properties that can be bound to form inputs or calculated dynamically.
 
-**Form Input Binding** - Use `data-live-property="propertyName"` on inputs:
+**Form Input Binding** - Use `data-live-state="propertyName"` on inputs:
 
 ```html
-<input type="text" data-live-property="username" value="john" />
-<input type="checkbox" data-live-property="isActive" />
-<select data-live-property="theme">
+<input type="text" data-live-state="username" value="john" />
+<input type="checkbox" data-live-state="isActive" />
+<select data-live-state="theme">
   <option value="light">Light</option>
   <option value="dark">Dark</option>
 </select>
 ```
 
-**Computed Properties** - Use `<script type="text/template" data-live-property="propertyName">` with JavaScript expressions:
+**Computed States** - Use `<script type="text/template" data-live-computed="propertyName">` with JavaScript expressions:
 
 ```html
-<script type="text/template" data-live-property="fullName">
+<script type="text/template" data-live-computed="fullName">
   state.firstName + ' ' + state.lastName
 </script>
-<script type="text/template" data-live-property="isValid">
+<script type="text/template" data-live-computed="isValid">
   state.username.length > 3 && state.email.includes('@')
 </script>
 ```
 
-### Live Directives
+### Live Attributes
 
 Bind state to DOM elements using special `live:*` attributes that automatically update when state changes.
 
-| Directive       | Description                   | Example                                     |
+| Attribute       | Description                   | Example                                     |
 | --------------- | ----------------------------- | ------------------------------------------- |
 | `live:text`     | Sets element text content     | `live:text="state.count"`                   |
 | `live:html`     | Sets element innerHTML        | `live:html="state.content"`                 |

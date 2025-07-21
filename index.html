@@ -28,41 +28,41 @@
             >1. Interactive Counter</a
           >
           <div data-controller="live">
-            <!-- State Properties -->
-            <input type="hidden" data-live-property="count" value="0" />
-            <input type="hidden" data-live-property="totalClicks" value="0" />
-            <input type="hidden" data-live-property="stepSize" value="5" />
+            <!-- State States -->
+            <input type="hidden" data-live-state="count" value="0" />
+            <input type="hidden" data-live-state="totalClicks" value="0" />
+            <input type="hidden" data-live-state="stepSize" value="5" />
 
-            <!-- Computed Properties -->
-            <script type="text/template" data-live-property="absMax">
+            <!-- Computed States -->
+            <script type="text/template" data-live-computed="absMax">
               42
             </script>
-            <script type="text/template" data-live-property="isNegative">
+            <script type="text/template" data-live-computed="isNegative">
               state.count < 0
             </script>
-            <script type="text/template" data-live-property="isPositive">
+            <script type="text/template" data-live-computed="isPositive">
               state.count > 0
             </script>
-            <script type="text/template" data-live-property="isZero">
+            <script type="text/template" data-live-computed="isZero">
               state.count === 0
             </script>
-            <script type="text/template" data-live-property="absCount">
+            <script type="text/template" data-live-computed="absCount">
               Math.abs(state.count)
             </script>
-            <script type="text/template" data-live-property="countCategory">
+            <script type="text/template" data-live-computed="countCategory">
               state.count === 0 ? 'neutral' :
               state.count > 0 && state.count <= 10 ? 'small-positive' :
               state.count > 10 ? 'large-positive' :
               state.count < 0 && state.count >= -10 ? 'small-negative' :
               'large-negative'
             </script>
-            <script type="text/template" data-live-property="progressWidth">
+            <script type="text/template" data-live-computed="progressWidth">
               Math.min(100, (state.absCount / state.absMax) * 100)
             </script>
-            <script type="text/template" data-live-property="canDecrement">
+            <script type="text/template" data-live-computed="canDecrement">
               state.count > -state.absMax
             </script>
-            <script type="text/template" data-live-property="canIncrement">
+            <script type="text/template" data-live-computed="canIncrement">
               state.count < state.absMax
             </script>
 
@@ -252,25 +252,25 @@
             >2. Progress Bar with Status</a
           >
           <div data-controller="live">
-            <input type="range" data-live-property="progress" min="0" max="100" value="25" class="hidden" />
-            <script type="text/template" data-live-property="progressPercentageColor">
+            <input type="range" data-live-state="progress" min="0" max="100" value="25" class="hidden" />
+            <script type="text/template" data-live-computed="progressPercentageColor">
               {
                 "text-red-600": state.progress < 30,
                 "text-yellow-600": state.progress >= 30 && state.progress < 70,
                 "text-green-600": state.progress >= 70,
               }
             </script>
-            <script type="text/template" data-live-property="progressBarColor">
+            <script type="text/template" data-live-computed="progressBarColor">
               {
                 "bg-red-600": state.progress < 30,
                 "bg-yellow-600": state.progress >= 30 && state.progress < 70,
                 "bg-green-600": state.progress >= 70,
               }
             </script>
-            <script type="text/template" data-live-property="canDecrease">
+            <script type="text/template" data-live-computed="canDecrease">
               state.progress > 0
             </script>
-            <script type="text/template" data-live-property="canIncrease">
+            <script type="text/template" data-live-computed="canIncrease">
               state.progress < 100
             </script>
 
@@ -319,13 +319,13 @@
             >3. Shopping Cart Calculator</a
           >
           <div data-controller="live">
-            <script type="text/template" data-live-property="subtotal">
+            <script type="text/template" data-live-computed="subtotal">
               state.quantity * state.price;
             </script>
-            <script type="text/template" data-live-property="discountAmount">
+            <script type="text/template" data-live-computed="discountAmount">
               (state.subtotal * state.discount) / 100;
             </script>
-            <script type="text/template" data-live-property="total">
+            <script type="text/template" data-live-computed="total">
               state.subtotal - state.discountAmount;
             </script>
 
@@ -336,7 +336,7 @@
                   type="number"
                   min="1"
                   value="1"
-                  data-live-property="quantity"
+                  data-live-state="quantity"
                   data-action="input->live#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 />
@@ -348,7 +348,7 @@
                   step="0.01"
                   min="0"
                   value="29.99"
-                  data-live-property="price"
+                  data-live-state="price"
                   data-action="input->live#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 />
@@ -356,15 +356,7 @@
             </div>
             <div class="mb-4">
               <label class="block text-sm font-medium text-gray-700 mb-1">Discount (%)</label>
-              <input
-                type="range"
-                min="0"
-                max="50"
-                value="0"
-                data-live-property="discount"
-                data-action="input->live#update"
-                class="w-full"
-              />
+              <input type="range" min="0" max="50" value="0" data-live-state="discount" data-action="input->live#update" class="w-full" />
               <div class="text-center text-sm text-gray-600 mt-1" live:text="state.discount + '% off'">0% off</div>
             </div>
             <div class="bg-gray-50 p-4 rounded">
@@ -390,11 +382,11 @@
             >4. Theme Switcher</a
           >
           <div data-controller="live">
-            <script type="text/template" data-live-property="previewClasses">
+            <script type="text/template" data-live-computed="previewClasses">
               { 'p-4 rounded transition-all duration-150': true, 'text-sm': state.fontSize === 'small', 'text-base': state.fontSize === 'medium', 'text-lg': state.fontSize === 'large' }
             </script>
 
-            <script type="text/template" data-live-property="previewHtml">
+            <script type="text/template" data-live-computed="previewHtml">
               (theme) => `
                 <h3 class="font-bold mb-2">${theme} theme</h3>
                 <p>This is what your content will look with the selected theme and font size.</p>
@@ -410,7 +402,7 @@
                       type="radio"
                       name="theme"
                       value="light"
-                      data-live-property="theme"
+                      data-live-state="theme"
                       data-action="change->live#update"
                       class="mr-2"
                       checked
@@ -418,14 +410,7 @@
                     Light
                   </label>
                   <label class="flex items-center">
-                    <input
-                      type="radio"
-                      name="theme"
-                      value="dark"
-                      data-live-property="theme"
-                      data-action="change->live#update"
-                      class="mr-2"
-                    />
+                    <input type="radio" name="theme" value="dark" data-live-state="theme" data-action="change->live#update" class="mr-2" />
                     Dark
                   </label>
                   <label class="flex items-center">
@@ -433,7 +418,7 @@
                       type="radio"
                       name="theme"
                       value="colorful"
-                      data-live-property="theme"
+                      data-live-state="theme"
                       data-action="change->live#update"
                       class="mr-2"
                     />
@@ -443,7 +428,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
-                <select data-live-property="fontSize" data-action="change->live#update" class="w-full p-2 border border-gray-300 rounded">
+                <select data-live-state="fontSize" data-action="change->live#update" class="w-full p-2 border border-gray-300 rounded">
                   <option value="small">Small</option>
                   <option value="medium" selected>Medium</option>
                   <option value="large">Large</option>
@@ -478,7 +463,7 @@
           >
           <div data-controller="live">
             <!-- Hidden input to track which panel is open -->
-            <input type="hidden" data-live-property="openPanel" value="" data-action="input->live#update" />
+            <input type="hidden" data-live-state="openPanel" value="" data-action="input->live#update" />
 
             <!-- Panel 1 -->
             <div class="border border-gray-200 rounded-lg mb-2">
@@ -576,22 +561,22 @@
             >6. Live Search Results</a
           >
           <div data-controller="live">
-            <script type="text/template" data-live-property="items">
+            <script type="text/template" data-live-computed="items">
               ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape']
             </script>
-            <script type="text/template" data-live-property="hasQuery">
+            <script type="text/template" data-live-computed="hasQuery">
               state.query !== ''
             </script>
-            <script type="text/template" data-live-property="filteredResults">
+            <script type="text/template" data-live-computed="filteredResults">
               state.items.filter(item => item.toLowerCase().includes(state.query.toLowerCase()))
             </script>
-            <script type="text/template" data-live-property="resultsText">
+            <script type="text/template" data-live-computed="resultsText">
               state.hasQuery ? state.filteredResults.length + ' results found' : state.items.length + ' items available'
             </script>
-            <script type="text/template" data-live-property="hasNoResults">
+            <script type="text/template" data-live-computed="hasNoResults">
               state.hasQuery && state.filteredResults.length === 0
             </script>
-            <script type="text/template" data-live-property="itemsHtml">
+            <script type="text/template" data-live-computed="itemsHtml">
               state.filteredResults.map(item => `
                 <div class="p-2 bg-gray-50 rounded border-l-4 ${state.hasQuery ? 'border-blue-500' : 'border-gray-300'}">
                   ${item}
@@ -603,7 +588,7 @@
               type="text"
               placeholder="Search fruits..."
               value=""
-              data-live-property="query"
+              data-live-state="query"
               data-action="input->live#update"
               class="w-full p-3 border border-gray-300 rounded-lg mb-4"
             />
@@ -629,32 +614,32 @@
             >7. Character Counter & Text Analysis</a
           >
           <div data-controller="live">
-            <!-- Computed Properties Templates -->
-            <script type="text/template" data-live-property="lineCount">
+            <!-- Computed States Templates -->
+            <script type="text/template" data-live-computed="lineCount">
               state.text.split('\n').length
             </script>
-            <script type="text/template" data-live-property="wordCount">
+            <script type="text/template" data-live-computed="wordCount">
               state.text.trim().split(/\s+/).filter(word => word.length > 0).length
             </script>
-            <script type="text/template" data-live-property="readingTime">
+            <script type="text/template" data-live-computed="readingTime">
               Math.ceil(state.wordCount / 200)
             </script>
-            <script type="text/template" data-live-property="usagePercentage">
+            <script type="text/template" data-live-computed="usagePercentage">
               Math.round((state.text.length / state.maxLength) * 100)
             </script>
-            <script type="text/template" data-live-property="isOverLimit">
+            <script type="text/template" data-live-computed="isOverLimit">
               state.text.length > state.maxLength
             </script>
-            <script type="text/template" data-live-property="isNearLimit">
+            <script type="text/template" data-live-computed="isNearLimit">
               state.text.length > state.maxLength * 0.8 && state.text.length <= state.maxLength
             </script>
-            <script type="text/template" data-live-property="isComfortable">
+            <script type="text/template" data-live-computed="isComfortable">
               state.text.length > 0 && state.text.length <= state.maxLength * 0.8
             </script>
-            <script type="text/template" data-live-property="isEmpty">
+            <script type="text/template" data-live-computed="isEmpty">
               state.text.length === 0
             </script>
-            <script type="text/template" data-live-property="isHalfway">
+            <script type="text/template" data-live-computed="isHalfway">
               state.text.length > 0 && state.text.length <= state.maxLength * 0.5
             </script>
 
@@ -665,7 +650,7 @@
                 min="50"
                 max="500"
                 step="10"
-                data-live-property="maxLength"
+                data-live-state="maxLength"
                 data-action="input->live#update"
                 class="w-full"
               />
@@ -675,7 +660,7 @@
             <div class="relative">
               <textarea
                 placeholder="Start typing your message..."
-                data-live-property="text"
+                data-live-state="text"
                 data-action="input->live#update"
                 live:class="{
                   'border-red-500 bg-red-50': state.isOverLimit,
@@ -791,13 +776,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             >8. Subdomain Input with Validation</a
           >
           <div data-controller="live">
-            <script type="text/template" data-live-property="containsDomain">
+            <script type="text/template" data-live-computed="containsDomain">
               state.subdomain.toLowerCase().includes('example.com')
             </script>
-            <script type="text/template" data-live-property="isEmpty">
+            <script type="text/template" data-live-computed="isEmpty">
               state.subdomain.length === 0
             </script>
-            <script type="text/template" data-live-property="isValid">
+            <script type="text/template" data-live-computed="isValid">
               state.subdomain.length > 0 && !state.containsDomain && /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(state.subdomain)
             </script>
 
@@ -809,7 +794,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                     type="text"
                     placeholder="www"
                     value="www.example.com"
-                    data-live-property="subdomain"
+                    data-live-state="subdomain"
                     data-action="input->live#update"
                     live:class="{
                       'border-red-500 bg-red-50': !state.isValid && !state.isEmpty,
@@ -920,7 +905,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           >
           <div data-controller="live">
             <!-- Initial data -->
-            <script type="text/template" data-live-property="users">
+            <script type="text/template" data-live-computed="users">
               [
                 { name: 'Alice', role: 'admin', active: true, score: 91 },
                 { name: 'Bob', role: 'user', active: false, score: 78 },
@@ -929,15 +914,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               ]
             </script>
 
-            <!-- Computed Properties Templates -->
-            <script type="text/template" data-live-property="classifyScore">
+            <!-- Computed States Templates -->
+            <script type="text/template" data-live-computed="classifyScore">
               (score) => {
                 if (score >= 90) return { level: 'excellent', color: 'text-green-600', label: 'Excellent' };
                 if (score >= 80) return { level: 'good', color: 'text-blue-600', label: 'Good' };
                 return { level: 'needs-improvement', color: 'text-yellow-600', label: 'Needs Improvement' };
               }
             </script>
-            <script type="text/template" data-live-property="filteredUsers">
+            <script type="text/template" data-live-computed="filteredUsers">
               state.users.filter(user => {
                 // Role filter
                 const roleMatch = state.role === 'all' ||
@@ -951,7 +936,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 return roleMatch && scoreMatch;
               })
             </script>
-            <script type="text/template" data-live-property="sortedUsers">
+            <script type="text/template" data-live-computed="sortedUsers">
               [...state.filteredUsers].sort((a, b) => {
                 if (state.sortBy === 'score') {
                   return b.score - a.score; // Sort by score descending
@@ -960,7 +945,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 return a.name.localeCompare(b.name);
               })
             </script>
-            <script type="text/template" data-live-property="usersHtml">
+            <script type="text/template" data-live-computed="usersHtml">
               state.sortedUsers.map(user => {
                 const statusColor = user.active ? 'bg-green-500' : 'bg-red-500';
                 const scoreInfo = state.classifyScore(user.score);
@@ -991,7 +976,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
                 <select
                   value="all"
-                  data-live-property="role"
+                  data-live-state="role"
                   data-action="change->live#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
@@ -1004,7 +989,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Score</label>
                 <select
                   value="all"
-                  data-live-property="scoreFilter"
+                  data-live-state="scoreFilter"
                   data-action="change->live#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
@@ -1018,7 +1003,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
                 <select
                   value="name"
-                  data-live-property="sortBy"
+                  data-live-state="sortBy"
                   data-action="change->live#update"
                   class="w-full p-2 border border-gray-300 rounded"
                 >
@@ -1045,7 +1030,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           </a>
           <div data-controller="live">
             <!-- Initial data -->
-            <script type="text/template" data-live-property="countries">
+            <script type="text/template" data-live-computed="countries">
               {
                 'usa': { name: 'United States', cities: ['New York', 'Los Angeles', 'Chicago', 'Miami', 'San Francisco'] },
                 'france': { name: 'France', cities: ['Paris', 'Lyon', 'Marseille', 'Nice', 'Bordeaux'] },
@@ -1055,25 +1040,25 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               }
             </script>
 
-            <!-- Computed Properties Templates -->
-            <script type="text/template" data-live-property="selectedCountryData">
+            <!-- Computed States Templates -->
+            <script type="text/template" data-live-computed="selectedCountryData">
               state.country ? state.countries[state.country] : null
             </script>
-            <script type="text/template" data-live-property="availableCities">
+            <script type="text/template" data-live-computed="availableCities">
               state.selectedCountryData ? state.selectedCountryData.cities : []
             </script>
-            <script type="text/template" data-live-property="cityOptionsHtml">
+            <script type="text/template" data-live-computed="cityOptionsHtml">
               `<option value="">Select a city...</option>` + state.availableCities.map(city =>
                 `<option value="${city}" ${state.city === city ? 'selected' : ''}>${city}</option>`
               ).join('')
             </script>
-            <script type="text/template" data-live-property="hasSelection">
+            <script type="text/template" data-live-computed="hasSelection">
               state.country && state.city
             </script>
-            <script type="text/template" data-live-property="estimatedPrice">
+            <script type="text/template" data-live-computed="estimatedPrice">
               state.hasSelection ? Math.floor(Math.random() * 800) + 400 : 0
             </script>
-            <script type="text/template" data-live-property="totalPrice">
+            <script type="text/template" data-live-computed="totalPrice">
               state.estimatedPrice * state.travelers * (state.tripType === 'roundtrip' ? 1 : 0.6)
             </script>
 
@@ -1088,7 +1073,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 </label>
                 <select
                   value="usa"
-                  data-live-property="country"
+                  data-live-state="country"
                   data-action="change->live#update"
                   data-live-update-param="state.city = ''"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -1112,7 +1097,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 </label>
                 <select
                   value=""
-                  data-live-property="city"
+                  data-live-state="city"
                   data-action="change->live#update"
                   live:disabled="!state.country"
                   live:html="state.cityOptionsHtml"
@@ -1128,7 +1113,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Number of Travelers </label>
                 <select
                   value="1"
-                  data-live-property="travelers"
+                  data-live-state="travelers"
                   data-action="change->live#update"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
@@ -1145,7 +1130,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 <label class="block text-sm font-medium text-gray-700 mb-2">Trip Type </label>
                 <select
                   value="roundtrip"
-                  data-live-property="tripType"
+                  data-live-state="tripType"
                   data-action="change->live#update"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
@@ -1265,11 +1250,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             >11. Terms & Conditions Agreement</a
           >
           <div data-controller="live">
-            <!-- Computed Properties Templates -->
-            <script type="text/template" data-live-property="isValidEmail">
+            <!-- Computed States Templates -->
+            <script type="text/template" data-live-computed="isValidEmail">
               state.email && state.email.includes('@') && state.email.length > 5
             </script>
-            <script type="text/template" data-live-property="allRequirementsMet">
+            <script type="text/template" data-live-computed="allRequirementsMet">
               state.acceptTerms && state.acceptPrivacy && state.isValidEmail
             </script>
 
@@ -1280,7 +1265,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
                 type="email"
                 placeholder="Enter your email address"
                 value=""
-                data-live-property="email"
+                data-live-state="email"
                 data-action="input->live#update"
                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
@@ -1291,7 +1276,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <label class="flex items-start space-x-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  data-live-property="acceptTerms"
+                  data-live-state="acceptTerms"
                   data-action="change->live#update"
                   class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
@@ -1306,7 +1291,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               <label class="flex items-start space-x-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  data-live-property="acceptPrivacy"
+                  data-live-state="acceptPrivacy"
                   data-action="change->live#update"
                   class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
@@ -1422,24 +1407,39 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
     </div>
 
     <script type="module">
-      import { Application, Controller } from "@hotwired/stimulus";
+      import { Application, Controller } from '@hotwired/stimulus';
 
-      class LiveProperty {
+      class LiveState {
         constructor(element) {
           this.element = element;
-          this.name = element.dataset.liveProperty;
+          this.name = element.dataset.liveState;
         }
 
         get processFunctionName() {
-          return `processLive${toTitleCase(this.element.tagName)}Property`;
+          return `processLive${toTitleCase(this.element.tagName)}State`;
         }
 
         toString() {
-          return `LiveProperty(${this.name})`;
+          return `LiveState(${this.name})`;
         }
       }
 
-      class LiveDirective {
+      export class LiveComputed {
+        constructor(element) {
+          this.element = element;
+          this.name = element.dataset.liveComputed;
+        }
+
+        get processFunctionName() {
+          return `processLive${toTitleCase(this.element.tagName)}Computed`;
+        }
+
+        toString() {
+          return `LiveComputed(${this.element.tagName}, ${this.name})`;
+        }
+      }
+
+      class LiveAttribute {
         constructor(attributeNode) {
           this.element = attributeNode.ownerElement;
           this.name = attributeNode.name;
@@ -1447,11 +1447,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         get processFunctionName() {
-          return `processLive${toTitleCase(this.name.replace("live:", ""))}Directive`;
+          return `processLive${toTitleCase(this.name.replace('live:', ''))}Attribute`;
         }
 
         toString() {
-          return `LiveDirective(${this.name}, ${this.expression})`;
+          return `LiveAttribute(${this.name}, ${this.expression})`;
         }
       }
 
@@ -1490,113 +1490,138 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
       class LiveController extends Controller {
         connect() {
           this.state = {};
+          this.computed = {};
 
           this.observer = new LiveObserver(this.element, (mutations) => {
-            this.collectLiveDirectives();
-            this.processLiveDirectives();
+            this.collectLiveComputeds();
+            this.processLiveComputeds();
+            this.collectLiveAttributes();
+            this.processLiveAttributes();
           });
 
-          this.collectLiveProperties();
-          this.processLiveProperties();
+          this.collectLiveStates();
+          this.processLiveStates();
 
-          this.collectLiveDirectives();
-          this.processLiveDirectives();
+          this.collectLiveComputeds();
+          this.processLiveComputeds();
+
+          this.collectLiveAttributes();
+          this.processLiveAttributes();
 
           this.observer.connect();
         }
 
-        get liveDirectiveAttributeNames() {
-          return ["live:text", "live:html", "live:class", "live:style", "live:show", "live:disabled"];
+        get liveAttributeAttributeNames() {
+          return ['live:text', 'live:html', 'live:class', 'live:style', 'live:show', 'live:disabled'];
         }
 
-        collectLiveProperties() {
-          this.liveProperties = this.queryElementsByAttribute("data-live-property").map((element) => new LiveProperty(element));
+        collectLiveStates() {
+          this.liveStates = this.queryElementsByAttribute('data-live-state').map((element) => new LiveState(element));
         }
 
-        collectLiveDirectives() {
-          this.liveDirectives = this.liveDirectiveAttributeNames.flatMap((attributeName) => {
+        collectLiveComputeds() {
+          this.liveComputed = this.queryElementsByAttribute('data-live-computed').map((element) => new LiveComputed(element));
+        }
+
+        collectLiveAttributes() {
+          this.liveAttributes = this.liveAttributeAttributeNames.flatMap((attributeName) => {
             return this.queryElementsByAttribute(attributeName).map((element) => {
               const attributeNode = element.getAttributeNode(attributeName);
-              return new LiveDirective(attributeNode);
+              return new LiveAttribute(attributeNode);
             });
           });
         }
 
-        processLiveProperties() {
-          this.liveProperties.forEach(this.processLiveProperty.bind(this));
+        processLiveStates() {
+          this.liveStates.forEach(this.processLiveState.bind(this));
         }
 
-        processLiveProperty(liveProperty) {
-          const functionName = liveProperty.processFunctionName;
+        processLiveState(liveState) {
+          const functionName = liveState.processFunctionName;
 
-          if (typeof this[functionName] !== "function") {
-            console.warn(`Could not find state define function ${functionName} for ${liveProperty}`);
+          if (typeof this[functionName] !== 'function') {
+            console.warn(`Could not find state define function ${functionName} for ${liveState}`);
             return;
           }
 
-          this[functionName](liveProperty);
+          this[functionName](liveState);
         }
 
-        processLiveInputProperty({ element, name }) {
-          this.defineLiveProperty(name, { get: () => this.getInputValue({ element, name }), set: (value) => (element.value = value) });
+        processLiveInputState({ element, name }) {
+          this.defineLiveState(name, { get: () => this.getInputValue({ element, name }), set: (value) => (element.value = value) });
         }
 
-        processLiveTextareaProperty({ element, name }) {
-          this.defineLiveProperty(name, { get: () => element.value, set: (value) => (element.value = value) });
+        processLiveTextareaState({ element, name }) {
+          this.defineLiveState(name, { get: () => element.value, set: (value) => (element.value = value) });
         }
 
-        processLiveSelectProperty({ element, name }) {
-          this.defineLiveProperty(name, { get: () => element.value, set: (value) => (element.value = value) });
+        processLiveSelectState({ element, name }) {
+          this.defineLiveState(name, { get: () => element.value, set: (value) => (element.value = value) });
         }
 
-        processLiveScriptProperty({ element, name }) {
-          this.defineLiveProperty(name, { get: () => this.evaluateExpression(element.textContent.trim()) });
+        processLiveComputeds() {
+          this.liveComputed.forEach(this.processLiveComputed.bind(this));
         }
 
-        processLiveDirectives() {
-          this.liveDirectives.forEach(this.processLiveDirective.bind(this));
-        }
+        processLiveComputed(liveComputed) {
+          const functionName = liveComputed.processFunctionName;
 
-        processLiveDirective(liveDirective) {
-          const functionName = liveDirective.processFunctionName;
-
-          if (typeof this[functionName] !== "function") {
-            console.warn(`Could not find binding function ${functionName} for ${liveDirective}`);
+          if (typeof this[functionName] !== 'function') {
+            console.warn(`${liveComputed} is not supported yet, please implement ${functionName}`);
             return;
           }
 
-          this[functionName](liveDirective, this.evaluateExpression(liveDirective.expression));
+          this[functionName](liveComputed);
         }
 
-        processLiveTextDirective({ element }, result) {
+        processLiveScriptComputed({ element, name }) {
+          this.defineLiveComputed(name, { get: () => this.evaluator.evaluateExpression(element.textContent.trim()) });
+        }
+
+        processLiveAttributes() {
+          this.liveAttributes.forEach(this.processLiveAttribute.bind(this));
+        }
+
+        processLiveAttribute(liveAttribute) {
+          const functionName = liveAttribute.processFunctionName;
+
+          if (typeof this[functionName] !== 'function') {
+            console.warn(`Could not find binding function ${functionName} for ${liveAttribute}`);
+            return;
+          }
+
+          this[functionName](liveAttribute, this.evaluateExpression(liveAttribute.expression));
+        }
+
+        processLiveTextAttribute({ element }, result) {
           this.observer.paused(() => (element.textContent = result));
         }
 
-        processLiveHtmlDirective({ element }, result) {
+        processLiveHtmlAttribute({ element }, result) {
           this.observer.paused(() => (element.innerHTML = result));
         }
 
-        processLiveClassDirective({ element }, result) {
+        processLiveClassAttribute({ element }, result) {
           Object.keys(result).forEach((classNames) => this.toggleClasses(element, classNames, result[classNames]));
         }
 
-        processLiveStyleDirective({ element }, result) {
+        processLiveStyleAttribute({ element }, result) {
           Object.keys(result).forEach((property) => {
             this.observer.paused(() => (element.style[property] = result[property]));
           });
         }
 
-        processLiveShowDirective({ element }, result) {
-          this.observer.paused(() => (element.style.display = result ? "" : "none"));
+        processLiveShowAttribute({ element }, result) {
+          this.observer.paused(() => (element.style.display = result ? '' : 'none'));
         }
 
-        processLiveDisabledDirective({ element }, result) {
+        processLiveDisabledAttribute({ element }, result) {
           this.observer.paused(() => (element.disabled = result));
         }
 
         update(event) {
           this.evaluateExpression(event.params.update);
-          this.processLiveDirectives();
+          this.processLiveAttributes();
         }
 
         disconnect() {
@@ -1604,15 +1629,19 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         queryElementsByAttribute(attributeName) {
-          return Array.from(this.element.querySelectorAll(`[${attributeName.replace(":", "\\:")}]`));
+          return Array.from(this.element.querySelectorAll(`[${attributeName.replace(':', '\\:')}]`));
         }
 
-        defineLiveProperty(name, descriptor) {
+        defineLiveState(name, descriptor) {
           Object.defineProperty(this.state, name, { configurable: true, enumerable: true, ...descriptor });
         }
 
+        defineLiveComputed(name, descriptor) {
+          Object.defineProperty(this.computed, name, { configurable: true, enumerable: true, ...descriptor });
+        }
+
         evaluateExpression(expression) {
-          return new Function("state", `return ${expression};`)(this.state);
+          return new Function('state', `return ${expression};`)(this.state);
         }
 
         toggleClasses(element, classNames, isToggled) {
@@ -1620,10 +1649,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         getInputValue({ element, name }) {
-          if (element.type === "checkbox") {
+          if (element.type === 'checkbox') {
             return element.checked;
-          } else if (element.type === "radio") {
-            return this.element.querySelector(`input[name="${name}"]:checked`)?.value || "";
+          } else if (element.type === 'radio') {
+            return this.element.querySelector(`input[name="${name}"]:checked`)?.value || '';
           }
 
           return typecast(element.value);
@@ -1631,7 +1660,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
       }
 
       const application = Application.start();
-      application.register("live", LiveController);
+      application.register('live', LiveController);
     </script>
   </body>
 </html>
