@@ -30,8 +30,8 @@ A reactive UI system built on top of Stimulus.js that enables declarative, state
 
   <!-- Demo -->
   <h2 live:text="state.count">0</h2>
-  <p live:class="{ 'bg-green-100': state.isPositive, 'bg-red-100': !state.isPositive }">
-    Counter is <span live:text="state.statusText">positive</span>
+  <p live:class="{ 'bg-green-100': computed.isPositive, 'bg-red-100': !computed.isPositive }">
+    Counter is <span live:text="computed.statusText">positive</span>
   </p>
 
   <button data-action="click->live#update" data-live-update-param="state.count++">Increment</button>
@@ -83,6 +83,22 @@ Define reactive state properties that can be bound to form inputs or calculated 
 </script>
 ```
 
+> **Important:** Within computed property definitions, use `state.` to reference base state properties and `computed.` to reference other computed properties. In your HTML templates, use `computed.` to reference computed properties and `state.` for base state properties.
+
+```html
+<!-- In computed definitions -->
+<script type="text/template" data-live-computed="greeting">
+  'Hello, ' + state.firstName + ' ' + state.lastName
+</script>
+<script type="text/template" data-live-computed="formalGreeting">
+  computed.greeting + '! Welcome to our application.'
+</script>
+
+<!-- In HTML templates -->
+<h1 live:text="computed.greeting">Hello</h1>
+<p live:text="computed.formalGreeting">Welcome</p>
+```
+
 ### Live Attributes
 
 Bind state to DOM elements using special `live:*` attributes that automatically update when state changes.
@@ -101,14 +117,14 @@ Bind state to DOM elements using special `live:*` attributes that automatically 
 ```html
 <!-- Text and HTML content -->
 <h1 live:text="state.title">Default Title</h1>
-<div live:html="state.htmlContent"></div>
+<div live:html="computed.htmlContent"></div>
 
 <!-- Conditional styling -->
 <button
   live:class="{
-  'btn-primary': state.isActive,
-  'btn-secondary': !state.isActive,
-  'disabled': state.isLoading
+  'btn-primary': computed.isActive,
+  'btn-secondary': !computed.isActive,
+  'disabled': computed.isLoading
 }"
 >
   Submit
@@ -117,14 +133,14 @@ Bind state to DOM elements using special `live:*` attributes that automatically 
 <!-- Dynamic styles -->
 <div
   live:style="{
-  width: state.progress + '%',
+  width: computed.progress + '%',
   backgroundColor: state.color
 }"
 ></div>
 
 <!-- Show/hide and enable/disable -->
-<div live:show="state.showDetails">Details content</div>
-<button live:disabled="!state.isValid">Save</button>
+<div live:show="computed.showDetails">Details content</div>
+<button live:disabled="!computed.isValid">Save</button>
 ```
 
 **State Updates** - Trigger state changes using the `live#update` action:
