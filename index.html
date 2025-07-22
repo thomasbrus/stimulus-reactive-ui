@@ -770,10 +770,200 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           </div>
         </div>
 
-        <!-- 8. Subdomain Input with Validation -->
+        <!-- 8. Image Slideshow -->
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <a href="#image-slideshow" id="image-slideshow" class="text-xl font-semibold text-gray-700 scroll-mt-12 hover:underline">
+            8. Image Slideshow
+          </a>
+          <div data-controller="live">
+            <!-- State -->
+            <input type="hidden" data-live-state="currentSlide" value="0" />
+
+            <!-- Events -->
+            <div
+              data-action="keydown.left@document->live#update"
+              data-live-update-param="state.currentSlide = Math.max(0, state.currentSlide - 1)"
+            ></div>
+            <div
+              data-action="keydown.right@document->live#update"
+              data-live-update-param="state.currentSlide = Math.min(computed.totalSlides - 1, state.currentSlide + 1)"
+            ></div>
+
+            <!-- Computed States -->
+            <script type="text/template" data-live-computed="slides">
+              [
+                {
+                  url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop',
+                  title: 'Mountain Vista',
+                  description: 'Breathtaking mountain landscape at sunrise'
+                },
+                {
+                  url: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&h=400&fit=crop',
+                  title: 'Lake Reflection',
+                  description: 'Serene lake with perfect mountain reflections'
+                },
+                {
+                  url: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&h=400&fit=crop',
+                  title: 'Forest Path',
+                  description: 'Mystical forest trail in golden morning light'
+                },
+                {
+                  url: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800&h=400&fit=crop',
+                  title: 'Ocean Sunset',
+                  description: 'Dramatic sunset over calm ocean waters'
+                }
+              ]
+            </script>
+            <script type="text/template" data-live-computed="totalSlides">
+              computed.slides.length
+            </script>
+            <script type="text/template" data-live-computed="currentSlideData">
+              computed.slides[state.currentSlide]
+            </script>
+            <script type="text/template" data-live-computed="canGoPrevious">
+              state.currentSlide > 0
+            </script>
+            <script type="text/template" data-live-computed="canGoNext">
+              state.currentSlide < computed.totalSlides - 1
+            </script>
+            <script type="text/template" data-live-computed="slideCounter">
+              `${state.currentSlide + 1} / ${computed.totalSlides}`
+            </script>
+
+            <!-- Main Slideshow Container -->
+            <div class="relative bg-gray-100 rounded-lg overflow-hidden" style="height: 400px">
+              <!-- Current Image -->
+              <img
+                live:src="computed.currentSlideData.url"
+                live:alt="computed.currentSlideData.title"
+                class="w-full h-full object-cover transition-opacity duration-300"
+                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop"
+                alt="Mountain Vista"
+              />
+
+              <!-- Navigation Buttons -->
+              <button
+                data-action="click->live#update"
+                data-live-update-param="state.currentSlide = Math.max(0, state.currentSlide - 1)"
+                live:disabled="!computed.canGoPrevious"
+                class="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200"
+                live:class="{
+                  'bg-white/80 hover:bg-white/90 text-gray-800 shadow-lg': computed.canGoPrevious,
+                  'bg-gray-300/50 text-gray-400 cursor-not-allowed': !computed.canGoPrevious
+                }"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+              </button>
+
+              <button
+                data-action="click->live#update"
+                data-live-update-param="state.currentSlide = Math.min(computed.totalSlides - 1, state.currentSlide + 1)"
+                live:disabled="!computed.canGoNext"
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200"
+                live:class="{
+                  'bg-white/80 hover:bg-white/90 text-gray-800 shadow-lg': computed.canGoNext,
+                  'bg-gray-300/50 text-gray-400 cursor-not-allowed': !computed.canGoNext
+                }"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </button>
+
+              <!-- Slide Counter -->
+              <div class="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
+                <span live:text="computed.slideCounter">1 / 4</span>
+              </div>
+            </div>
+
+            <!-- Slide Information -->
+            <div class="mt-4 text-center">
+              <h3 class="text-xl font-semibold text-gray-800" live:text="computed.currentSlideData.title">Mountain Vista</h3>
+              <p class="text-gray-600 mt-1" live:text="computed.currentSlideData.description">Breathtaking mountain landscape at sunrise</p>
+            </div>
+
+            <!-- Dot Indicators -->
+            <div class="flex justify-center space-x-2 mt-4">
+              <button
+                data-action="click->live#update"
+                data-live-update-param="state.currentSlide = 0"
+                class="w-3 h-3 rounded-full transition-all duration-200"
+                live:class="{
+                  'bg-blue-600': state.currentSlide === 0,
+                  'bg-gray-300 hover:bg-gray-400': state.currentSlide !== 0
+                }"
+                title="Slide 1"
+              ></button>
+              <button
+                data-action="click->live#update"
+                data-live-update-param="state.currentSlide = 1"
+                class="w-3 h-3 rounded-full transition-all duration-200"
+                live:class="{
+                  'bg-blue-600': state.currentSlide === 1,
+                  'bg-gray-300 hover:bg-gray-400': state.currentSlide !== 1
+                }"
+                title="Slide 2"
+              ></button>
+              <button
+                data-action="click->live#update"
+                data-live-update-param="state.currentSlide = 2"
+                class="w-3 h-3 rounded-full transition-all duration-200"
+                live:class="{
+                  'bg-blue-600': state.currentSlide === 2,
+                  'bg-gray-300 hover:bg-gray-400': state.currentSlide !== 2
+                }"
+                title="Slide 3"
+              ></button>
+              <button
+                data-action="click->live#update"
+                data-live-update-param="state.currentSlide = 3"
+                class="w-3 h-3 rounded-full transition-all duration-200"
+                live:class="{
+                  'bg-blue-600': state.currentSlide === 3,
+                  'bg-gray-300 hover:bg-gray-400': state.currentSlide !== 3
+                }"
+                title="Slide 4"
+              ></button>
+            </div>
+
+            <!-- Slideshow Controls -->
+            <div class="mt-6 flex justify-center space-x-3">
+              <button
+                data-action="click->live#update"
+                data-live-update-param="state.currentSlide = 0"
+                class="px-4 py-2 text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+              >
+                First
+              </button>
+              <button
+                data-action="click->live#update"
+                data-live-update-param="state.currentSlide = Math.floor(Math.random() * computed.totalSlides)"
+                class="px-4 py-2 text-sm font-medium bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg transition-colors"
+              >
+                Random
+              </button>
+              <button
+                data-action="click->live#update"
+                data-live-update-param="state.currentSlide = computed.totalSlides - 1"
+                class="px-4 py-2 text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+              >
+                Last
+              </button>
+            </div>
+
+            <!-- Help Text -->
+            <div class="mt-4 text-sm text-gray-500 text-center">
+              Use the arrow buttons, click the dots, or use the control buttons to navigate through the slideshow.
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. Subdomain Input with Validation -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <a href="#subdomain-validation" id="subdomain-validation" class="text-xl font-semibold text-gray-700 scroll-mt-12 hover:underline"
-            >8. Subdomain Input with Validation</a
+            >9. Subdomain Input with Validation</a
           >
           <div data-controller="live">
             <script type="text/template" data-live-computed="containsDomain">
@@ -898,10 +1088,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           </div>
         </div>
 
-        <!-- 9. User Management (Advanced Filtering) -->
+        <!-- 10. User Management (Advanced Filtering) -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <a href="#user-management" id="user-management" class="text-xl font-semibold text-gray-700 scroll-mt-12 hover:underline"
-            >9. User Management (Advanced Filtering)</a
+            >10. User Management (Advanced Filtering)</a
           >
           <div data-controller="live">
             <!-- Initial data -->
@@ -1023,10 +1213,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           </div>
         </div>
 
-        <!-- 10. Travel Booking Form (Dependent Dropdowns) -->
+        <!-- 11. Travel Booking Form (Dependent Dropdowns) -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <a href="#travel-booking" id="travel-booking" class="text-xl font-semibold text-gray-700 scroll-mt-12 hover:underline">
-            10. Travel Booking Form (Dependent Dropdowns)
+            11. Travel Booking Form (Dependent Dropdowns)
           </a>
           <div data-controller="live">
             <!-- Initial data -->
@@ -1244,10 +1434,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           </div>
         </div>
 
-        <!-- 11. Terms & Conditions Agreement -->
+        <!-- 12. Terms & Conditions Agreement -->
         <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
           <a href="#terms-agreement" id="terms-agreement" class="text-xl font-semibold text-gray-700 scroll-mt-12 hover:underline"
-            >11. Terms & Conditions Agreement</a
+            >12. Terms & Conditions Agreement</a
           >
           <div data-controller="live">
             <!-- Computed States Templates -->
@@ -1512,7 +1702,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         get liveAttributeAttributeNames() {
-          return ['live:text', 'live:html', 'live:class', 'live:style', 'live:show', 'live:disabled'];
+          return ['live:text', 'live:html', 'live:class', 'live:style', 'live:show', 'live:disabled', 'live:src', 'live:alt'];
         }
 
         collectLiveStates() {
@@ -1617,6 +1807,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
 
         processLiveDisabledAttribute({ element }, result) {
           this.observer.paused(() => (element.disabled = result));
+        }
+
+        processLiveSrcAttribute({ element }, result) {
+          this.observer.paused(() => (element.src = result));
+        }
+
+        processLiveAltAttribute({ element }, result) {
+          this.observer.paused(() => (element.alt = result));
         }
 
         update(event) {
