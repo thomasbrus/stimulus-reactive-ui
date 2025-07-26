@@ -386,11 +386,13 @@
               { 'p-4 rounded transition-all duration-150': true, 'text-sm': state.fontSize === 'small', 'text-base': state.fontSize === 'medium', 'text-lg': state.fontSize === 'large' }
             </script>
 
+            <script type="text/template" data-live-computed="themeTitle">
+              state.theme.charAt(0).toUpperCase() + state.theme.slice(1)
+            </script>
+
             <script type="text/template" data-live-computed="previewHtml">
-              (theme) => `
-                <h3 class="font-bold mb-2">${theme} theme</h3>
-                <p>This is what your content will look with the selected theme and font size.</p>
-              `
+              <h3 class="font-bold mb-2">${computed.themeTitle} theme</h3>
+              <p>This is what your content will look like with the selected theme and font size.</p>
             </script>
 
             <div class="grid grid-cols-2 gap-4 mb-4">
@@ -439,19 +441,19 @@
               class="bg-gray-50 text-gray-800"
               live:class="computed.previewClasses"
               live:show="state.theme === 'light'"
-              live:html="computed.previewHtml('Light')"
+              live:html="computed.previewHtml"
             ></div>
             <div
               class="bg-gray-800 border-gray-600 text-gray-100"
               live:class="computed.previewClasses"
               live:show="state.theme === 'dark'"
-              live:html="computed.previewHtml('Dark')"
+              live:html="computed.previewHtml"
             ></div>
             <div
               class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white"
               live:class="computed.previewClasses"
               live:show="state.theme === 'colorful'"
-              live:html="computed.previewHtml('Colorful')"
+              live:html="computed.previewHtml"
             ></div>
           </div>
         </div>
@@ -1856,7 +1858,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         processLiveScriptComputed({ element, name }) {
-          this.defineLiveComputed(name, { get: () => this.evaluateExpression(element.textContent.trim()) });
+          const expression = element.textContent.trim();
+
+          // Check if the expression starts with '<' (HTML content)
+          const isHtmlExpression = expression.startsWith('<');
+
+          // If it's HTML, wrap it in backticks for template literal evaluation
+          const finalExpression = isHtmlExpression ? `\`${expression}\`` : expression;
+
+          this.defineLiveComputed(name, { get: () => this.evaluateExpression(finalExpression) });
         }
 
         processLiveAttributes() {
