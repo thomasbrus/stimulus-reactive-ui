@@ -834,11 +834,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             <div class="relative bg-gray-100 rounded-lg overflow-hidden" style="height: 400px">
               <!-- Current Image -->
               <img
-                live:src="computed.currentSlideData.url"
-                live:alt="computed.currentSlideData.title"
+                live:attributes="{ src: computed.currentSlideData.url, alt: computed.currentSlideData.title }"
                 class="w-full h-full object-cover transition-opacity duration-300"
-                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop"
-                alt="Mountain Vista"
               />
 
               <!-- Navigation Buttons -->
@@ -1425,7 +1422,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               </button>
               <button
                 data-action="click->live#update"
-                data-live-update-param="state.country = 'usa'; state.city = ''; state.travelers = 1; state.tripType = 'roundtrip'"
+                data-live-update-param="state.country = 'usa', state.city = '', state.travelers = 1, state.tripType = 'roundtrip'"
                 class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Reset Form
@@ -1550,7 +1547,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
               </button>
               <button
                 data-action="click->live#update"
-                data-live-update-param="state.acceptTerms = false; state.acceptPrivacy = false; state.email = ''"
+                data-live-update-param="state.acceptTerms = false, state.acceptPrivacy = false, state.email = ''"
                 class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Cancel
@@ -1793,7 +1790,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         get liveAttributeAttributeNames() {
-          return ['live:text', 'live:html', 'live:class', 'live:style', 'live:show', 'live:disabled', 'live:src', 'live:alt'];
+          return ['live:text', 'live:html', 'live:class', 'live:style', 'live:show', 'live:disabled', 'live:attributes'];
         }
 
         collectLiveStates() {
@@ -1900,12 +1897,19 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           this.observer.paused(() => (element.disabled = result));
         }
 
-        processLiveSrcAttribute({ element }, result) {
-          this.observer.paused(() => (element.src = result));
-        }
-
-        processLiveAltAttribute({ element }, result) {
-          this.observer.paused(() => (element.alt = result));
+        processLiveAttributesAttribute({ element }, result) {
+          Object.keys(result).forEach((attrName) => {
+            const value = result[attrName];
+            this.observer.paused(() => {
+              if (value === null || value === undefined || value === false) {
+                element.removeAttribute(attrName);
+              } else if (value === true) {
+                element.setAttribute(attrName, '');
+              } else {
+                element.setAttribute(attrName, value);
+              }
+            });
+          });
         }
 
         update(event) {
