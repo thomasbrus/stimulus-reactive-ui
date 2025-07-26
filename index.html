@@ -383,7 +383,15 @@
           >
           <div data-controller="live">
             <script type="text/template" data-live-computed="previewClasses">
-              { 'p-4 rounded transition-all duration-150': true, 'text-sm': state.fontSize === 'small', 'text-base': state.fontSize === 'medium', 'text-lg': state.fontSize === 'large' }
+              {
+                'p-4 rounded transition-all duration-150': true,
+                'text-sm': state.fontSize === 'small',
+                'text-base': state.fontSize === 'medium',
+                'text-lg': state.fontSize === 'large',
+                'bg-gray-50 text-gray-800': state.theme === 'light',
+                'bg-gray-800 text-gray-100': state.theme === 'dark',
+                'bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white': state.theme === 'colorful'
+              }
             </script>
 
             <script type="text/template" data-live-computed="themeTitle">
@@ -437,24 +445,7 @@
                 </select>
               </div>
             </div>
-            <div
-              class="bg-gray-50 text-gray-800"
-              live:class="computed.previewClasses"
-              live:show="state.theme === 'light'"
-              live:html="computed.previewHtml"
-            ></div>
-            <div
-              class="bg-gray-800 border-gray-600 text-gray-100"
-              live:class="computed.previewClasses"
-              live:show="state.theme === 'dark'"
-              live:html="computed.previewHtml"
-            ></div>
-            <div
-              class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white"
-              live:class="computed.previewClasses"
-              live:show="state.theme === 'colorful'"
-              live:html="computed.previewHtml"
-            ></div>
+            <div live:class="computed.previewClasses" live:html="computed.previewHtml"></div>
           </div>
         </div>
 
