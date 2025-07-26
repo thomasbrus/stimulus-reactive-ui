@@ -1826,7 +1826,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
 
         processLiveInputState({ element, name }) {
-          this.defineLiveState(name, { get: () => this.getInputValue({ element, name }), set: (value) => (element.value = value) });
+          this.defineLiveState(name, {
+            get: () => this.getInputValue({ element, name }),
+            set: (value) => this.setInputValue({ element, name }, value),
+          });
         }
 
         processLiveTextareaState({ element, name }) {
@@ -1954,6 +1957,20 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
           }
 
           return typecast(element.value);
+        }
+
+        setInputValue({ element, name }, value) {
+          if (element.type === 'checkbox') {
+            element.checked = value;
+          } else if (element.type === 'radio') {
+            // For radio buttons, find the radio button with the matching value and check it
+            const radioButton = this.element.querySelector(`input[name="${name}"][value="${value}"]`);
+            if (radioButton) {
+              radioButton.checked = true;
+            }
+          } else {
+            element.value = value;
+          }
         }
       }
 
