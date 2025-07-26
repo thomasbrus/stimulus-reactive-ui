@@ -1593,6 +1593,97 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
             </div>
           </div>
         </div>
+
+        <!-- 13. Modal Component -->
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <a href="#modal-component" id="modal-component" class="text-xl font-semibold text-gray-700 scroll-mt-12 hover:underline">
+            13. Modal Component with Live Template
+          </a>
+          <div data-controller="modal live">
+            <!-- State for modal content -->
+            <input type="hidden" data-live-state="modalType" value="info" />
+
+            <!-- Buttons that change modal content -->
+            <div class="space-x-3 mb-4">
+              <button
+                data-action="click->live#update click->modal#open"
+                data-live-update-param="state.modalType = 'info'"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Open Info Modal
+              </button>
+              <button
+                data-action="click->live#update click->modal#open"
+                data-live-update-param="state.modalType = 'warning'"
+                class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Open Warning Modal
+              </button>
+              <button
+                data-action="click->live#update click->modal#open"
+                data-live-update-param="state.modalType = 'success'"
+                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Open Success Modal
+              </button>
+            </div>
+
+            <!-- Computed content based on modal type -->
+            <script type="text/template" data-live-computed="modalContent">
+              state.modalType === 'info' ?
+                `<div class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50" data-action="click->modal#close">
+                   <div class="bg-white rounded-lg shadow-xl p-6 w-1/2 max-w-md" data-action="click->modal#stopPropagation">
+                     <h2 class="text-xl font-bold mb-4 text-blue-600">📘 Information Modal</h2>
+                     <p class="text-gray-700 mb-4">This is an informational modal. Here you can display helpful information to your users.</p>
+                     <div class="bg-blue-50 p-3 rounded mb-4">
+                       <p class="text-blue-800 text-sm">💡 Tip: Information modals are great for providing context and guidance.</p>
+                     </div>
+                     <div class="mt-4 flex justify-end">
+                       <button data-action="click->modal#close" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                         Close
+                       </button>
+                     </div>
+                   </div>
+                 </div>` :
+              state.modalType === 'warning' ?
+                `<div class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50" data-action="click->modal#close">
+                   <div class="bg-white rounded-lg shadow-xl p-6 w-1/2 max-w-md" data-action="click->modal#stopPropagation">
+                     <h2 class="text-xl font-bold mb-4 text-yellow-600">⚠️ Warning Modal</h2>
+                     <p class="text-gray-700 mb-4">This is a warning modal. Use this to alert users about important information.</p>
+                     <div class="bg-yellow-50 p-3 rounded mb-4">
+                       <p class="text-yellow-800 text-sm">⚠️ Warning: Please review your actions before proceeding.</p>
+                     </div>
+                     <div class="mt-4 flex justify-end">
+                       <button data-action="click->modal#close" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                         Close
+                       </button>
+                     </div>
+                   </div>
+                 </div>` :
+                `<div class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50" data-action="click->modal#close">
+                   <div class="bg-white rounded-lg shadow-xl p-6 w-1/2 max-w-md" data-action="click->modal#stopPropagation">
+                     <h2 class="text-xl font-bold mb-4 text-green-600">✅ Success Modal</h2>
+                     <p class="text-gray-700 mb-4">This is a success modal. Perfect for confirming completed actions.</p>
+                     <div class="bg-green-50 p-3 rounded mb-4">
+                       <p class="text-green-800 text-sm">🎉 Success: Your action was completed successfully!</p>
+                     </div>
+                     <div class="mt-4 flex justify-end">
+                       <button data-action="click->modal#close" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                         Close
+                       </button>
+                     </div>
+                   </div>
+                 </div>`
+            </script>
+
+            <template data-modal-target="template" live:html="computed.modalContent"> </template>
+
+            <!-- Current state display -->
+            <div class="mt-4 p-3 bg-gray-50 rounded">
+              <p class="text-sm text-gray-600">Current modal type: <span class="font-semibold" live:text="state.modalType">info</span></p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1862,8 +1953,69 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus laoreet elit 
         }
       }
 
+      class ModalController extends Controller {
+        static targets = ['template'];
+
+        open() {
+          if (this.modal) return; // Prevent multiple modals
+
+          this.modal = this.templateTarget.content.cloneNode(true).firstElementChild;
+
+          // Add event listeners to the modal
+          this.modal.addEventListener('click', this.handleBackdropClick.bind(this));
+          const modalContent = this.modal.querySelector('[data-action*="stopPropagation"]');
+          if (modalContent) {
+            modalContent.addEventListener('click', this.stopPropagation.bind(this));
+          }
+
+          const closeButtons = this.modal.querySelectorAll('[data-action*="modal#close"]');
+          closeButtons.forEach((button) => {
+            button.addEventListener('click', this.close.bind(this));
+          });
+
+          // Add escape key listener
+          this.escapeHandler = this.handleEscape.bind(this);
+          document.addEventListener('keydown', this.escapeHandler);
+
+          document.body.appendChild(this.modal);
+        }
+
+        close() {
+          if (this.modal) {
+            this.modal.remove();
+            this.modal = null;
+          }
+
+          if (this.escapeHandler) {
+            document.removeEventListener('keydown', this.escapeHandler);
+            this.escapeHandler = null;
+          }
+        }
+
+        handleBackdropClick(event) {
+          if (event.target === this.modal) {
+            this.close();
+          }
+        }
+
+        handleEscape(event) {
+          if (event.key === 'Escape') {
+            this.close();
+          }
+        }
+
+        stopPropagation(event) {
+          event.stopPropagation();
+        }
+
+        disconnect() {
+          this.close();
+        }
+      }
+
       const application = Application.start();
       application.register('live', LiveController);
+      application.register('modal', ModalController);
     </script>
   </body>
 </html>
