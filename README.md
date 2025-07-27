@@ -39,7 +39,7 @@ A reactive UI system built on top of Stimulus.js that enables declarative, state
 </div>
 ```
 
-The demo is entirely self-contained in a single `index.html` file that showcases 11 different interactive examples. Everything needed to run the demo is included:
+The demo is entirely self-contained in a single `index.html` file that showcases 13 different interactive examples. Everything needed to run the demo is included:
 
 - **Tailwind CSS** - Loaded via CDN for styling
 - **Stimulus.js** - Imported via ES modules from unpkg
@@ -83,6 +83,27 @@ Define reactive state properties that can be bound to form inputs or calculated 
 </script>
 ```
 
+**HTML Template Literals** - When a computed property starts with `<`, it's automatically treated as an HTML template literal:
+
+```html
+<!-- Simple HTML templates with interpolation -->
+<script type="text/template" data-live-computed="userCard">
+  <div class="user-card">
+    <h3>${state.userName}</h3>
+    <p>Status: ${computed.userStatus}</p>
+  </div>
+</script>
+
+<!-- Complex templates with conditional content -->
+<script type="text/template" data-live-computed="notificationHtml">
+  <div class="notification ${computed.notificationType}">
+    <strong>${computed.title}</strong>
+    <p>${state.message}</p>
+    ${computed.showTimestamp ? `<small>${computed.timestamp}</small>` : ''}
+  </div>
+</script>
+```
+
 > **Important:** Within computed property definitions, use `state.` to reference base state properties and `computed.` to reference other computed properties. In your HTML templates, use `computed.` to reference computed properties and `state.` for base state properties.
 
 ```html
@@ -103,14 +124,15 @@ Define reactive state properties that can be bound to form inputs or calculated 
 
 Bind state to DOM elements using special `live:*` attributes that automatically update when state changes.
 
-| Attribute       | Description                   | Example                                     |
-| --------------- | ----------------------------- | ------------------------------------------- |
-| `live:text`     | Sets element text content     | `live:text="state.count"`                   |
-| `live:html`     | Sets element innerHTML        | `live:html="state.content"`                 |
-| `live:class`    | Conditionally applies classes | `live:class="{ 'active': state.isActive }"` |
-| `live:style`    | Sets CSS styles               | `live:style="{ color: state.textColor }"`   |
-| `live:show`     | Shows/hides element           | `live:show="state.isVisible"`               |
-| `live:disabled` | Enables/disables element      | `live:disabled="!state.isValid"`            |
+| Attribute         | Description                   | Example                                                  |
+| ----------------- | ----------------------------- | -------------------------------------------------------- |
+| `live:text`       | Sets element text content     | `live:text="state.count"`                                |
+| `live:html`       | Sets element innerHTML        | `live:html="state.content"`                              |
+| `live:class`      | Conditionally applies classes | `live:class="{ 'active': state.isActive }"`              |
+| `live:style`      | Sets CSS styles               | `live:style="{ color: state.textColor }"`                |
+| `live:show`       | Shows/hides element           | `live:show="state.isVisible"`                            |
+| `live:disabled`   | Enables/disables element      | `live:disabled="!state.isValid"`                         |
+| `live:attributes` | Sets multiple HTML attributes | `live:attributes="{ src: state.url, alt: state.title }"` |
 
 **Examples:**
 
@@ -141,6 +163,22 @@ Bind state to DOM elements using special `live:*` attributes that automatically 
 <!-- Show/hide and enable/disable -->
 <div live:show="computed.showDetails">Details content</div>
 <button live:disabled="!computed.isValid">Save</button>
+
+<!-- Multiple attributes at once -->
+<img
+  live:attributes="{
+  src: computed.imageUrl,
+  alt: computed.imageDescription,
+  title: computed.imageTitle
+}"
+/>
+<input
+  live:attributes="{
+  placeholder: computed.placeholderText,
+  'data-tooltip': computed.helpText,
+  'aria-label': computed.accessibilityLabel
+}"
+/>
 ```
 
 **State Updates** - Trigger state changes using the `live#update` action:
